@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.idea/
+.vscode/
+airflow/logs/*
+!airflow/logs/.gitkeep
+~$*
+*.tmp
+
+# Exclude raw dataset files > 100 MB to comply with GitHub file size limits
+bigdata_dataset/game_lineups.csv
+bigdata_dataset/appearances.csv
+bigdata_dataset/game_events.csv
