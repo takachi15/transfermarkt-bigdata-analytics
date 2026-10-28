@@ -919,16 +919,16 @@ def build_hufi_full_document():
         "Bảng 5.3: Bảng tổng hợp lịch sử Commit Git tiêu biểu theo các mốc tiến độ dự án",
         [
             ("Mã Commit Hash", "Thời gian commit", "Tác giả commit", "Module thay đổi", "Nội dung thông điệp commit (Commit Message)"),
-            ("02bd2ea", "2026-09-20", "Đặng Duy Lợi", "bigdata_dataset/", "feat(dataset): collect and explore transfermarkt dataset (12 CSV tables)"),
-            ("e5e3989", "2026-09-27", "Đặng Duy Lợi", "01_data_exploration", "feat(hdfs): configure hadoop hdfs cluster and upload raw data lake"),
-            ("110cb57", "2026-10-04", "Đặng Duy Lợi", "02_data_cleaning.py", "feat(spark): implement pyspark etl data cleaning and feature engineering"),
-            ("7d2da9d", "2026-10-10", "Chu Văn Quốc Trung", "03_spark_analysis.py", "feat(analytics): add spark sql multi-dimensional queries and kmeans ml"),
-            ("d0be1d7", "2026-10-12", "Chu Văn Quốc Trung", "05_ml_regression.py", "feat(ml): train random forest regressor model for player valuation"),
-            ("bb05d2a", "2026-10-18", "Nguyễn Thế Quang", "06_kafka_producer.py", "feat(kafka): setup kafka producer and consumer for real-time transfers"),
-            ("5283a93", "2026-10-23", "Nguyễn Thế Quang", "airflow/dags/", "feat(airflow): build airflow dag pipeline with 7 sequential tasks"),
-            ("1ea2ddc", "2026-10-25", "Nguyễn Thế Quang", "08_dashboard_streamlit", "feat(dashboard): develop streamlit dashboard with 14 interactive modules"),
-            ("5998888", "2026-10-26", "Đặng Duy Lợi", "run_pipeline.py", "fix(pipeline): optimize memory and enhance pagination and xai evaluation"),
-            ("d75e46f", "2026-10-27", "Đặng Duy Lợi", "Bao_Cao/ & README", "docs: complete final report and documentation with full traceability"),
+            ("fd21d10", "2026-09-20", "Đặng Duy Lợi", "bigdata_dataset/", "feat(dataset): collect and explore transfermarkt dataset (12 CSV tables)"),
+            ("a8076e7", "2026-09-27", "Đặng Duy Lợi", "01_data_exploration", "feat(hdfs): configure hadoop hdfs cluster and upload raw data lake"),
+            ("13a9c30", "2026-10-04", "Đặng Duy Lợi", "02_data_cleaning.py", "feat(spark): implement pyspark etl data cleaning and feature engineering"),
+            ("9b810cd", "2026-10-10", "Chu Văn Quốc Trung", "03_spark_analysis.py", "feat(analytics): add spark sql multi-dimensional queries and kmeans ml"),
+            ("a8b9108", "2026-10-12", "Chu Văn Quốc Trung", "05_ml_regression.py", "feat(ml): train random forest regressor model for player valuation"),
+            ("c5deb47", "2026-10-18", "Nguyễn Thế Quang", "06_kafka_producer.py", "feat(kafka): setup kafka producer and consumer for real-time transfers"),
+            ("f51596d", "2026-10-23", "Nguyễn Thế Quang", "airflow/dags/", "feat(airflow): build airflow dag pipeline with 7 sequential tasks"),
+            ("6269e17", "2026-10-25", "Nguyễn Thế Quang", "08_dashboard_streamlit", "feat(dashboard): develop streamlit dashboard with 14 interactive modules"),
+            ("aedba91", "2026-10-26", "Đặng Duy Lợi", "run_pipeline.py", "fix(pipeline): optimize memory and enhance pagination and xai evaluation"),
+            ("5cc5d17", "2026-10-27", "Đặng Duy Lợi", "Bao_Cao/ & README", "docs: complete final report and documentation with full traceability"),
         ]
     )
 
