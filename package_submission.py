@@ -34,6 +34,8 @@ INCLUDE_ITEMS = [
     ("Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData_Chuan_AI_10Diem.docx", "Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData_Chuan_AI_10Diem.docx"),
     ("Bao_Cao/Kich_Ban_Demo_Bao_Ve_Website_BigData.pdf", "Bao_Cao/Kich_Ban_Demo_Bao_Ve_Website_BigData.pdf"),
     ("Bao_Cao/Kich_Ban_Demo_Bao_Ve_Website_BigData.docx", "Bao_Cao/Kich_Ban_Demo_Bao_Ve_Website_BigData.docx"),
+    ("Bao_Cao/Kich_Ban_Demo_Bao_Cao_Cuoi_Ky_BigData.pdf", "Bao_Cao/Kich_Ban_Demo_Bao_Cao_Cuoi_Ky_BigData.pdf"),
+    ("Bao_Cao/Kich_Ban_Demo_Bao_Cao_Cuoi_Ky_BigData.docx", "Bao_Cao/Kich_Ban_Demo_Bao_Cao_Cuoi_Ky_BigData.docx"),
     ("Bao_Cao/Bao_Cao_Tien_Do_Do_An_BigData.docx", "Bao_Cao/Bao_Cao_Tien_Do_Do_An_BigData.docx"),
     ("Bao_Cao/Bao_Cao_Tien_Do_Do_An_BigData.pdf", "Bao_Cao/Bao_Cao_Tien_Do_Do_An_BigData.pdf"),
 

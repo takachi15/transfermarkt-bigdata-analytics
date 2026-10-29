@@ -2,88 +2,77 @@
 """
 build_demo_script_doc.py
 ========================
-Kịch bản tự động biên tập và xuất bản tài liệu:
-"KỊCH BẢN CHI TIẾT TRÌNH DIỄN (LIVE DEMO) & BẢO VỆ HỆ THỐNG BIG DATA"
-Chuẩn học thuật HUFI / HUIT (Khoa Công nghệ Thông tin)
-
-Cải tiến toàn diện theo yêu cầu người dùng:
-- Bổ sung rõ ràng và chính xác 100% Địa chỉ URL / Deep Link cho từng phân đoạn
-- Khớp chuẩn xác tên từng trang trên Sidebar của Web Dashboard
-- Tiêu đề từng phân đoạn cụ thể, chuyên nghiệp, gắn rõ Người nói và Timeline
-- Tách bạch: [ĐỊA CHỈ URL] -> [THAO TÁC MÀN HÌNH] -> [LỜI THOẠI THUYẾT TRÌNH] -> [ĐIỂM NHẤN CÔNG NGHỆ]
-- Sửa triệt để 100% lỗi font tiếng Việt và loại bỏ hoàn toàn emoji
-- Tự động xuất đồng thời cả file DOCX và PDF chuẩn mực
+Kịch bản thuyết trình và Demo trực quan, đơn giản, dễ hiểu cho BÁO CÁO CUỐI KỲ MÔN HỌC.
+Môn học: Công nghệ Dữ liệu lớn (Big Data Technologies)
+Giảng viên: ThS. Huỳnh Thái Học
+Nhóm 5 thực hiện.
 """
 
 import os
 import sys
 import docx
-from docx.shared import Inches, Pt, RGBColor, Cm
+from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
-from docx.oxml import parse_xml
-from docx.oxml.ns import nsdecls
+from docx.oxml import parse_xml, OxmlElement
+from docx.oxml.ns import nsdecls, qn
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 if hasattr(sys.stderr, 'reconfigure'):
     sys.stderr.reconfigure(encoding='utf-8')
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_DIR   = os.path.dirname(SCRIPT_DIR) if os.path.basename(SCRIPT_DIR) == "Bao_Cao" else SCRIPT_DIR
-REPORT_DIR = SCRIPT_DIR if os.path.basename(SCRIPT_DIR) == "Bao_Cao" else os.path.join(BASE_DIR, "Bao_Cao")
-os.makedirs(REPORT_DIR, exist_ok=True)
-
-OUT_DOCX  = os.path.join(REPORT_DIR, "Kich_Ban_Demo_Bao_Ve_Website_BigData.docx")
-OUT_PDF   = os.path.join(REPORT_DIR, "Kich_Ban_Demo_Bao_Ve_Website_BigData.pdf")
-
-# Màu sắc học thuật nhận diện thương hiệu HUIT
-COLOR_NAVY    = RGBColor(27, 54, 93)      # #1B365D - Tiêu đề chính
-COLOR_TEAL    = RGBColor(13, 118, 110)    # #0D766E - Nhấn mạnh kỹ thuật
-COLOR_DARK    = RGBColor(34, 34, 34)      # #222222 - Thân bài
-COLOR_MUTED   = RGBColor(90, 90, 90)      # #5A5A5A - Ghi chú phụ
-COLOR_CRIMSON = RGBColor(160, 20, 20)     # #A01414 - Cảnh báo quan trọng
-
-HEX_NAVY_BG   = "1B365D"
-HEX_LIGHT_BG  = "F4F6F9"
-HEX_ACCENT_BG = "E6F4F1"
-HEX_WARN_BG   = "FFF8E7"
-HEX_URL_BG    = "EEF2F6"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+OUT_DOCX = os.path.join(BASE_DIR, "Kich_Ban_Demo_Bao_Ve_Website_BigData.docx")
+OUT_DOCX_FRIENDLY = os.path.join(BASE_DIR, "Kich_Ban_Demo_Bao_Cao_Cuoi_Ky_BigData.docx")
 
 FONT_MAIN = "Times New Roman"
 FONT_CODE = "Consolas"
 
-def set_page_margins(section):
-    section.top_margin    = Cm(2.0)
-    section.bottom_margin = Cm(2.0)
-    section.left_margin   = Cm(2.5)
-    section.right_margin  = Cm(2.0)
+COLOR_NAVY = RGBColor(27, 54, 93)     # #1B365D
+COLOR_TEAL = RGBColor(13, 118, 110)   # #0D766E
+COLOR_DARK = RGBColor(30, 41, 59)     # #1E293B
+COLOR_MUTED = RGBColor(100, 116, 139) # #64748B
 
-def set_cell_pad(cell, t=70, b=70, l=90, r=90):
+HEX_NAVY_BG   = "1B365D"
+HEX_LIGHT_BG  = "F8FAFC"
+HEX_ACCENT_BG = "F0FDF4"  # Xanh dịu cho lời thoại
+HEX_ACTION_BG = "EFF6FF"  # Xanh dương nhạt cho thao tác
+HEX_TECH_BG   = "FEF3C7"  # Vàng nhạt cho công nghệ
+HEX_URL_BG    = "F1F5F9"  # Xám sáng cho URL
+
+def set_page_margins(section):
+    section.top_margin    = Inches(0.7)
+    section.bottom_margin = Inches(0.7)
+    section.left_margin   = Inches(0.75)
+    section.right_margin  = Inches(0.75)
+
+def set_cell_pad(cell, t=60, b=60, l=90, r=90):
     tcPr = cell._tc.get_or_add_tcPr()
-    xml = f'<w:tcMar {nsdecls("w")}><w:top w:w="{t}" w:type="dxa"/><w:bottom w:w="{b}" w:type="dxa"/><w:left w:w="{l}" w:type="dxa"/><w:right w:w="{r}" w:type="dxa"/></w:tcMar>'
-    tcPr.append(parse_xml(xml))
+    tcMar = OxmlElement('w:tcMar')
+    for m, val in [('w:top', t), ('w:bottom', b), ('w:left', l), ('w:right', r)]:
+        node = parse_xml(f'<{m} {nsdecls("w")} w:w="{val}" w:type="dxa"/>')
+        tcMar.append(node)
+    tcPr.append(tcMar)
 
 def set_bg(cell, hex_color):
     tcPr = cell._tc.get_or_add_tcPr()
-    for child in list(tcPr):
-        if child.tag.endswith('shd'):
-            tcPr.remove(child)
-    tcPr.append(parse_xml(f'<w:shd {nsdecls("w")} w:fill="{hex_color}"/>'))
+    shd = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{hex_color}"/>')
+    tcPr.append(shd)
 
 def set_cell_borders(cell, top=True, bottom=True, left=True, right=True, color="D0D5DD", sz="4"):
     tcPr = cell._tc.get_or_add_tcPr()
-    tcBorders = parse_xml(f'<w:tcBorders {nsdecls("w")}/>')
-    for edge, active in [('top', top), ('bottom', bottom), ('left', left), ('right', right)]:
-        if active:
-            b_xml = f'<w:{edge} {nsdecls("w")} w:val="single" w:sz="{sz}" w:space="0" w:color="{color}"/>'
+    tcBorders = OxmlElement('w:tcBorders')
+    sides = [('top', top), ('bottom', bottom), ('left', left), ('right', right)]
+    for side_name, enabled in sides:
+        if enabled:
+            b_xml = f'<w:{side_name} {nsdecls("w")} w:val="single" w:sz="{sz}" w:space="0" w:color="{color}"/>'
         else:
-            b_xml = f'<w:{edge} {nsdecls("w")} w:val="none"/>'
+            b_xml = f'<w:{side_name} {nsdecls("w")} w:val="none"/>'
         tcBorders.append(parse_xml(b_xml))
     tcPr.append(tcBorders)
 
 def apply_font_to_run(run, font_name=FONT_MAIN, size_pt=11, bold=False, italic=False, color=None):
-    """Khóa cứng font OpenXML để tránh lỗi font tiếng Việt"""
     run.font.name = font_name
     run.font.size = Pt(size_pt)
     run.font.bold = bold
@@ -118,7 +107,7 @@ def configure_document_styles(doc):
         except Exception:
             pass
 
-def add_p(doc, text="", size=11, bold=False, italic=False, color=COLOR_DARK, align=WD_ALIGN_PARAGRAPH.JUSTIFY, space_before=0, space_after=3, line_spacing=1.15):
+def add_p(doc, text="", size=11, bold=False, italic=False, color=COLOR_DARK, align=WD_ALIGN_PARAGRAPH.LEFT, space_before=0, space_after=2, line_spacing=1.15):
     p = doc.add_paragraph()
     p.alignment = align
     p.paragraph_format.space_before = Pt(space_before)
@@ -131,58 +120,52 @@ def add_p(doc, text="", size=11, bold=False, italic=False, color=COLOR_DARK, ali
 
 def add_heading_1(doc, text):
     p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(14)
+    p.paragraph_format.space_before = Pt(13)
     p.paragraph_format.space_after  = Pt(4)
     p.paragraph_format.keep_with_next = True
     r = p.add_run(text)
-    apply_font_to_run(r, FONT_MAIN, size_pt=13.5, bold=True, color=COLOR_NAVY)
+    apply_font_to_run(r, FONT_MAIN, size_pt=13, bold=True, color=COLOR_NAVY)
     return p
 
 def add_heading_2(doc, text):
     p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(10)
+    p.paragraph_format.space_before = Pt(9)
     p.paragraph_format.space_after  = Pt(3)
     p.paragraph_format.keep_with_next = True
     r = p.add_run(text)
-    apply_font_to_run(r, FONT_MAIN, size_pt=12, bold=True, color=COLOR_TEAL)
+    apply_font_to_run(r, FONT_MAIN, size_pt=11.5, bold=True, color=COLOR_TEAL)
     return p
 
 def add_url_box(doc, page_name, direct_url, secondary_url=None):
-    """Hộp chỉ dẫn đường dẫn URL và Tab trên giao diện một cách rõ ràng nhất"""
+    """Hộp định vị Tab và URL rõ ràng, trực quan"""
     table = doc.add_table(rows=1, cols=1)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     cell = table.cell(0, 0)
     cell.width = Inches(6.5)
     set_bg(cell, HEX_URL_BG)
-    set_cell_pad(cell, t=60, b=60, l=100, r=100)
-    set_cell_borders(cell, top=True, bottom=True, left=True, right=True, color="1B365D", sz="8")
+    set_cell_pad(cell, t=50, b=50, l=90, r=90)
+    set_cell_borders(cell, top=True, bottom=True, left=True, right=True, color="1B365D", sz="6")
     
     p = cell.paragraphs[0]
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after  = Pt(2)
     p.paragraph_format.line_spacing = 1.15
     
-    r_tag = p.add_run("[ĐỊA CHỈ TRUY CẬP VÀ PHÂN HỆ GIAO DIỆN]\n")
+    r_tag = p.add_run("[ĐỊNH VỊ GIAO DIỆN & URL TRUY CẬP]\n")
     apply_font_to_run(r_tag, FONT_MAIN, size_pt=9.5, bold=True, color=COLOR_NAVY)
     
-    r_tab_label = p.add_run("• Tên Tab trên Sidebar: ")
-    apply_font_to_run(r_tab_label, FONT_MAIN, size_pt=10, bold=True, color=COLOR_DARK)
-    r_tab_val = p.add_run(f'"{page_name}"\n')
-    apply_font_to_run(r_tab_val, FONT_MAIN, size_pt=10.5, bold=True, color=COLOR_TEAL)
+    r_tab = p.add_run(f"• Bấm Tab trên Sidebar: \"{page_name}\"\n")
+    apply_font_to_run(r_tab, FONT_MAIN, size_pt=10, bold=True, color=COLOR_TEAL)
     
-    r_url_label = p.add_run("• URL Web Dashboard: ")
-    apply_font_to_run(r_url_label, FONT_MAIN, size_pt=9.5, bold=True, color=COLOR_DARK)
-    r_url_val = p.add_run(f"{direct_url}\n")
-    apply_font_to_run(r_url_val, FONT_CODE, size_pt=9, bold=True, color=COLOR_NAVY)
+    r_url = p.add_run(f"• Đường dẫn trực tiếp: {direct_url}\n")
+    apply_font_to_run(r_url, FONT_CODE, size_pt=9, bold=True, color=COLOR_NAVY)
     
     if secondary_url:
-        r_sec_label = p.add_run("• Cổng dịch vụ hạ tầng liên kết: ")
-        apply_font_to_run(r_sec_label, FONT_MAIN, size_pt=9.5, bold=True, color=COLOR_MUTED)
-        r_sec_val = p.add_run(secondary_url)
-        apply_font_to_run(r_sec_val, FONT_CODE, size_pt=9, bold=False, color=COLOR_MUTED)
+        r_sec = p.add_run(f"• Cổng dịch vụ phụ: {secondary_url}")
+        apply_font_to_run(r_sec, FONT_CODE, size_pt=8.5, bold=False, color=COLOR_MUTED)
     add_p(doc, "", size=2, space_before=0, space_after=1)
 
-def add_callout_box(doc, title, content_list, box_type="speech"):
+def add_callout_box(doc, title, items, box_type="speech"):
     table = doc.add_table(rows=1, cols=1)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     cell = table.cell(0, 0)
@@ -192,55 +175,54 @@ def add_callout_box(doc, title, content_list, box_type="speech"):
         bg_hex = HEX_ACCENT_BG
         border_color = "0D766E"
         title_color = COLOR_TEAL
-        icon_prefix = "[LỜI THOẠI THUYẾT TRÌNH MẪU] "
+        icon_prefix = "[LỜI THOẠI NÓI CÁI HIỂU LIỀN] "
     elif box_type == "action":
-        bg_hex = HEX_LIGHT_BG
+        bg_hex = HEX_ACTION_BG
         border_color = "1B365D"
         title_color = COLOR_NAVY
         icon_prefix = "[THAO TÁC MÀN HÌNH & CHUỘT] "
     elif box_type == "tech":
-        bg_hex = HEX_WARN_BG
+        bg_hex = HEX_TECH_BG
         border_color = "D97706"
         title_color = RGBColor(180, 83, 9)
-        icon_prefix = "[ĐIỂM NHẤN CÔNG NGHỆ BẮT BUỘC NÓI] "
+        icon_prefix = "[TỪ KHÓA BIG DATA ĂN ĐIỂM] "
     else:
         bg_hex = HEX_LIGHT_BG
-        border_color = "999999"
+        border_color = "94A3B8"
         title_color = COLOR_DARK
-        icon_prefix = "[LƯU Ý] "
+        icon_prefix = "[THÔNG TIN] "
 
     set_bg(cell, bg_hex)
-    set_cell_pad(cell, t=70, b=70, l=100, r=100)
-    set_cell_borders(cell, top=True, bottom=True, left=True, right=True, color=border_color, sz="8")
+    set_cell_pad(cell, t=60, b=60, l=90, r=90)
+    set_cell_borders(cell, top=True, bottom=True, left=True, right=True, color=border_color, sz="6")
     
     p = cell.paragraphs[0]
     p.paragraph_format.space_before = Pt(0)
-    p.paragraph_format.space_after  = Pt(3)
+    p.paragraph_format.space_after  = Pt(2)
     p.paragraph_format.line_spacing = 1.15
     
     r_title = p.add_run(icon_prefix + title)
-    apply_font_to_run(r_title, FONT_MAIN, size_pt=10.5, bold=True, color=title_color)
+    apply_font_to_run(r_title, FONT_MAIN, size_pt=10, bold=True, color=title_color)
     
-    for item in content_list:
+    for item in items:
         p_c = cell.add_paragraph()
         p_c.paragraph_format.space_before = Pt(1)
         p_c.paragraph_format.space_after  = Pt(2)
         p_c.paragraph_format.line_spacing = 1.15
-        p_c.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        p_c.alignment = WD_ALIGN_PARAGRAPH.LEFT
         r_item = p_c.add_run(item)
-        apply_font_to_run(r_item, FONT_MAIN, size_pt=10, bold=False, italic=(box_type == "speech"), color=COLOR_DARK)
+        apply_font_to_run(r_item, FONT_MAIN, size_pt=9.5, bold=False, italic=(box_type == "speech"), color=COLOR_DARK)
     add_p(doc, "", size=2, space_before=0, space_after=1)
 
 def add_table_data(doc, headers, rows_data, col_widths=None):
     table = doc.add_table(rows=len(rows_data) + 1, cols=len(headers))
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     
-    # Header
     hdr_cells = table.rows[0].cells
     for c_idx, title in enumerate(headers):
         set_bg(hdr_cells[c_idx], HEX_NAVY_BG)
-        set_cell_pad(hdr_cells[c_idx], t=70, b=70, l=80, r=80)
-        set_cell_borders(hdr_cells[c_idx], top=True, bottom=True, left=False, right=False, color="1B365D", sz="10")
+        set_cell_pad(hdr_cells[c_idx], t=60, b=60, l=70, r=70)
+        set_cell_borders(hdr_cells[c_idx], top=True, bottom=True, left=False, right=False, color="1B365D", sz="8")
         p = hdr_cells[c_idx].paragraphs[0]
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p.paragraph_format.space_before = Pt(1)
@@ -248,14 +230,13 @@ def add_table_data(doc, headers, rows_data, col_widths=None):
         r = p.add_run(title)
         apply_font_to_run(r, FONT_MAIN, size_pt=9.5, bold=True, color=RGBColor(255, 255, 255))
         
-    # Data Rows
     for r_idx, row in enumerate(rows_data):
         row_cells = table.rows[r_idx + 1].cells
         bg_col = HEX_LIGHT_BG if (r_idx % 2 == 1) else "FFFFFF"
         for c_idx, val in enumerate(row):
             set_bg(row_cells[c_idx], bg_col)
-            set_cell_pad(row_cells[c_idx], t=60, b=60, l=80, r=80)
-            set_cell_borders(row_cells[c_idx], top=True, bottom=True, left=False, right=False, color="E5E7EB", sz="4")
+            set_cell_pad(row_cells[c_idx], t=50, b=50, l=70, r=70)
+            set_cell_borders(row_cells[c_idx], top=True, bottom=True, left=False, right=False, color="E2E8F0", sz="4")
             p = row_cells[c_idx].paragraphs[0]
             p.alignment = WD_ALIGN_PARAGRAPH.LEFT if c_idx > 1 else WD_ALIGN_PARAGRAPH.CENTER
             p.paragraph_format.space_before = Pt(1)
@@ -277,241 +258,245 @@ def build_demo_document():
     configure_document_styles(doc)
 
     # ══════════════════════════════════════════════════════════════════════
-    # TIÊU ĐỀ TÀI LIỆU
+    # TIÊU ĐỀ BÁO CÁO CUỐI KỲ MÔN HỌC
     # ══════════════════════════════════════════════════════════════════════
     add_p(doc, "TRƯỜNG ĐẠI HỌC CÔNG THƯƠNG TP. HỒ CHÍ MINH (HUIT)\nKHOA CÔNG NGHỆ THÔNG TIN — BỘ MÔN KHOA HỌC DỮ LIỆU",
-          size=10.5, bold=True, color=COLOR_NAVY, align=WD_ALIGN_PARAGRAPH.CENTER, space_before=0, space_after=8)
+          size=10, bold=True, color=COLOR_NAVY, align=WD_ALIGN_PARAGRAPH.CENTER, space_before=0, space_after=6)
 
-    add_p(doc, "KỊCH BẢN CHI TIẾT TRÌNH DIỄN (LIVE DEMO) & BẢO VỆ ĐỒ ÁN BIG DATA",
+    add_p(doc, "KỊCH BẢN THUYẾT TRÌNH & DEMO BÁO CÁO CUỐI KỲ",
           size=15, bold=True, color=COLOR_NAVY, align=WD_ALIGN_PARAGRAPH.CENTER, space_before=4, space_after=2)
-    add_p(doc, "BẢNG CHỈ DẪN URL TRUY CẬP TỪNG PHÂN HỆ, THAO TÁC MÀN HÌNH VÀ LỜI THOẠI THUYẾT TRÌNH MẪU",
-          size=9.5, bold=True, italic=True, color=COLOR_TEAL, align=WD_ALIGN_PARAGRAPH.CENTER, space_before=0, space_after=10)
+    add_p(doc, "HỌC PHẦN: CÔNG NGHỆ DỮ LIỆU LỚN (BIG DATA TECHNOLOGIES)",
+          size=11, bold=True, color=COLOR_TEAL, align=WD_ALIGN_PARAGRAPH.CENTER, space_before=0, space_after=2)
+    add_p(doc, "Đề tài: Xây dựng Data Pipeline thu thập, xử lý phân tán và phân tích dữ liệu thị trường chuyển nhượng bóng đá",
+          size=10, bold=False, italic=True, color=COLOR_DARK, align=WD_ALIGN_PARAGRAPH.CENTER, space_before=0, space_after=8)
 
-    # Khung Metadata
+    # Khung Thông tin Nhóm môn học
     meta_box = [
-        "Đề tài: Xây dựng Data Pipeline thu thập, xử lý phân tán và phân tích dữ liệu thị trường chuyển nhượng bóng đá quốc tế",
-        "Giảng viên hướng dẫn: ThS. Huỳnh Thái Học",
-        "Nhóm sinh viên thực hiện (Nhóm 5): Đặng Duy Lợi (Trưởng nhóm - 2001230479) | Chu Văn Quốc Trung (2001231010) | Nguyễn Thế Quang (20012307010)",
-        "Thời lượng khuyến nghị: 8 đến 10 phút trình diễn (kèm 5 phút Q&A phản biện)",
-        "GitHub Repository chính thức: https://github.com/takachi15/transfermarkt-bigdata-analytics",
-        "Địa chỉ Web Dashboard cục bộ: http://localhost:8501 (Khởi động 1-Click bằng file CHAY_WEB.bat)"
+        "Giảng viên bộ môn: ThS. Huỳnh Thái Học",
+        "Nhóm sinh viên thực hiện (Nhóm 5):",
+        "  1. Đặng Duy Lợi (Trưởng nhóm - MSSV: 2001230479) - Phụ trách Tổng quan, HDFS, Spark Benchmark",
+        "  2. Chu Văn Quốc Trung (MSSV: 2001231010) - Phụ trách PySpark ETL, Spark SQL, Machine Learning",
+        "  3. Nguyễn Thế Quang (MSSV: 20012307010) - Phụ trách Kafka Streaming, Airflow DAG, CSDL Data Mart",
+        "Thời lượng trình bày trước lớp: 8 đến 10 phút Demo + 3 đến 5 phút trả lời câu hỏi của Thầy",
+        "Web Dashboard: http://localhost:8501 (Khởi động 1-Click bằng file CHAY_WEB.bat)",
+        "GitHub Repository chính thức: https://github.com/takachi15/transfermarkt-bigdata-analytics"
     ]
-    add_callout_box(doc, "THÔNG TIN HỒ SƠ BẢO VỆ", meta_box, box_type="normal")
+    add_callout_box(doc, "THÔNG TIN BÀI BÁO CÁO CUỐI KỲ", meta_box, box_type="normal")
 
     # ══════════════════════════════════════════════════════════════════════
-    # PHẦN 1: BẢNG TIMELINE & ÁNH XẠ URL TỔNG QUAN
+    # 1. BẢNG PHÂN CÔNG THỜI GIAN & TAB GIAO DIỆN
     # ══════════════════════════════════════════════════════════════════════
-    add_heading_1(doc, "1. Bảng phân công thời gian và Ánh xạ URL từng phân hệ (Navigation Matrix)")
-    add_p(doc, "Bảng dưới đây giúp nhóm định vị tức thì Tab cần bấm trên Sidebar và URL tương ứng để chuyển đổi màn hình mượt mà trong 10 phút thuyết trình:")
+    add_heading_1(doc, "1. Bảng phân công thời gian và Tab giao diện trực quan")
+    add_p(doc, "Bảng tra cứu nhanh giúp nhóm phối hợp nhịp nhàng: người thuyết trình nói đến đâu, bạn ngồi máy tính bấm ngay Tab và URL đó:")
 
     timeline_data = [
-        ("Phần 1: Mở đầu (00:00 - 01:00)", "Trang bìa & Header", "http://localhost:8501", "Đặng Duy Lợi"),
-        ("Phần 2: Kiến trúc & HDFS (01:00 - 02:30)", "Bản đồ ứng dụng Big Data\nQuản trị dữ liệu HDFS Data Lake", "http://localhost:8501/?page=Bản+đồ+ứng+dụng+Big+Data\nhttp://localhost:8501/?page=Quản+trị+dữ+liệu+HDFS+Data+Lake", "Đặng Duy Lợi"),
-        ("Phần 3: Benchmark Spark (02:30 - 04:00)", "Benchmark hiệu năng Spark vs Pandas", "http://localhost:8501/?page=Benchmark+hiệu+năng+Spark+vs+Pandas", "Đặng Duy Lợi"),
-        ("Phần 4: Thị trường & SQL (04:00 - 05:30)", "Tổng quan thị trường\nPhân tích Spark SQL", "http://localhost:8501/?page=Tổng+quan+thị+trường\nhttp://localhost:8501/?page=Phân+tích+Spark+SQL", "Chu Văn Quốc Trung"),
-        ("Phần 5: Machine Learning (05:30 - 07:30)", "Phân cụm K-Means\nDự đoán định giá (ML)", "http://localhost:8501/?page=Phân+cụm+K-Means\nhttp://localhost:8501/?page=Dự+đoán+định+giá+(ML)", "Chu Văn Quốc Trung"),
-        ("Phần 6: Kafka & Airflow (07:30 - 08:30)", "Dòng dữ liệu Kafka Streaming\nĐiều phối Airflow Workflow", "http://localhost:8501/?page=Dòng+dữ+liệu+Kafka+Streaming\nhttp://localhost:8501/?page=Điều+phối+Airflow+Workflow", "Nguyễn Thế Quang"),
-        ("Phần 7: Data Mart & Tổng kết (08:30 - 09:30)", "Truy vấn CSDL Data Mart", "http://localhost:8501/?page=Truy+vấn+CSDL+Data+Mart", "Nguyễn Thế Quang"),
-        ("Phần 8: Q&A Phản biện (09:30 - 15:00)", "Toàn bộ Dashboard & Terminal", "Sẵn sàng các cổng 8501, 9870, 8080", "Cả 3 thành viên")
+        ("Phần 1: Mở đầu\n(00:00 - 01:00 | 60s)", "Trang chủ / Header", "http://localhost:8501", "Đặng Duy Lợi"),
+        ("Phần 2: Kiến trúc & HDFS\n(01:00 - 02:30 | 90s)", "Bản đồ ứng dụng Big Data\nQuản trị dữ liệu HDFS Data Lake", "http://localhost:8501/?page=Bản+đồ+ứng+dụng+Big+Data\nhttp://localhost:8501/?page=Quản+trị+dữ+liệu+HDFS+Data+Lake", "Đặng Duy Lợi"),
+        ("Phần 3: Benchmark Spark vs Pandas\n(02:30 - 04:00 | 90s)", "Benchmark hiệu năng Spark vs Pandas", "http://localhost:8501/?page=Benchmark+hiệu+năng+Spark+vs+Pandas", "Đặng Duy Lợi"),
+        ("Phần 4: PySpark ETL & Spark SQL\n(04:00 - 05:30 | 90s)", "Tổng quan thị trường\nPhân tích Spark SQL", "http://localhost:8501/?page=Tổng+quan+thị+trường\nhttp://localhost:8501/?page=Phân+tích+Spark+SQL", "Chu Văn Quốc Trung"),
+        ("Phần 5: Machine Learning & Săn cầu thủ\n(05:30 - 07:30 | 120s)", "Phân cụm K-Means\nDự đoán định giá (ML)", "http://localhost:8501/?page=Phân+cụm+K-Means\nhttp://localhost:8501/?page=Dự+đoán+định+giá+(ML)", "Chu Văn Quốc Trung"),
+        ("Phần 6: Kafka Streaming & Airflow\n(07:30 - 08:30 | 60s)", "Dòng dữ liệu Kafka Streaming\nĐiều phối Airflow Workflow", "http://localhost:8501/?page=Dòng+dữ+liệu+Kafka+Streaming\nhttp://localhost:8501/?page=Điều+phối+Airflow+Workflow", "Nguyễn Thế Quang"),
+        ("Phần 7: CSDL Data Mart & Kết luận\n(08:30 - 09:30 | 60s)", "Truy vấn CSDL Data Mart", "http://localhost:8501/?page=Truy+vấn+CSDL+Data+Mart", "Nguyễn Thế Quang"),
+        ("Phần 8: Trả lời câu hỏi của Thầy\n(09:30 - 14:00 | 5 phút)", "Toàn bộ Dashboard & Terminal Logs", "Cổng 8501, 9870, 8080", "Cả 3 thành viên")
     ]
-    add_table_data(doc, ["Phân đoạn & Thời gian", "Tên Tab trên Sidebar", "Địa chỉ URL tương ứng", "Thành viên phụ trách"], timeline_data, [1.6, 1.8, 2.0, 1.1])
+    add_table_data(doc, ["Phân đoạn & Thời gian", "Bấm Tab trên Sidebar", "Địa chỉ URL tương ứng", "Thành viên nói"], timeline_data, [1.7, 1.8, 1.9, 1.1])
 
     # ══════════════════════════════════════════════════════════════════════
-    # PHẦN 2: KỊCH BẢN CHI TIẾT TỪNG PHÂN ĐOẠN (STEP-BY-STEP CUE SHEET)
+    # 2. KỊCH BẢN CHI TIẾT TỪNG PHÂN ĐOẠN (NÓI CÁI HIỂU LIỀN)
     # ══════════════════════════════════════════════════════════════════════
-    add_heading_1(doc, "2. Kịch bản chi tiết từng phân đoạn (Step-by-Step Live Demo Run-sheet)")
+    add_heading_1(doc, "2. Kịch bản chi tiết từng phân đoạn (Đơn giản, trực quan, nói cái hiểu liền)")
 
     # ── PHẦN 1 ───────────────────────────────────────────────────────────
-    add_heading_2(doc, "Phần 1: Mở đầu & Khởi chạy hệ thống 1-Click (Thời lượng: 00:00 - 01:00 | Người nói: Đặng Duy Lợi)")
-    add_url_box(doc, "Trang bìa Web Dashboard", "http://localhost:8501")
+    add_heading_2(doc, "Phần 1: Mở đầu & Khởi chạy hệ thống 1-Click (1 phút | Đặng Duy Lợi)")
+    add_url_box(doc, "Trang chủ Web Dashboard", "http://localhost:8501")
 
-    add_callout_box(doc, "HÀNH ĐỘNG THAO TÁC MÀN HÌNH", [
-        "1. Trên màn hình máy chiếu, mở trình duyệt Chrome/Edge đang chạy URL: http://localhost:8501.",
-        "2. Nhấn phím F11 để bật chế độ Toàn màn hình (Full Screen), ẩn thanh URL để hiển thị chuyên nghiệp.",
-        "3. Chỉ tay vào Header chính: 'HỆ THỐNG PHÂN TÍCH DỮ LIỆU LỚN THỊ TRƯỜNG BÓNG ĐÁ' và 4 badge trạng thái xanh (HDFS: 872.5 MB, Spark 4.2 Engine, Kafka Port 9092, Airflow 7 Tasks OK)."
+    add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
+        "1. Mở trình duyệt Chrome/Edge đang chạy URL: http://localhost:8501.",
+        "2. Bấm phím F11 để bật Toàn màn hình (Full Screen) cho đẹp và gọn gàng.",
+        "3. Chỉ tay vào Header chính và 4 ô trạng thái xanh: HDFS (872.5 MB), Spark 4.2 Engine, Kafka Port 9092, Airflow 7 Tasks OK."
     ], box_type="action")
 
-    add_callout_box(doc, "LỜI THOẠI THUYẾT TRÌNH MẪU", [
-        "\"Kính thưa Thầy Huỳnh Thái Học và Hội đồng đánh giá! Nhóm 5 chúng em xin phép được trình bày và bảo vệ đồ án môn học Công nghệ Dữ liệu lớn với đề tài: 'Xây dựng Data Pipeline thu thập, xử lý phân tán và phân tích dữ liệu thị trường chuyển nhượng bóng đá quốc tế'.\"",
-        "\"Thị trường chuyển nhượng bóng đá toàn cầu có quy mô hàng chục tỷ Euro mỗi năm nhưng trước đây chủ yếu dựa trên cảm tính. Nhóm em đã giải quyết bài toán này bằng cách ứng dụng trọn vẹn kiến trúc Big Data phân tán: từ lưu trữ HDFS Data Lake, xử lý phân tán Apache Spark, truyền tải thời gian thực Apache Kafka, điều phối tự động Apache Airflow đến phục vụ trực quan hóa trên Web Dashboard Enterprise.\"",
-        "\"Toàn bộ hệ sinh thái đã được đóng gói 1-Click tự động hóa qua tệp CHAY_WEB.bat. Bây giờ em xin mời Thầy cùng bước vào từng phân hệ kỹ thuật của hệ thống!\""
+    add_callout_box(doc, "LỜI THOẠI MẪU (NÓI TỰ NHIÊN, DỄ HIỂU)", [
+        "\"Kính chào Thầy Huỳnh Thái Học và các bạn trong lớp! Hôm nay Nhóm 5 xin báo cáo bài tập lớn cuối kỳ môn Công nghệ Dữ liệu lớn với đề tài: 'Xây dựng Data Pipeline phân tích thị trường chuyển nhượng bóng đá'.\"",
+        "\"Trước đây dữ liệu bóng đá rất rời rạc, các câu lạc bộ thường định giá cầu thủ bằng cảm tính. Nhóm em đã giải quyết bài toán này bằng một hệ thống Big Data hoàn chỉnh từ đầu đến cuối: thu thập 7.5 triệu dòng dữ liệu vào HDFS, dùng Apache Spark xử lý phân tán siêu tốc, Apache Kafka bắt tin chuyển nhượng thời gian thực, Apache Airflow lên lịch tự động và hiển thị trực quan lên Web Dashboard này.\"",
+        "\"Toàn bộ hệ sinh thái đã được nhóm đóng gói tự động hóa 1-Click qua file CHAY_WEB.bat. Sau đây em xin bắt đầu trình diễn từng phân hệ!\""
     ], box_type="speech")
 
     # ── PHẦN 2 ───────────────────────────────────────────────────────────
-    add_heading_2(doc, "Phần 2: Kiến trúc Lambda 5 lớp & Khám phá HDFS Data Lake (Thời lượng: 01:00 - 02:30 | Người nói: Đặng Duy Lợi)")
+    add_heading_2(doc, "Phần 2: Kiến trúc Lambda 5 lớp & Kho dữ liệu HDFS (1.5 phút | Đặng Duy Lợi)")
     add_url_box(doc, "Bản đồ ứng dụng Big Data & Quản trị dữ liệu HDFS Data Lake",
                 "http://localhost:8501/?page=Bản+đồ+ứng+dụng+Big+Data",
                 secondary_url="http://localhost:8501/?page=Quản+trị+dữ+liệu+HDFS+Data+Lake (HDFS Web UI: http://localhost:9870)")
 
-    add_callout_box(doc, "HÀNH ĐỘNG THAO TÁC MÀN HÌNH", [
-        "1. Trên Sidebar bên trái, click chọn menu: 'Bản đồ ứng dụng Big Data'. Cuộn nhẹ để Hội đồng nhìn thấy ma trận 5 tầng công nghệ.",
-        "2. Tiếp tục click chọn menu: 'Quản trị dữ liệu HDFS Data Lake'.",
-        "3. Tại ô dropdown chọn bảng, lần lượt chọn 'game_lineups.csv (3.18 Triệu dòng)' và 'players.csv (50,149 dòng)' để màn hình hiển thị trực tiếp Schema 26 cột và 8 dòng dữ liệu mẫu trích xuất từ đĩa HDFS."
+    add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
+        "1. Trên Sidebar bên trái, bấm chọn menu: 'Bản đồ ứng dụng Big Data' -> Chỉ vào sơ đồ 5 lớp công nghệ.",
+        "2. Tiếp tục bấm chọn menu: 'Quản trị dữ liệu HDFS Data Lake'.",
+        "3. Tại ô chọn bảng, lần lượt bấm chọn 'game_lineups.csv' và 'players.csv' để xem số dòng và bảng dữ liệu mẫu."
     ], box_type="action")
 
-    add_callout_box(doc, "LỜI THOẠI THUYẾT TRÌNH MẪU", [
-        "\"Thưa Thầy, đồ án của nhóm được thiết kế chặt chẽ theo mô hình Lambda Architecture gồm 5 lớp phân tách: Tầng 1 Lưu trữ HDFS Data Lake, Tầng 2 Xử lý phân tán Spark, Tầng 3 Xử lý luồng Kafka, Tầng 4 Điều phối Airflow và Tầng 5 Serving Data Mart.\"",
-        "\"Tại Tầng 1, kho dữ liệu thô được nạp lên Hadoop HDFS tại thư mục phân tán /football_project/ gồm trọn vẹn 12 bảng CSV với hơn 7.49 triệu bản ghi, dung lượng xấp xỉ 872.5 MB, cấu hình Replication factor = 3 và Block size 128MB.\"",
-        "\"Em xin trích xuất trực tiếp cấu trúc của bảng game_lineups.csv gồm gần 3.2 triệu dòng và bảng trung tâm players.csv gồm 26 thuộc tính. Toàn bộ dữ liệu đều được quản lý phân tán và sẵn sàng cấp phát cho tầng tính toán phía sau.\""
+    add_callout_box(doc, "LỜI THOẠI MẪU (NÓI CÁI HIỂU LIỀN)", [
+        "\"Thưa Thầy và các bạn, hệ thống của nhóm được thiết kế theo đúng kiến trúc Lambda 5 lớp chuẩn trong Big Data: Tầng 1 Lưu trữ HDFS -> Tầng 2 Xử lý mẻ Spark -> Tầng 3 Xử lý luồng Kafka -> Tầng 4 Điều phối Airflow -> Tầng 5 Web Data Mart.\"",
+        "\"Tại Tầng lưu trữ HDFS: Nhóm lưu trữ trọn vẹn 12 bảng dữ liệu thô với hơn 7.49 triệu dòng, tổng dung lượng 872.5 MB, cấu hình Block size 128MB và nhân bản 3 lần an toàn.\"",
+        "\"Như Thầy và các bạn thấy trên màn hình: bảng game_lineups chứa gần 3.2 triệu dòng lịch sử thi đấu, và bảng trung tâm players gồm hơn 50 nghìn cầu thủ với 26 cột thông tin. Toàn bộ dữ liệu lớn này đã nằm sẵn trên HDFS để cấp phát cho tầng tính toán phía sau!\""
     ], box_type="speech")
 
-    add_callout_box(doc, "ĐIỂM NHẤN CÔNG NGHỆ CẦN NÓI", [
-        "• Quy mô dữ liệu: 12 bảng CSV, 7.497.433 bản ghi thô, 872.5 MB.",
-        "• URL HDFS: hdfs://localhost:9820/football_project/ (Replication = 3, dung lượng vật lý 2.58 GB)."
+    add_callout_box(doc, "Ý CHÍNH CẦN NHỚ", [
+        "• Quy mô dữ liệu: 12 file CSV, 7.497.433 bản ghi thô, 872.5 MB.",
+        "• Kiến trúc: Lambda 5 tầng, HDFS Block size 128MB, Replication factor 3."
     ], box_type="tech")
 
     # ── PHẦN 3 ───────────────────────────────────────────────────────────
-    add_heading_2(doc, "Phần 3: Benchmark Thực nghiệm Hiệu năng Spark 4.2 vs Pandas (Thời lượng: 02:30 - 04:00 | Người nói: Đặng Duy Lợi)")
+    add_heading_2(doc, "Phần 3: Benchmark Spark 4.2 vs Pandas - Trả lời: Sao phải dùng Big Data? (1.5 phút | Đặng Duy Lợi)")
     add_url_box(doc, "Benchmark hiệu năng Spark vs Pandas", "http://localhost:8501/?page=Benchmark+hiệu+năng+Spark+vs+Pandas")
 
-    add_callout_box(doc, "HÀNH ĐỘNG THAO TÁC MÀN HÌNH", [
-        "1. Trên Sidebar, click chọn menu: 'Benchmark hiệu năng Spark vs Pandas'.",
-        "2. Nhấp chuột vào nút: 'Chạy kiểm tra tốc độ đọc 200,000 bản ghi'.",
-        "3. Đợi 1 giây để thanh tiến trình hoàn thành và biểu đồ so sánh cột thời gian hiển thị."
+    add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
+        "1. Bấm chọn menu: 'Benchmark hiệu năng Spark vs Pandas'.",
+        "2. Bấm chuột vào nút màu đỏ: 'Chạy kiểm tra tốc độ đọc 200,000 bản ghi'.",
+        "3. Đợi 1 giây thanh tiến trình chạy xong, chỉ tay vào biểu đồ cột so sánh thời gian."
     ], box_type="action")
 
-    add_callout_box(doc, "LỜI THOẠI THUYẾT TRÌNH MẪU", [
-        "\"Một câu hỏi lớn mà Hội đồng thường đặt ra là: 'Tập dữ liệu này tại sao phải dùng Hadoop/Spark mà không dùng Pandas cho tiện?'. Nhóm em xin trả lời bằng mô-đun Benchmark đo đạc thực nghiệm trực tiếp ngay trên hệ thống.\"",
-        "\"Khi thực hiện thao tác quét và tính toán trên 200,000 bản ghi của bảng game_lineups.csv, thư viện Pandas truyền thống bắt buộc phải xử lý tuần tự trên 1 core CPU duy nhất và tiêu tốn hơn 12.45 giây.\"",
-        "\"Trong khi đó, Apache Spark 4.2 với động cơ tối ưu Tungsten và Catalyst Optimizer đã tự động chia nhỏ dữ liệu thành 16 partitions song song, tận dụng 16 luồng CPU phần cứng, hoàn thành chỉ trong 0.78 giây — đạt tốc độ xử lý nhanh gấp 16.0 lần so với Pandas! Điều này khẳng định năng lực mở rộng ngang (Horizontal Scalability) không thể thay thế của Spark khi dữ liệu tăng lên hàng chục triệu bản ghi.\""
+    add_callout_box(doc, "LỜI THOẠI MẪU (NÓI CÁI HIỂU LIỀN)", [
+        "\"Nhiều bạn sẽ thắc mắc: 'Dữ liệu chưa tới 1GB thì sao không dùng thư viện Pandas cho tiện, cần chi cài đặt Hadoop với Spark phức tạp?'. Nhóm em xin trả lời bằng thực nghiệm đo đạc trực tiếp trên máy:\"",
+        "\"Khi quét và tính toán trên 200,000 dòng dữ liệu của bảng game_lineups: Thư viện Pandas chỉ chạy được trên 1 lõi CPU duy nhất và mất tận 12.45 giây.\"",
+        "\"Trong khi đó, Apache Spark 4.2 tự động chia nhỏ dữ liệu thành 16 phân vùng, tận dụng song song 16 luồng CPU phần cứng, hoàn thành chỉ trong 0.78 giây — tức là Spark chạy nhanh gấp 16 lần so với Pandas!\"",
+        "\"Điều cốt lõi là: Khi dữ liệu tăng lên 10 triệu hay 50 triệu dòng, Pandas sẽ bị tràn RAM và sập máy, còn Spark chỉ cần gắn thêm máy (mở rộng ngang) là chạy bình thường!\""
     ], box_type="speech")
 
-    add_callout_box(doc, "ĐIỂM NHẤN CÔNG NGHỆ CẦN NÓI", [
-        "• Pandas: Đơn luồng (Single Core), thời gian xử lý: ~12.45 giây.",
-        "• Apache Spark 4.2: 16 partitions song song, thời gian xử lý: ~0.78 giây (Tốc độ nhanh gấp 16.0 lần)."
+    add_callout_box(doc, "Ý CHÍNH CẦN NHỚ", [
+        "• Pandas: Chạy đơn luồng (1 core), tốn 12.45 giây.",
+        "• Spark 4.2: Chạy song song 16 partitions trên 16 cores, chỉ tốn 0.78 giây (Nhanh gấp 16 lần)."
     ], box_type="tech")
 
     # ── PHẦN 4 ───────────────────────────────────────────────────────────
-    add_heading_2(doc, "Phần 4: PySpark ETL, Bộ lọc Niên độ & Spark SQL (Thời lượng: 04:00 - 05:30 | Người nói: Chu Văn Quốc Trung)")
+    add_heading_2(doc, "Phần 4: PySpark ETL, Bộ lọc Niên độ & Spark SQL (1.5 phút | Chu Văn Quốc Trung)")
     add_url_box(doc, "Tổng quan thị trường & Phân tích Spark SQL",
                 "http://localhost:8501/?page=Tổng+quan+thị+trường",
                 secondary_url="http://localhost:8501/?page=Phân+tích+Spark+SQL")
 
-    add_callout_box(doc, "HÀNH ĐỘNG THAO TÁC MÀN HÌNH", [
-        "1. Click chọn menu: 'Tổng quan thị trường'. Thao tác tích chọn / bỏ chọn checkbox 'Chỉ lấy niên độ gần nhất (2023 - Nay)', chỉ tay vào thẻ thống kê hiển thị: 22,751 cầu thủ đang thi đấu với tổng định giá 16.48 tỷ Euro.",
-        "2. Click chọn menu: 'Phân tích Spark SQL'. Chuyển đổi giữa 4 tab phân tích: Top 15 siêu sao, Vị trí thi đấu, Top 10 quốc gia và Độ tuổi vàng. Bấm thử nút 'Trang tiếp ▶' trên thanh phân trang Enterprise."
+    add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
+        "1. Bấm menu: 'Tổng quan thị trường' -> Tích vào ô 'Chỉ lấy niên độ gần nhất (2023 - Nay)', chỉ vào thẻ thống kê: 22,751 cầu thủ đang đá với tổng định giá 16.5 tỷ Euro.",
+        "2. Bấm menu: 'Phân tích Spark SQL' -> Bấm chuyển giữa 4 tab: Top 15 siêu sao, Vị trí thi đấu, Quốc gia, Độ tuổi. Bấm thử nút 'Trang tiếp ▶' trên bảng phân trang."
     ], box_type="action")
 
-    add_callout_box(doc, "LỜI THOẠI THUYẾT TRÌNH MẪU", [
-        "\"Em xin chào Thầy và Hội đồng, em là Chu Văn Quốc Trung, phụ trách phần PySpark ETL, Spark SQL và Machine Learning.\"",
-        "\"Module 02_data_cleaning.py đã thực hiện làm sạch dữ liệu lớn: điền trung vị chiều cao, tính tuổi chuẩn xác từ ngày sinh và loại bỏ các bản ghi khuyết định giá. Kết quả từ 50,149 dòng thô đã được tinh lọc thành 40,749 bản ghi sạch, lưu trữ dưới định dạng nén Parquet Snappy chỉ tốn 1.41 MB, tiết kiệm tới 97.7% dung lượng lưu trữ.\"",
-        "\"Để dữ liệu không bị loãng bởi các cầu thủ đã giải nghệ từ hàng chục năm trước, nhóm thiết kế Bộ lọc niên độ động 2023 - Nay, tự động gom 22,751 hồ sơ cầu thủ đương đại.\"",
-        "\"Tại module 03_spark_analysis.py, nhóm đăng ký TempView để thực thi phân tán 4 truy vấn Spark SQL chuyên sâu: xác định Top 15 siêu sao đắt giá nhất (Haaland, Bellingham, Mbappe: 180M - 200M Euro), tương quan vị trí tiền đạo áp đảo giá trị, Top 10 quốc gia và độ tuổi vàng từ 25 - 28 tuổi. Đặc biệt, bảng dữ liệu được tích hợp bộ phân trang Enterprise thông minh đồng bộ trạng thái vào URL query params, giúp người dùng khi nhấn F5 refresh trình duyệt thì bảng vẫn giữ nguyên số trang đang xem!\""
+    add_callout_box(doc, "LỜI THOẠI MẪU (NÓI CÁI HIỂU LIỀN)", [
+        "\"Chào Thầy và các bạn, em là Chu Văn Quốc Trung, phụ trách phần PySpark ETL, Spark SQL và Machine Learning.\"",
+        "\"Thứ nhất, về làm sạch dữ liệu lớn: File thô có hơn 50 nghìn cầu thủ nhưng nhiều người bị thiếu giá tiền, thiếu chiều cao. PySpark đã tự động điền trung vị chiều cao, tính lại tuổi từ ngày sinh và lọc ra đúng 40,749 cầu thủ chuẩn, lưu vào file nén Parquet chỉ còn 1.4 MB — giúp tiết kiệm đến 97% dung lượng lưu trữ so với file gốc.\"",
+        "\"Thứ hai, nhóm thiết kế thêm Bộ lọc niên độ 2023 - Nay để loại bỏ những cầu thủ đã giải nghệ từ 20 năm trước, giữ lại đúng 22 nghìn cầu thủ đang thi đấu thực tế.\"",
+        "\"Thứ ba, ở phần Spark SQL: Nhóm dùng Spark SQL chạy phân tán 4 truy vấn: tìm ra Top 15 siêu sao đắt nhất thế giới như Haaland, Mbappe giá 180 đến 200 triệu Euro; vị trí Tiền đạo luôn áp đảo về giá trị; và độ tuổi vàng đạt đỉnh giá trị là từ 25 đến 28 tuổi. Bảng dữ liệu có phân trang thông minh lưu trạng thái vào URL, khi bấm F5 vẫn giữ nguyên trang đang xem!\""
     ], box_type="speech")
 
-    add_callout_box(doc, "ĐIỂM NHẤN CÔNG NGHỆ CẦN NÓI", [
-        "• PySpark ETL: 50.149 bản ghi thô -> 40.749 bản ghi sạch (Tỷ lệ 81.25%).",
-        "• Tối ưu Parquet Snappy: Giảm dung lượng đĩa từ 872.5 MB xuống 1.41 MB.",
-        "• Spark SQL: 4 góc độ đa chiều, phân trang Enterprise checkpoint URL query param."
+    add_callout_box(doc, "Ý CHÍNH CẦN NHỚ", [
+        "• Làm sạch: 50.149 dòng thô -> 40.749 dòng sạch (Parquet nén Snappy chỉ 1.4 MB).",
+        "• Niên độ: Lọc 22.751 cầu thủ đang thi đấu (2023 - Nay).",
+        "• Spark SQL: Top 15 siêu sao, phân tích vị trí, quốc gia, độ tuổi vàng 25-28."
     ], box_type="tech")
 
     # ── PHẦN 5 ───────────────────────────────────────────────────────────
-    add_heading_2(doc, "Phần 5: Đỉnh cao Machine Learning & Săn cầu thủ theo Ngân sách (Thời lượng: 05:30 - 07:30 | Người nói: Chu Văn Quốc Trung)")
+    add_heading_2(doc, "Phần 5: Machine Learning - K-Means & Săn cầu thủ giá hời (2 phút | Chu Văn Quốc Trung)")
     add_url_box(doc, "Phân cụm K-Means & Dự đoán định giá (ML)",
                 "http://localhost:8501/?page=Phân+cụm+K-Means",
                 secondary_url="http://localhost:8501/?page=Dự+đoán+định+giá+(ML)")
 
-    add_callout_box(doc, "HÀNH ĐỘNG THAO TÁC MÀN HÌNH", [
-        "1. Click chọn menu: 'Phân cụm K-Means': Chỉ vào biểu đồ phân cụm 3 màu và bảng Silhouette Score k=3 đạt 0.6429.",
-        "2. Click chọn menu: 'Dự đoán định giá (ML)':",
-        "   - Tại ô chọn cầu thủ, gõ tên 'Erling Haaland' (hoặc 'Lamine Yamal', 'Kylian Mbappé'). Quan sát kết quả định giá AI nhảy ra tức thì kèm Thẻ trạng thái 'Đúng giá / Kèo hời'. Cuộn chuột chỉ vào 5 bước giải trình Explainable AI (XAI) và khoảng tin cậy 95%.",
-        "   - Cuộn xuống phân hệ 'Săn cầu thủ theo Ngân sách (Scouting Engine)': Kéo thanh ngân sách về mức 35 triệu EUR, chọn Vị trí 'Attack', tích chọn 'Chỉ tìm cầu thủ Kèo hời (Undervalued)'. Xem danh sách các viên ngọc quý được AI phát hiện."
+    add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
+        "1. Bấm menu: 'Phân cụm K-Means' -> Chỉ vào biểu đồ 3 cụm màu sắc và điểm Silhouette Score k=3 đạt 0.6429.",
+        "2. Bấm menu: 'Dự đoán định giá (ML)':",
+        "   - Tại ô chọn cầu thủ: Gõ tên 'Erling Haaland' (hoặc chọn 'Lamine Yamal') -> Xem AI dự đoán giá và 5 bước giải thích XAI.",
+        "   - Cuộn xuống tính năng 'Săn cầu thủ theo Ngân sách (Scouting Engine)': Kéo thanh ngân sách về 35 triệu EUR, chọn Vị trí 'Attack', tích ô 'Chỉ tìm cầu thủ Kèo hời' -> Xem danh sách cầu thủ hiện ra."
     ], box_type="action")
 
-    add_callout_box(doc, "LỜI THOẠI THUYẾT TRÌNH MẪU", [
-        "\"Tiếp theo là phần cốt lõi tạo nên giá trị kinh tế của đồ án: Ứng dụng Machine Learning phân tán giải quyết bài toán phân đoạn và định giá cầu thủ.\"",
-        "\"Thứ nhất, phân cụm Spark MLlib K-Means: Nhóm đã thực nghiệm Silhouette Analysis từ k=2 đến k=6 và xác định k=3 là tối ưu nhất với Silhouette Score đạt 0.6429. Mô hình chia cầu thủ thành 3 phân khúc chuẩn xác: Cụm 0 là Siêu sao thế giới (định giá trung bình 29.7 triệu EUR), Cụm 1 là Cầu thủ trụ cột các giải hàng đầu (1.2 triệu EUR) và Cụm 2 là Cầu thủ tiềm năng/phổ thông (0.4 triệu EUR).\"",
-        "\"Thứ hai, mô hình Random Forest Regressor dự đoán giá trị chuyển nhượng: Do biến giá trị thị trường bị lệch phải nặng nề, nhóm áp dụng phép biến đổi logarit chuẩn hóa y = ln(1 + market_value), giúp mô hình đạt độ chính xác R2 = 84.68% trên tập kiểm thử Test 20%. Hệ thống tích hợp Explainable AI (XAI) giải trình rõ 5 nhân tố cấu thành định giá cùng khoảng tin cậy 95%.\"",
-        "\"Đặc biệt nhất, nhóm đã xây dựng tính năng 'Scouting Engine' phục vụ các chuyên gia tuyển trạch: Khi CLB nhập ngân sách 35 triệu Euro, mô hình Random Forest sẽ tự động quét đồng loạt toàn bộ 40,749 hồ sơ để phát hiện các 'Kèo hời' (Undervalued) — tức những cầu thủ mà giá trị thuật toán dự đoán cao hơn nhiều so với giá trị niêm yết trên thị trường, giúp CLB tiết kiệm hàng chục triệu Euro ngân sách chuyển nhượng!\""
+    add_callout_box(doc, "LỜI THOẠI MẪU (NÓI CÁI HIỂU LIỀN)", [
+        "\"Tiếp theo là phần thông minh nhất của đồ án: Ứng dụng Machine Learning phân tán để giải quyết bài toán định giá cầu thủ.\"",
+        "\"1. Về Phân cụm K-Means: Nhóm đã thử nghiệm Silhouette từ k=2 đến k=6 và chọn k=3 tối ưu nhất với điểm Silhouette đạt 0.6429. Thuật toán tự chia cầu thủ làm 3 phân khúc rất chuẩn: Cụm Siêu sao thế giới (giá trung bình gần 30 triệu Euro), Cụm Cầu thủ trụ cột (1.2 triệu Euro) và Cụm Cầu thủ tiềm năng/phổ thông (400 nghìn Euro).\"",
+        "\"2. Về Dự đoán giá chuyển nhượng bằng Random Forest: Do giá cầu thủ bị lệch rất mạnh (đa số cầu thủ giá rẻ, chỉ vài người giá cực cao), nhóm dùng phép biến đổi logarit chuẩn hóa y = ln(1 + market_value), giúp mô hình đạt độ chính xác R2 = 84.7%. Ví dụ khi chọn Erling Haaland, AI dự đoán khoảng 175 triệu Euro — rất sát thực tế. Hệ thống còn có Explainable AI giải thích rõ 5 lý do tại sao cầu thủ này có giá đó.\"",
+        "\"3. Đặc biệt là tính năng Săn cầu thủ giá hời: Ví dụ một CLB có ngân sách 35 triệu Euro, công cụ sẽ quét toàn bộ 40 nghìn hồ sơ để tìm ra những cầu thủ có tài năng vượt trội nhưng đang bị thị trường định giá thấp, giúp CLB mua được cầu thủ giỏi với giá rẻ!\""
     ], box_type="speech")
 
-    add_callout_box(doc, "ĐIỂM NHẤN CÔNG NGHỆ CẦN NÓI", [
-        "• K-Means: k=3 tối ưu, Silhouette Score = 0.6429.",
-        "• Random Forest Regressor: R2 = 84.68%, RMSE = 0.5942, MAE = 0.4120, file rf_model.joblib.",
-        "• Kỹ thuật toán học: Chuẩn hóa log1p(y) triệt tiêu độ lệch phải (Right-skewness).",
-        "• XAI & Scouting Engine: Giải trình suy luận 5 bước và phát hiện Kèo hời (Undervalued)."
+    add_callout_box(doc, "Ý CHÍNH CẦN NHỚ", [
+        "• K-Means: k=3 tối ưu, Silhouette Score = 0.6429 (3 phân khúc cầu thủ rõ rệt).",
+        "• Random Forest Regressor: R2 = 84.68%, biến đổi log1p(y) triệt tiêu độ lệch phải.",
+        "• Tính năng thực tế: Explainable AI (XAI 5 bước) & Scouting Engine săn cầu thủ giá hời."
     ], box_type="tech")
 
     # ── PHẦN 6 ───────────────────────────────────────────────────────────
-    add_heading_2(doc, "Phần 6: Kafka Streaming & Điều phối Airflow DAG (Thời lượng: 07:30 - 08:30 | Người nói: Nguyễn Thế Quang)")
+    add_heading_2(doc, "Phần 6: Kafka Streaming & Điều phối Airflow DAG (1 phút | Nguyễn Thế Quang)")
     add_url_box(doc, "Dòng dữ liệu Kafka Streaming & Điều phối Airflow Workflow",
                 "http://localhost:8501/?page=Dòng+dữ+liệu+Kafka+Streaming",
                 secondary_url="http://localhost:8501/?page=Điều+phối+Airflow+Workflow (Airflow UI: http://localhost:8080)")
 
-    add_callout_box(doc, "HÀNH ĐỘNG THAO TÁC MÀN HÌNH", [
-        "1. Click chọn menu: 'Dòng dữ liệu Kafka Streaming': Xem bảng tin JSON giao dịch phát sóng thời gian thực, tổng số tiền chuyển nhượng nhảy số (15 thương vụ, EUR 707M).",
-        "2. Click chọn menu: 'Điều phối Airflow Workflow': Chỉ vào đồ thị 7 tasks tuần tự và trạng thái 100% SUCCESS. (Nếu Thầy yêu cầu mở cụm container thật, chuyển sang tab trình duyệt cổng 8080)."
+    add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
+        "1. Bấm menu: 'Dòng dữ liệu Kafka Streaming' -> Xem các dòng tin JSON giao dịch phát trực tiếp thời gian thực (15 thương vụ, tổng 707 triệu Euro).",
+        "2. Bấm menu: 'Điều phối Airflow Workflow' -> Chỉ vào sơ đồ 7 task tuần tự và trạng thái 100% SUCCESS màu xanh lá."
     ], box_type="action")
 
-    add_callout_box(doc, "LỜI THOẠI THUYẾT TRÌNH MẪU", [
-        "\"Em xin chào Thầy và Hội đồng, em là Nguyễn Thế Quang, phụ trách mảng Streaming Kafka, điều phối Airflow và Serving Data Mart.\"",
-        "\"Bên cạnh việc xử lý mẻ dữ liệu lịch sử bằng Spark, trong các kỳ chuyển nhượng luôn có những thương vụ đột xuất theo từng giờ. Để giải quyết tầng tốc độ Speed Layer, nhóm triển khai Apache Kafka tại cổng 9092 với topic 'football_transfers'. Module 06 Producer phát sóng liên tục các bản tin JSON thời gian thực, module 07 Consumer lắng nghe, bóc tách và nạp trực tiếp vào CSDL với tổng giá trị giao dịch theo dõi vượt mốc 707 triệu Euro.\"",
-        "\"Để toàn bộ Data Pipeline 7 bước hoạt động tự động và ổn định, nhóm xây dựng DAG transfermarkt_bigdata_pipeline trên nền tảng Apache Airflow 2.10 chạy qua cụm 5 container Docker Compose. Mỗi task từ nạp HDFS, chạy Spark ETL, phân tích SQL, huấn luyện ML đến nạp CSDL đều được kiểm tra điều kiện tiên quyết và ghi nhận trạng thái 100% SUCCESS trong thời gian 2 phút 10 giây!\""
+    add_callout_box(doc, "LỜI THOẠI MẪU (NÓI CÁI HIỂU LIỀN)", [
+        "\"Chào Thầy và các bạn, em là Nguyễn Thế Quang, phụ trách mảng Streaming Kafka, điều phối Airflow và CSDL Data Mart.\"",
+        "\"Thứ nhất, với Apache Kafka: Trong kỳ chuyển nhượng luôn có những thương vụ đột xuất diễn ra từng giờ. Để xử lý dữ liệu thời gian thực, nhóm dùng Kafka chạy ở cổng 9092. Producer liên tục phát sóng các bản tin chuyển nhượng mới dạng JSON, Consumer bắt lấy và cập nhật tức thì lên hệ thống với tổng giá trị theo dõi hơn 707 triệu Euro mà không phải chạy lại toàn bộ dữ liệu lịch sử cũ.\"",
+        "\"Thứ hai, với Apache Airflow: Toàn bộ quy trình 7 bước (từ HDFS -> Spark làm sạch -> Spark SQL -> K-Means -> Random Forest -> Lưu vào CSDL) được nhóm gom vào 1 DAG tự động trên Airflow, triển khai bằng Docker Compose. Toàn bộ 7 task đều chạy thành công 100% SUCCESS trong 2 phút 10 giây!\""
     ], box_type="speech")
 
-    add_callout_box(doc, "ĐIỂM NHẤN CÔNG NGHỆ CẦN NÓI", [
-        "• Kafka Streaming: Topic football_transfers, port 9092, format JSON, tổng giá trị > 707M EUR.",
-        "• Apache Airflow 2.10 DAG: 7 tasks tuần tự đạt 100% SUCCESS (wait_for_raw_data >> ingest_to_hdfs >> spark_etl >> spark_sql >> train_ml >> kafka >> export_db)."
+    add_callout_box(doc, "Ý CHÍNH CẦN NHỚ", [
+        "• Kafka Streaming: Topic football_transfers cổng 9092, đẩy tin tức thì.",
+        "• Apache Airflow: DAG 7 tasks tự động hóa 100% SUCCESS, hoàn thành trong 2m 10s."
     ], box_type="tech")
 
     # ── PHẦN 7 ───────────────────────────────────────────────────────────
-    add_heading_2(doc, "Phần 7: Serving Data Mart (SQLite) & Kết luận (Thời lượng: 08:30 - 09:30 | Người nói: Nguyễn Thế Quang)")
+    add_heading_2(doc, "Phần 7: CSDL Data Mart & Kết luận (1 phút | Nguyễn Thế Quang)")
     add_url_box(doc, "Truy vấn CSDL Data Mart", "http://localhost:8501/?page=Truy+vấn+CSDL+Data+Mart")
 
-    add_callout_box(doc, "HÀNH ĐỘNG THAO TÁC MÀN HÌNH", [
-        "1. Click chọn menu: 'Truy vấn CSDL Data Mart'.",
-        "2. Tại ô dropdown chọn câu truy vấn mẫu, chọn: 'Top 10 cầu thủ có giá trị cao nhất' và bấm nút 'Thực thi truy vấn SQL'. Bảng kết quả trả về tức thì dưới 10ms."
+    add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
+        "1. Bấm menu: 'Truy vấn CSDL Data Mart'.",
+        "2. Tại ô chọn truy vấn mẫu, chọn: 'Top 10 cầu thủ có giá trị cao nhất' -> Bấm nút 'Thực thi truy vấn SQL' -> Kết quả hiện ra ngay lập tức."
     ], box_type="action")
 
-    add_callout_box(doc, "LỜI THOẠI THUYẾT TRÌNH MẪU", [
-        "\"Cuối cùng là Tầng phục vụ Serving Layer. Toàn bộ dữ liệu sạch sau tính toán phân tán được module load_to_database.py nạp vào CSDL Data Mart SQLite football_analytics.db gồm 5 bảng quan hệ được đánh chỉ mục tối ưu, giúp Web phản hồi tức thì dưới 10ms mà không gây nghẽn tài nguyên cụm Spark.\"",
-        "\"Tóm lại, đồ án của Nhóm 5 đã vận dụng đầy đủ và xuất sắc 5 trụ cột công nghệ Big Data: Hadoop HDFS, Apache Spark, Apache Kafka, Apache Airflow và Machine Learning. Hệ thống hoạt động trơn tru 100%, có khả năng tái hiện hoàn toàn và mang lại giá trị ứng dụng thực tiễn cao.\"",
-        "\"Nhóm em xin chân thành cảm ơn Thầy Huỳnh Thái Học và Hội đồng đã chú ý lắng nghe. Chúng em xin sẵn sàng bước vào phần trả lời câu hỏi phản biện của Thầy Cô!\""
+    add_callout_box(doc, "LỜI THOẠI MẪU (NÓI CÁI HIỂU LIỀN)", [
+        "\"Cuối cùng là Tầng phục vụ Web (Serving Layer). Sau khi Spark tính toán dữ liệu lớn xong, kết quả được lưu vào CSDL SQLite Data Mart football_analytics.db. Nhờ vậy trang web phản hồi cực nhanh dưới 10 mili-giây mà không làm nghẽn máy chủ Spark.\"",
+        "\"Tóm lại: Bài tập lớn cuối kỳ của Nhóm 5 đã vận dụng đầy đủ cả 5 công nghệ cốt lõi của Big Data: Hadoop HDFS, Apache Spark, Apache Kafka, Apache Airflow và Machine Learning. Hệ thống chạy ổn định 100%, có thể chạy lại bất cứ lúc nào và có ý nghĩa ứng dụng thực tế cao.\"",
+        "\"Nhóm 5 chúng em xin chân thành cảm ơn Thầy Huỳnh Thái Học và các bạn đã chú ý lắng nghe. Nhóm em rất mong nhận được câu hỏi và góp ý từ Thầy ạ!\""
     ], box_type="speech")
 
     # ══════════════════════════════════════════════════════════════════════
-    # PHẦN 3: BỘ CÂU HỎI PHẢN BIỆN THƯỜNG GẶP (TOP 5 Q&A CHEAT SHEET)
+    # 3. 5 CÂU HỎI THẦY HAY HỎI & CÁCH TRẢ LỜI NGẮN GỌN (ĂN ĐIỂM NGAY)
     # ══════════════════════════════════════════════════════════════════════
-    add_heading_1(doc, "3. Bộ câu hỏi phản biện thường gặp của Hội đồng & Câu trả lời ăn điểm tuyệt đối (Top 5 Q&A)")
+    add_heading_1(doc, "3. Top 5 câu hỏi Thầy hay hỏi & Cách trả lời ngắn gọn (Hiểu liền, ăn điểm ngay)")
 
     qa_list = [
-        ("Câu 1: Tại sao đề tài lại dùng thêm SQLite mà không cho Web Dashboard truy vấn trực tiếp từ Spark hoặc HDFS?",
-         "Thưa Thầy, đây là nguyên lý cốt lõi của kiến trúc phân tầng Lambda Architecture (Serving Layer). Hadoop HDFS và Spark được thiết kế cho Batch Layer nhằm tính toán xử lý dữ liệu quy mô lớn (hàng triệu bản ghi). Nếu mỗi lần người dùng click trên Web lại kích hoạt một Spark Job thì độ trễ sẽ mất từ 5 đến 30 giây để khởi tạo JVM và Driver, khiến ứng dụng web bị đơ. Do đó, Spark thực hiện tính toán trước (Pre-computing) và xuất dữ liệu sạch vào CSDL Serving Data Mart (SQLite) được đánh chỉ mục tối ưu, giúp Web phản hồi tức thì dưới 10ms mà không gây nghẽn tài nguyên cụm."),
+        ("Câu 1: Tại sao đề tài lại dùng thêm SQLite mà không cho Web truy vấn trực tiếp từ Spark hoặc HDFS?",
+         "Trả lời ngắn gọn: Dạ thưa Thầy, Spark và HDFS được thiết kế để xử lý dữ liệu lớn theo mẻ. Mỗi lần chạy một câu lệnh trên Spark mất từ 5 đến 10 giây để khởi động JVM, nếu người dùng lướt web mà chờ lâu như vậy thì web sẽ bị đơ. Vì vậy theo mô hình Lambda, Spark tính toán trước rồi lưu kết quả vào CSDL SQLite (Serving Layer) để người dùng lướt web mượt mà dưới 10 mili-giây mà không tốn tài nguyên máy chủ ạ."),
         
-        ("Câu 2: Dữ liệu 872 MB có thực sự cần đến Big Data (Hadoop/Spark) không hay chỉ cần Pandas là đủ?",
-         "Thưa Thầy, dữ liệu Transfermarkt của nhóm gồm 12 bảng với hơn 7.49 triệu bản ghi, trong đó bảng game_lineups.csv có gần 3.2 triệu dòng. Khi chạy benchmark thực tế trên cùng một máy tính, Pandas mất hơn 12.45 giây trên 1 core CPU, trong khi PySpark chia 16 phân vùng chạy song song trên 16 cores chỉ mất 0.78 giây (nhanh gấp 16 lần). Quan trọng hơn, kiến trúc này được thiết kế theo khả năng mở rộng ngang (Horizontal Scalability), nghĩa là khi bổ sung thêm dữ liệu các mùa giải mới lên 10 triệu hay 50 triệu dòng, hệ thống chỉ cần thêm DataNode mà không phải viết lại mã nguồn."),
+        ("Câu 2: Dữ liệu chưa tới 1GB thì có thực sự cần đến Hadoop/Spark không hay chỉ cần Pandas là đủ?",
+         "Trả lời ngắn gọn: Dạ thưa Thầy, dữ liệu của nhóm có gần 7.5 triệu dòng. Khi chạy thử nghiệm thực tế trên bảng 200,000 dòng, Pandas chạy đơn luồng mất 12.45 giây, trong khi Spark chia 16 luồng song song chỉ mất 0.78 giây (nhanh gấp 16 lần). Quan trọng hơn, Spark có khả năng mở rộng ngang: khi dữ liệu tăng lên 10 triệu hay 50 triệu dòng, Pandas sẽ bị sập vì tràn RAM, còn Spark chỉ cần gắn thêm máy là chạy bình thường ạ."),
         
-        ("Câu 3: Tại sao nhóm lại chọn k=3 cho phân cụm K-Means mà không phải k=4 hay k=5?",
-         "Thưa Thầy, nhóm em chọn k=3 dựa trên cơ sở khoa học định lượng kết hợp với nghiệp vụ thực tế. Về mặt toán học, nhóm đã thực nghiệm phân tích Silhouette Score với k chạy từ 2 đến 6. Kết quả với k=3 đạt hệ số cao nhất là 0.6429, chứng tỏ các cụm có độ cô lập và gắn kết tối ưu nhất. Về mặt nghiệp vụ bóng đá, k=3 tương ứng hoàn hảo với 3 phân khúc thị trường: Siêu sao thế giới (World-Class Stars), Cầu thủ trụ cột giải VĐQG hàng đầu, và Cầu thủ trẻ tiềm năng / giải đấu phổ thông."),
+        ("Câu 3: Phân cụm K-Means tại sao nhóm lại chọn k=3 mà không phải k=4 hay k=5?",
+         "Trả lời ngắn gọn: Dạ thưa Thầy, nhóm chọn k=3 vì 2 lý do: Thứ nhất về toán học, nhóm đã chạy thử nghiệm Silhouette từ k=2 đến 6 thì k=3 đạt điểm cao nhất là 0.6429. Thứ hai về thực tế bóng đá, k=3 chia rất đúng 3 nhóm: Siêu sao thế giới (giá ~30 triệu Euro), Cầu thủ trụ cột các giải lớn (~1.2 triệu Euro), và Cầu thủ trẻ tiềm năng / giải đấu phổ thông (~400 nghìn Euro) ạ."),
         
-        ("Câu 4: Tại sao biến giá trị thị trường lại phải biến đổi log1p(y) trong mô hình Random Forest?",
-         "Thưa Thầy, trong kinh tế bóng đá, phân phối giá trị cầu thủ bị lệch phải (Right-skewness) cực kỳ nặng nề: hơn 80% cầu thủ có giá dưới 5 triệu EUR, nhưng một số ít siêu sao có giá lên tới 180 - 200 triệu EUR. Nếu huấn luyện trực tiếp trên thang đo tuyến tính, hàm mất mát (MSE) sẽ bị các siêu sao chi phối hoàn toàn, dẫn đến mô hình dự đoán rất tệ ở nhóm cầu thủ phổ thông. Phép biến đổi log1p(y) = ln(1 + y) giúp nén thang đo về dạng gần phân phối chuẩn, giúp mô hình học cân bằng trên mọi phân khúc và nâng điểm R2 từ dưới 60% lên đạt 84.68%."),
+        ("Câu 4: Tại sao trong mô hình Random Forest phải biến đổi log1p cho giá trị cầu thủ?",
+         "Trả lời ngắn gọn: Dạ thưa Thầy, trong bóng đá giá trị cầu thủ bị lệch rất nặng: đa số cầu thủ chỉ vài trăm nghìn đến vài triệu Euro, nhưng một số ít siêu sao lại có giá lên tới gần 200 triệu Euro. Nếu để nguyên thì thuật toán chỉ tập trung học siêu sao và đoán sai hết nhóm phổ thông. Phép biến đổi ln(1 + y) giúp nén giá trị về dạng phân phối chuẩn, giúp mô hình học đều và nâng độ chính xác R2 từ dưới 60% lên đạt 84.7% ạ."),
         
-        ("Câu 5: Apache Kafka trong đề tài đóng vai trò gì và dữ liệu streaming đi về đâu?",
-         "Thưa Thầy, Apache Kafka đóng vai trò là Message Broker trong tầng xử lý luồng (Speed Layer). Dữ liệu lịch sử được Spark xử lý theo mẻ, nhưng thị trường chuyển nhượng liên tục có các thông tin giao dịch đột xuất (Breaking News). Khi đó, Producer phát sóng bản tin JSON qua topic football_transfers cổng 9092, Consumer lắng nghe, bóc tách và đẩy trực tiếp vào Serving Data Mart để cập nhật tức thì lên Dashboard, giúp người dùng nắm bắt dòng tiền thời gian thực mà không phải chạy lại toàn bộ mẻ dữ liệu lịch sử 872 MB.")
+        ("Câu 5: Apache Kafka trong bài làm nhiệm vụ gì và dữ liệu streaming đi về đâu?",
+         "Trả lời ngắn gọn: Dạ thưa Thầy, Spark dùng để xử lý dữ liệu lịch sử theo mẻ, còn Kafka dùng để truyền tải các thương vụ chuyển nhượng mới phát sinh theo thời gian thực (Speed Layer). Producer phát bản tin chuyển nhượng qua cổng 9092, Consumer bắt lấy tin tức thì và ghi vào CSDL Data Mart để cập nhật ngay lên Dashboard cho người dùng xem ạ.")
     ]
 
     for q, a in qa_list:
-        add_p(doc, q, size=11, bold=True, color=COLOR_NAVY, space_before=6, space_after=2)
-        add_p(doc, a, size=10.5, bold=False, italic=False, color=COLOR_DARK, align=WD_ALIGN_PARAGRAPH.JUSTIFY, space_before=0, space_after=6)
+        add_p(doc, q, size=10.5, bold=True, color=COLOR_NAVY, space_before=5, space_after=1)
+        add_p(doc, a, size=10, bold=False, italic=False, color=COLOR_DARK, align=WD_ALIGN_PARAGRAPH.LEFT, space_before=0, space_after=5)
 
     # ══════════════════════════════════════════════════════════════════════
-    # PHẦN 4: 5 LỜI KHUYÊN ĂN ĐIỂM TUYỆT ĐỐI
+    # 4. 4 MẸO NHỎ ĐỂ BÁO CÁO MƯỢT MÀ VÀ ĐẠT ĐIỂM CAO
     # ══════════════════════════════════════════════════════════════════════
-    add_heading_1(doc, "4. Năm lời khuyên vàng để nhóm đạt điểm 10 tuyệt đối khi bảo vệ")
+    add_heading_1(doc, "4. Bốn mẹo nhỏ để nhóm báo cáo tự tin và đạt điểm tối đa")
     tips = [
-        "Thao tác chuột nhịp nhàng theo lời nói: Người ngồi máy tính chuyển tab trước 3 giây khi người thuyết trình bắt đầu nói về phân hệ đó. Khi nói đến Spark, chuyển sang Benchmark; khi nói đến ML, chọn cầu thủ Haaland/Yamal để số liệu nhảy ngay lập tức.",
-        "Nhấn mạnh từ khóa Big Data đắt giá: 16 partitions parallel, In-memory Tungsten, Snappy Parquet, k=3 Silhouette 0.6429, log1p transformation, R2 = 84.68%, Kafka topic 9092, Airflow DAG 7 tasks SUCCESS, Latency < 10ms.",
-        "Sẵn sàng mở mã nguồn hoặc terminal nếu Thầy yêu cầu: Bình tĩnh mở thư mục Source_Code/02_data_cleaning.py hoặc Source_Code/08_dashboard_streamlit.py để chỉ vào hàm xử lý.",
-        "Thái độ tự tin, khiêm tốn và tôn trọng: Luôn mở đầu câu trả lời bằng 'Dạ thưa Thầy...' và kết thúc bằng lời cảm ơn sự góp ý của Hội đồng.",
-        "Bảo hiểm kỹ thuật an toàn 100%: Dữ liệu và mô hình đã lưu sẵn trong football_analytics.db và rf_model.joblib, đảm bảo máy tính không cần Internet vẫn chạy mượt mà 100%!"
+        "Phối hợp nhịp nhàng giữa người nói và người bấm máy: Người ngồi máy tính chuyển Tab trước 3 giây khi bạn mình chuẩn bị nói đến phần đó. Khi bạn nói đến Spark Benchmark, bấm nút chạy ngay để kết quả hiện ra đúng lúc.",
+        "Nói ngắn gọn, rõ ràng, không đọc thuộc lòng: Mỗi phần chỉ cần nắm đúng 3 ý: Trang này làm gì? Dùng công nghệ Big Data nào? Con số nổi bật là gì?",
+        "Tự tin trả lời câu hỏi của Thầy: Luôn mở đầu bằng 'Dạ thưa Thầy...', trả lời thẳng vào trọng tâm trong 2-3 câu, không lan man lý thuyết.",
+        "Hệ thống đã chạy sẵn và an toàn 100%: Dữ liệu và mô hình AI đã được nhóm lưu sẵn offline trên máy, hoàn toàn không phụ thuộc vào mạng Internet trường học nên cứ an tâm trình diễn!"
     ]
     for idx, tip in enumerate(tips):
-        add_p(doc, f"• Lời khuyên {idx+1}: {tip}", size=10.5, space_before=1, space_after=3)
+        add_p(doc, f"• Mẹo {idx+1}: {tip}", size=10, space_before=1, space_after=3)
 
-    # Lưu tệp DOCX
+    # Lưu tệp DOCX cả 2 tên để tiện dùng và tương thích 100%
     doc.save(OUT_DOCX)
-    print(f"[HOÀN THÀNH] ĐÃ TẠO TỆP KỊCH BẢN DEMO DOCX TẠI: {OUT_DOCX}")
+    doc.save(OUT_DOCX_FRIENDLY)
+    print(f"[HOÀN THÀNH] ĐÃ TẠO TỆP KỊCH BẢN DEMO BÁO CÁO CUỐI KỲ TẠI:\n - {OUT_DOCX}\n - {OUT_DOCX_FRIENDLY}")
 
 if __name__ == "__main__":
     build_demo_document()
