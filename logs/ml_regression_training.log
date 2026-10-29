@@ -1,0 +1,31 @@
+===========================================================================
+ [RANDOM FOREST REGRESSOR] DU DOAN GIA TRI CHUYEN NHUONG CAU THU
+===========================================================================
+
+[INFO] Du lieu huan luyen: 40,749 cau thu hop le
+[INFO] Phan chia tap du lieu: Train = 32,599 dong | Test = 8,150 dong
+[TRAINING] Dang huan luyen Random Forest Regressor (100 cay, max_depth=10)...
+[INFO] Huan luyen hoan thanh! Dang danh gia tren tap kiem thu...
+
+---------------------------------------------------------------------------
+KET QUA DANH GIA MO HINH RANDOM FOREST REGRESSOR:
+---------------------------------------------------------------------------
+  * R2 (He so xac dinh R-squared)  : 0.8221  ==> DO CHINH XAC DAT 82.21%
+  * RMSE (Root Mean Squared Error) : 0.6396  (thang log1p)
+  * MAE (Mean Absolute Error)      : 0.4626
+---------------------------------------------------------------------------
+
+[DOI CHIEU GIA TRI THUC TE vs DU DOAN - TOP 10 CAU THU MAU]
+                 name position  age market_value_in_eur predicted_value_eur
+         Lamine Yamal   Attack   19     EUR 200,000,000     EUR 184,359,415
+       Erling Haaland   Attack   26     EUR 200,000,000     EUR 173,459,992
+        Kylian Mbappé   Attack   27     EUR 180,000,000     EUR 163,087,394
+                Pedri Midfield   23     EUR 150,000,000     EUR 125,148,908
+        Michael Olise   Attack   24     EUR 150,000,000     EUR 127,476,349
+Khvicha Kvaratskhelia   Attack   25     EUR 140,000,000     EUR 118,467,650
+      Vinicius Junior   Attack   26     EUR 140,000,000     EUR 172,977,480
+              Vitinha Midfield   26     EUR 140,000,000     EUR 125,979,494
+           João Neves Midfield   22     EUR 140,000,000     EUR 125,273,036
+      Jude Bellingham Midfield   23     EUR 130,000,000     EUR 136,493,853
+
+[HOAN THANH] Da luu ket qua du doan ra Parquet: bigdata_dataset/rf_predictions.parquet

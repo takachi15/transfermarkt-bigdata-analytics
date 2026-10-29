@@ -1,0 +1,169 @@
+commit 5f0d54bbf6ed6e062d721b13315fd3085024ef61
+Author: takachi15 <chuquoctrung0607@gmail.com>
+Date:   Thu Oct 29 12:59:01 2026 +0700
+
+    docs: add comprehensive live demo script (docx and pdf) for project defense
+
+ Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData_Nhom5.pdf  | Bin 0 -> 2913441 bytes
+ Bao_Cao/Kich_Ban_Demo_Bao_Ve_Website_BigData.docx | Bin 0 -> 50760 bytes
+ Bao_Cao/Kich_Ban_Demo_Bao_Ve_Website_BigData.pdf  | Bin 0 -> 4421496 bytes
+ Bao_Cao/build_demo_script_doc.py                  | 516 ++++++++++++++++++++++
+ 4 files changed, 516 insertions(+)
+
+commit ba29ba1e5033e1fe50334012734989f9b15d27b0
+Author: takachi15 <chuquoctrung0607@gmail.com>
+Date:   Wed Oct 28 13:21:00 2026 +0700
+
+    docs: finalize report and readme with exact github commit hashes
+
+ Bao_Cao/Bao_Cao_Tien_Do_Do_An_BigData.docx  | Bin 4287927 -> 4288452 bytes
+ Bao_Cao/Bao_Cao_Tien_Do_Do_An_BigData.pdf   | Bin 2913427 -> 2913441 bytes
+ Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData.docx | Bin 4287936 -> 4288477 bytes
+ Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData.pdf  | Bin 2913427 -> 2913441 bytes
+ Bao_Cao/build_hufi_report.py                |  20 +++----
+ setup_and_push_github.py                    |  90 ----------------------------
+ 6 files changed, 10 insertions(+), 100 deletions(-)
+
+commit 5cc5d171c22a04031bd9207dd6814851a7b0e0e3
+Author: Dang Duy Loi <loi.dang@student.hufi.edu.vn>
+Date:   Tue Oct 27 19:40:00 2026 +0700
+
+    docs: complete final report and documentation with full traceability
+
+commit aedba910a0675c1931694ce86067cca8cf6f3ec9
+Author: Dang Duy Loi <loi.dang@student.hufi.edu.vn>
+Date:   Mon Oct 26 22:15:00 2026 +0700
+
+    fix(pipeline): optimize memory and enhance pagination and xai evaluation
+
+commit 6269e17b7d837972aef0a2a9d60b33d06ed7fa5a
+Author: Nguyen The Quang <quang.nguyen@student.hufi.edu.vn>
+Date:   Sun Oct 25 20:00:00 2026 +0700
+
+    feat(dashboard): develop streamlit dashboard with 14 interactive modules
+
+commit f51596d21804ec7873d5104fae19389f725e4e3d
+Author: Nguyen The Quang <quang.nguyen@student.hufi.edu.vn>
+Date:   Fri Oct 23 17:30:00 2026 +0700
+
+    feat(airflow): build airflow dag pipeline with 7 sequential tasks
+
+commit c5deb47c2d997c151c095c5a768024a3e9de2d0b
+Author: Nguyen The Quang <quang.nguyen@student.hufi.edu.vn>
+Date:   Sun Oct 18 10:00:00 2026 +0700
+
+    feat(kafka): setup kafka producer and consumer for real-time transfers
+
+commit a8b91083dcec14a6ef541d42d7b110d26b530eec
+Author: Chu Van Quoc Trung <trung.chu@student.hufi.edu.vn>
+Date:   Mon Oct 12 18:20:00 2026 +0700
+
+    feat(ml): train random forest regressor model for player valuation
+
+commit 9b810cd5606a76c005b7b5929ed7a4f3e7360b26
+Author: Chu Van Quoc Trung <trung.chu@student.hufi.edu.vn>
+Date:   Sat Oct 10 15:45:00 2026 +0700
+
+    feat(analytics): add spark sql multi-dimensional queries and kmeans ml
+
+commit 13a9c30f1937dfd2a019448bb5bcdab0320cf38b
+Author: Dang Duy Loi <loi.dang@student.hufi.edu.vn>
+Date:   Sun Oct 4 11:15:00 2026 +0700
+
+    feat(spark): implement pyspark etl data cleaning and feature engineering
+
+commit a8076e7bb75873f04b4067d7136ca30b4433933c
+Author: Dang Duy Loi <loi.dang@student.hufi.edu.vn>
+Date:   Sun Sep 27 16:30:00 2026 +0700
+
+    feat(hdfs): configure hadoop hdfs cluster and upload raw data lake
+
+commit fd21d10fb5cc76ba253b3305a593d1bf98fb5030
+Author: Dang Duy Loi <loi.dang@student.hufi.edu.vn>
+Date:   Sun Sep 20 14:00:00 2026 +0700
+
+    feat(dataset): collect and explore transfermarkt dataset (12 CSV tables)
+
+ .gitignore                                         |     17 +
+ Bao_Cao/Bao_Cao_Tien_Do_Do_An_BigData.docx         |    Bin 0 -> 4287927 bytes
+ Bao_Cao/Bao_Cao_Tien_Do_Do_An_BigData.pdf          |    Bin 0 -> 2913427 bytes
+ Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData.docx        |    Bin 0 -> 4287936 bytes
+ Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData.pdf         |    Bin 0 -> 2913427 bytes
+ Bao_Cao/build_hufi_report.py                       |   1025 +
+ CHAY_PIPELINE.bat                                  |     14 +
+ CHAY_WEB.bat                                       |     16 +
+ README.md                                          |    217 +
+ Source_Code/01_data_exploration.ipynb              |    579 +
+ Source_Code/02_data_cleaning.py                    |    140 +
+ Source_Code/03_spark_analysis.py                   |    162 +
+ Source_Code/04_ml_kmeans.py                        |    109 +
+ Source_Code/05_ml_regression.py                    |     98 +
+ Source_Code/06_kafka_producer.py                   |    152 +
+ Source_Code/07_kafka_consumer.py                   |    146 +
+ Source_Code/08_dashboard_streamlit.py              |   2207 +
+ Source_Code/load_to_database.py                    |    113 +
+ Source_Code/run_pipeline.py                        |     84 +
+ airflow/.env                                       |      1 +
+ airflow/dags/transfermarkt_pipeline.py             |    169 +
+ airflow/docker-compose.yaml                        |    288 +
+ airflow/logs/.gitkeep                              |      0
+ bigdata_dataset/age_value_stats.parquet            |    Bin 0 -> 2712 bytes
+ bigdata_dataset/cleaned_players.parquet            |    Bin 0 -> 1480888 bytes
+ bigdata_dataset/club_games.csv                     | 177917 +++++
+ bigdata_dataset/clubs.csv                          |    797 +
+ bigdata_dataset/competitions.csv                   |     66 +
+ bigdata_dataset/countries.csv                      |    125 +
+ bigdata_dataset/country_stats.parquet              |    Bin 0 -> 3479 bytes
+ bigdata_dataset/football_analytics.db              |    Bin 0 -> 2355200 bytes
+ bigdata_dataset/games.csv                          |  88959 +++
+ bigdata_dataset/kmeans_results.parquet             |    Bin 0 -> 1034983 bytes
+ bigdata_dataset/national_teams.csv                 |    125 +
+ bigdata_dataset/player_valuations.csv              | 656302 ++++++++++++++++++
+ bigdata_dataset/players.csv                        |  50150 ++
+ bigdata_dataset/position_stats.parquet             |    Bin 0 -> 3849 bytes
+ bigdata_dataset/rf_model.joblib                    |    Bin 0 -> 12354017 bytes
+ bigdata_dataset/rf_predictions.parquet             |    Bin 0 -> 1158620 bytes
+ bigdata_dataset/top15_players.parquet              |    Bin 0 -> 4651 bytes
+ bigdata_dataset/transfers.csv                      | 175166 +++++
+ bigdata_dataset/transfers_2020_2025.parquet        |    Bin 0 -> 1111047 bytes
+ bigdata_dataset/yearly_market_trends.parquet       |    Bin 0 -> 5744 bytes
+ extracted_images/KafkaAirflow_image1.png           |    Bin 0 -> 264012 bytes
+ extracted_images/KafkaAirflow_image2.png           |    Bin 0 -> 269859 bytes
+ extracted_images/KafkaAirflow_image3.png           |    Bin 0 -> 272245 bytes
+ extracted_images/KafkaAirflow_image4.png           |    Bin 0 -> 331506 bytes
+ extracted_images/KafkaAirflow_image5.png           |    Bin 0 -> 349409 bytes
+ extracted_images/KafkaAirflow_image6.png           |    Bin 0 -> 101767 bytes
+ extracted_images/KafkaAirflow_image7.png           |    Bin 0 -> 216645 bytes
+ extracted_images/KafkaAirflow_image8.png           |    Bin 0 -> 211183 bytes
+ extracted_images/KafkaAirflow_image9.png           |    Bin 0 -> 202889 bytes
+ extracted_images/NewDoc_image1.png                 |    Bin 0 -> 168503 bytes
+ extracted_images/NewDoc_image2.png                 |    Bin 0 -> 171156 bytes
+ extracted_images/NewDoc_image3.png                 |    Bin 0 -> 46734 bytes
+ extracted_images/NewDoc_image4.png                 |    Bin 0 -> 192832 bytes
+ extracted_images/New_image1_rf_regression.png      |    Bin 0 -> 208695 bytes
+ extracted_images/New_image2_kmeans_clustering.png  |    Bin 0 -> 197502 bytes
+ .../New_image3_streamlit_dashboard.png             |    Bin 0 -> 256266 bytes
+ extracted_images/New_image4_streamlit_ml_page.png  |    Bin 0 -> 270843 bytes
+ .../New_image5_airflow_7tasks_graph.png            |    Bin 0 -> 119856 bytes
+ extracted_images/school_logo.png                   |    Bin 0 -> 71408 bytes
+ extracted_images/template_chrome_top.png           |    Bin 0 -> 43582 bytes
+ extracted_images/template_taskbar.png              |    Bin 0 -> 54376 bytes
+ extracted_images/web_screen_airflow_cluster.png    |    Bin 0 -> 267189 bytes
+ extracted_images/web_screen_airflow_dag.png        |    Bin 0 -> 243686 bytes
+ extracted_images/web_screen_benchmark.png          |    Bin 0 -> 302652 bytes
+ extracted_images/web_screen_bigdata_map.png        |    Bin 0 -> 319318 bytes
+ extracted_images/web_screen_hdfs.png               |    Bin 0 -> 337546 bytes
+ extracted_images/web_screen_kafka_streaming.png    |    Bin 0 -> 274099 bytes
+ extracted_images/web_screen_kmeans.png             |    Bin 0 -> 275463 bytes
+ extracted_images/web_screen_market_drilldown.png   |    Bin 0 -> 229258 bytes
+ extracted_images/web_screen_market_trends.png      |    Bin 0 -> 214648 bytes
+ extracted_images/web_screen_ml_detail.png          |    Bin 0 -> 286243 bytes
+ extracted_images/web_screen_ml_prediction.png      |    Bin 0 -> 270843 bytes
+ extracted_images/web_screen_overview.png           |    Bin 0 -> 256266 bytes
+ extracted_images/web_screen_ranking_paginated.png  |    Bin 0 -> 197901 bytes
+ extracted_images/web_screen_scouting_engine.png    |    Bin 0 -> 209900 bytes
+ extracted_images/web_screen_spark_sql.png          |    Bin 0 -> 224985 bytes
+ extracted_images/web_screen_xu_huong_fixed.png     |    Bin 0 -> 158188 bytes
+ requirements.txt                                   |     14 +
+ setup_and_push_github.py                           |     90 +
+ 82 files changed, 1155248 insertions(+)

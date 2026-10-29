@@ -15,3 +15,4 @@ airflow/logs/*
 bigdata_dataset/game_lineups.csv
 bigdata_dataset/appearances.csv
 bigdata_dataset/game_events.csv
+*.zip

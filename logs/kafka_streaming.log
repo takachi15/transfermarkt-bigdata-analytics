@@ -1,0 +1,88 @@
+=== APACHE KAFKA STREAMING BROKER (PORT 9092) - TOPIC: football_transfers ===
+===========================================================================
+ [KAFKA STREAMING PRODUCER] PHAT SONG SU KIEN CHUYEN NHUONG THOI GIAN THUC
+===========================================================================
+[STATUS] Kafka Broker (localhost:9092) khong online.
+         -> Tu dong kich hoat che do 'Local Stream Simulation & Log Recorder'
+         -> Su kien se duoc ghi truc tiep vao: kafka_transfers_stream.log
+
+[STREAMING] Bat dau phat song 15 su kien chuyen nhuong:
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #01 | 2026-10-29 06:15:48
+   * Cau thu: Khvicha Kvaratskhelia (Georgia) - Attack
+   * Thuong vu: Manchester City FC -> Bayern Munich
+   * Phi chuyen nhuong: EUR 34,000,000 | Loai: loan
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #02 | 2026-10-29 06:15:49
+   * Cau thu: Jude Bellingham (England) - Midfield
+   * Thuong vu: Borussia Dortmund -> Liverpool FC
+   * Phi chuyen nhuong: EUR 140,000,000 | Loai: loan
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #03 | 2026-10-29 06:15:49
+   * Cau thu: Khvicha Kvaratskhelia (Georgia) - Attack
+   * Thuong vu: Inter Milan -> Paris Saint-Germain FC
+   * Phi chuyen nhuong: EUR 109,000,000 | Loai: loan
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #04 | 2026-10-29 06:15:49
+   * Cau thu: Phil Foden (England) - Midfield
+   * Thuong vu: Chelsea FC -> Manchester City FC
+   * Phi chuyen nhuong: EUR 31,000,000 | Loai: loan
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #05 | 2026-10-29 06:15:50
+   * Cau thu: Khvicha Kvaratskhelia (Georgia) - Attack
+   * Thuong vu: Liverpool FC -> Bayern Munich
+   * Phi chuyen nhuong: EUR 15,000,000 | Loai: permanent
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #06 | 2026-10-29 06:15:50
+   * Cau thu: Cole Palmer (England) - Midfield
+   * Thuong vu: Real Madrid CF -> Liverpool FC
+   * Phi chuyen nhuong: Free Transfer | Loai: free_transfer
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #07 | 2026-10-29 06:15:50
+   * Cau thu: Michael Olise (France) - Attack
+   * Thuong vu: FC Barcelona -> Inter Milan
+   * Phi chuyen nhuong: EUR 42,000,000 | Loai: permanent
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #08 | 2026-10-29 06:15:51
+   * Cau thu: Vinicius Junior (Brazil) - Attack
+   * Thuong vu: Arsenal FC -> Paris Saint-Germain FC
+   * Phi chuyen nhuong: EUR 104,000,000 | Loai: loan
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #09 | 2026-10-29 06:15:51
+   * Cau thu: Phil Foden (England) - Midfield
+   * Thuong vu: Bayern Munich -> Arsenal FC
+   * Phi chuyen nhuong: EUR 135,000,000 | Loai: permanent
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #10 | 2026-10-29 06:15:51
+   * Cau thu: Pedri (Spain) - Midfield
+   * Thuong vu: FC Barcelona -> Paris Saint-Germain FC
+   * Phi chuyen nhuong: Free Transfer | Loai: free_transfer
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #11 | 2026-10-29 06:15:52
+   * Cau thu: Lamine Yamal (Spain) - Attack
+   * Thuong vu: Bayern Munich -> Real Madrid CF
+   * Phi chuyen nhuong: EUR 25,000,000 | Loai: loan
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #12 | 2026-10-29 06:15:52
+   * Cau thu: Kylian Mbappe (France) - Attack
+   * Thuong vu: Real Madrid CF -> Manchester City FC
+   * Phi chuyen nhuong: EUR 122,000,000 | Loai: permanent
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #13 | 2026-10-29 06:15:52
+   * Cau thu: Phil Foden (England) - Midfield
+   * Thuong vu: Chelsea FC -> Bayern Munich
+   * Phi chuyen nhuong: EUR 29,000,000 | Loai: loan
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #14 | 2026-10-29 06:15:52
+   * Cau thu: Lamine Yamal (Spain) - Attack
+   * Thuong vu: FC Barcelona -> Liverpool FC
+   * Phi chuyen nhuong: EUR 31,000,000 | Loai: permanent
+---------------------------------------------------------------------------
+ [STREAM LOG] Event #15 | 2026-10-29 06:15:53
+   * Cau thu: Pedri (Spain) - Midfield
+   * Thuong vu: Bayern Munich -> Manchester City FC
+   * Phi chuyen nhuong: EUR 28,000,000 | Loai: permanent
+---------------------------------------------------------------------------
+
+[HOAN THANH] Phat song thanh cong 15 su kien chuyen nhuong!
+             Tep nhat ky streaming da san sang tai: kafka_transfers_stream.log

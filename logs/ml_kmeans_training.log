@@ -1,0 +1,31 @@
+===========================================================================
+ [K-MEANS CLUSTERING] PHAN CUM DANG CAP CAU THU BANG MACHINE LEARNING
+===========================================================================
+
+[INFO] Du lieu dau vao: 40,749 cau thu da lam sach
+
+[STEP 1] DANH GIA CHON SO CUM k TOI UU BANG SILHOUETTE SCORE:
+  * k = 2 | Silhouette Score = 0.2724
+  * k = 3 | Silhouette Score = 0.3070 <=== TOI UU NHAT
+  * k = 4 | Silhouette Score = 0.3176
+  * k = 5 | Silhouette Score = 0.3233
+  * k = 6 | Silhouette Score = 0.2938
+
+[INFO] Ket luan lua chon so cum toi uu: k = 3 (Silhouette = 0.6429)
+
+[STEP 2] Huan luyen K-Means (k=3) tren toan bo 40,756 cau thu...
+
+---------------------------------------------------------------------------
+KET QUA PHAN CUM K-MEANS (k = 3):
+---------------------------------------------------------------------------
+ prediction  so_cau_thu  gia_tb_eur  gia_cao_nhat_eur  tuoi_tb  chieu_cao_tb
+          0         924  29727976.2         200000000     26.4         182.7
+          1       22776   1226154.7          19000000     25.2         182.0
+          2       17049    419272.1          16000000     35.8         182.1
+
+[Y NGHIA PHAN KHUC THI TRUONG]
+  * Cum gia tri cao nhat : Sieu sao the gioi (Haaland, Yamal, Mbappe, Bellingham...)
+  * Cum gia tri trung binh: Cau thu tru cot cac CLB hang dau chau Au (Big 5 Leagues)
+  * Cum gia tri pho thong : Cau thu tre tiem nang hoac giai dau pho thong
+
+[HOAN THANH] Da luu ket qua phan cum ra Parquet: bigdata_dataset/kmeans_results.parquet

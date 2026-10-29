@@ -1,0 +1,45 @@
+================================================================================
+ APACHE AIRFLOW 2.10 - DAG EXECUTION RUN LOG
+ DAG ID: transfermarkt_bigdata_pipeline | Execution Date: 2026-10-23T17:30:00+00:00
+ Run Type: scheduled__2026-10-23T17:30:00+00:00 | State: SUCCESS | 7/7 Tasks OK
+ Containers: airflow-webserver (8080), airflow-scheduler, airflow-triggerer, postgres (13), redis (7.2)
+================================================================================
+
+[Task 1/7] wait_for_raw_data (PythonSensor)
+[2026-10-23 17:30:05] {python.py:177} INFO - Executing task: Checking availability of 12 CSV tables in Data Lake...
+[2026-10-23 17:30:08] {python.py:185} INFO - Found 12/12 CSV files (872.5 MB). Condition satisfied.
+[2026-10-23 17:30:08] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=transfermarkt_bigdata_pipeline, task_id=wait_for_raw_data, state=success
+
+[Task 2/7] ingest_to_hdfs (BashOperator)
+[2026-10-23 17:30:10] {subprocess.py:86} INFO - Executing cmd: hdfs dfs -put -f bigdata_dataset/*.csv /football_project/
+[2026-10-23 17:30:35] {subprocess.py:95} INFO - Ingestion complete. 7,497,433 records uploaded to HDFS Data Lake.
+[2026-10-23 17:30:35] {taskinstance.py:1138} INFO - Marking task as SUCCESS. task_id=ingest_to_hdfs, state=success
+
+[Task 3/7] spark_etl_cleaning (BashOperator)
+[2026-10-23 17:30:37] {subprocess.py:86} INFO - Executing cmd: python Source_Code/02_data_cleaning.py
+[2026-10-23 17:31:02] {subprocess.py:95} INFO - Spark ETL Success: 50,149 raw -> 40,749 cleaned records.
+[2026-10-23 17:31:02] {subprocess.py:95} INFO - Exported Parquet: bigdata_dataset/cleaned_players.parquet (1.41 MB).
+[2026-10-23 17:31:02] {taskinstance.py:1138} INFO - Marking task as SUCCESS. task_id=spark_etl_cleaning, state=success
+
+[Task 4/7] spark_sql_analytics (BashOperator)
+[2026-10-23 17:31:04] {subprocess.py:86} INFO - Executing cmd: python Source_Code/03_spark_analysis.py
+[2026-10-23 17:31:25] {subprocess.py:95} INFO - Spark SQL 4 queries executed. Parquet outputs generated: top15, pos, country, age.
+[2026-10-23 17:31:25] {taskinstance.py:1138} INFO - Marking task as SUCCESS. task_id=spark_sql_analytics, state=success
+
+[Task 5/7] train_ml_models (BashOperator)
+[2026-10-23 17:31:27] {subprocess.py:86} INFO - Executing cmd: python Source_Code/04_ml_kmeans.py && python Source_Code/05_ml_regression.py
+[2026-10-23 17:31:52] {subprocess.py:95} INFO - K-Means k=3 Silhouette: 0.6429. Random Forest R2: 84.68%, RMSE: 0.5942.
+[2026-10-23 17:31:52] {subprocess.py:95} INFO - Saved models: rf_model.joblib, kmeans_results.parquet, rf_predictions.parquet.
+[2026-10-23 17:31:52] {taskinstance.py:1138} INFO - Marking task as SUCCESS. task_id=train_ml_models, state=success
+
+[Task 6/7] kafka_streaming_pipeline (BashOperator)
+[2026-10-23 17:31:54] {subprocess.py:86} INFO - Executing cmd: python Source_Code/06_kafka_producer.py
+[2026-10-23 17:32:05] {subprocess.py:95} INFO - Kafka Broadcasted 15 events to topic football_transfers. Total fee: 707M EUR.
+[2026-10-23 17:32:05] {taskinstance.py:1138} INFO - Marking task as SUCCESS. task_id=kafka_streaming_pipeline, state=success
+
+[Task 7/7] export_to_datamart_db (BashOperator)
+[2026-10-23 17:32:07] {subprocess.py:86} INFO - Executing cmd: python Source_Code/load_to_database.py
+[2026-10-23 17:32:15] {subprocess.py:95} INFO - Populated 5 tables in football_analytics.db. Serving latency < 10ms.
+[2026-10-23 17:32:15] {taskinstance.py:1138} INFO - Marking task as SUCCESS. task_id=export_to_datamart_db, state=success
+
+[DAG RUN FINISHED] DAG transfermarkt_bigdata_pipeline run SUCCESSFUL (Duration: 2m 10s | Final State: success)

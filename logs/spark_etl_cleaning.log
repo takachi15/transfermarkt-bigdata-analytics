@@ -1,0 +1,116 @@
+===========================================================================
+ [ETL PIPELINE] TIEN XU LY & LAM SACH DU LIEU CAU THU (APACHE SPARK)
+===========================================================================
+
+[STEP 1] Khoi tao Apache Spark Session...
+  * Spark Session da san sang (PySpark 4.2 / Java 17 Temurin).
+
+[STEP 2] Nap du lieu vao PySpark DataFrame tu: bigdata_dataset/players.csv
+  * Tong so ban ghi tho: 50,149 cau thu | 26 thuoc tinh
+
+[SCHEMA DU LIEU THO TU SPARK]
+root
+ |-- player_id: integer (nullable = true)
+ |-- first_name: string (nullable = true)
+ |-- last_name: string (nullable = true)
+ |-- name: string (nullable = true)
+ |-- last_season: integer (nullable = true)
+ |-- current_club_id: integer (nullable = true)
+ |-- player_code: string (nullable = true)
+ |-- country_of_birth: string (nullable = true)
+ |-- city_of_birth: string (nullable = true)
+ |-- country_of_citizenship: string (nullable = true)
+ |-- date_of_birth: timestamp (nullable = true)
+ |-- sub_position: string (nullable = true)
+ |-- position: string (nullable = true)
+ |-- foot: string (nullable = true)
+ |-- height_in_cm: integer (nullable = true)
+ |-- contract_expiration_date: timestamp (nullable = true)
+ |-- agent_name: string (nullable = true)
+ |-- image_url: string (nullable = true)
+ |-- international_caps: integer (nullable = true)
+ |-- international_goals: integer (nullable = true)
+ |-- current_national_team_id: integer (nullable = true)
+ |-- url: string (nullable = true)
+ |-- current_club_domestic_competition_id: string (nullable = true)
+ |-- current_club_name: string (nullable = true)
+ |-- market_value_in_eur: integer (nullable = true)
+ |-- highest_market_value_in_eur: integer (nullable = true)
+
+
+[STEP 3] Xu ly Missing Values & Feature Engineering...
+  * Loai bo 8,621 ban ghi thieu market_value_in_eur
+  * So luong ban ghi giu lai: 41,528
+
+[STEP 4] Tinh toan dac trung Tuoi (age) va loc ngoai le (Outliers)...
+  * Du lieu sau khi loc ngoai le: 40,749 cau thu
+  * Ty le du lieu hop le: 81.26%
+
+[STEP 5] Xuat tep Parquet chuan hoa: bigdata_dataset/cleaned_players.parquet
+  * Kich thuoc tep Parquet: 1.41 MB
+
+[5 DONG DU LIEU MAU SAU KHI LAM SACH]
+               name country_of_citizenship   position  foot  height_in_cm  age  market_value_in_eur
+   Dimitar Berbatov               Bulgaria     Attack right           182   45              1000000
+         Tom Starke                Germany Goalkeeper right           194   45               100000
+Christoph Metzelder                Germany   Defender right           182   45              1500000
+   Roque Santa Cruz               Paraguay     Attack right           193   45               250000
+       Tamás Hajnal                Hungary   Midfield  both           167   45               100000
+
+[HOAN THANH] Module 02_data_cleaning.py da thuc thi thanh cong 100%!
+SUCCESS: The process with PID 19616 (child process of PID 2532) has been terminated.
+
+Picked up _JAVA_OPTIONS: --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+Picked up _JAVA_OPTIONS: --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+WARNING: Using incubator modules: jdk.incubator.vector
+26/10/29 13:12:22 WARN Shell: Did not find winutils.exe: java.io.FileNotFoundException: java.io.FileNotFoundException: HADOOP_HOME and hadoop.home.dir are unset. -see https://cwiki.apache.org/confluence/display/HADOOP2/WindowsProblems
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/10/29 13:12:24 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+
+[Stage 0:>                                                          (0 + 1) / 1]
+
+                                                                                
+
+[Stage 1:>                                                          (0 + 1) / 5]
+
+[Stage 1:>                                                          (0 + 5) / 5]
+
+[Stage 1:===========>                                               (1 + 4) / 5]
+
+[Stage 1:===================================>                       (3 + 2) / 5]
+
+                                                                                
+
+[Stage 2:>                                                          (0 + 5) / 5]
+
+[Stage 4:>                                                          (0 + 1) / 1]
+
+                                                                                
+
+[Stage 5:>                                                          (0 + 5) / 5]
+
+[Stage 5:=======================>                                   (2 + 3) / 5]
+
+[Stage 5:===================================>                       (3 + 2) / 5]
+
+[Stage 5:===============================================>           (4 + 1) / 5]
+
+[Stage 7:>                                                          (0 + 1) / 1]
+
+                                                                                
+
+[Stage 8:>                                                          (0 + 5) / 5]
+
+[Stage 8:===================================>                       (3 + 2) / 5]
+
+[Stage 8:===========================================================(5 + 0) / 5]
+
+                                                                                
+ERROR: The process with PID 19516 (child process of PID 12624) could not be terminated.
+Reason: There is no running instance of the task.
+
+ERROR: The process with PID 12624 (child process of PID 19616) could not be terminated.
+Reason: There is no running instance of the task.
+

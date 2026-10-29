@@ -1,0 +1,121 @@
+===========================================================================
+ [SPARK SQL & STATS] PHAN TICH THONG KE DA CHIEU VOI APACHE SPARK
+===========================================================================
+
+[STEP 1] Khoi tao Apache Spark Session & Dang ky Spark SQL TempView...
+  * Da nap 40,749 cau thu vao Spark SQL view 'players'.
+
+---------------------------------------------------------------------------
+TRUY VAN SPARK SQL 1: TOP 15 CAU THU CO GIA TRI CHUYEN NHUONG CAO NHAT
+---------------------------------------------------------------------------
+ player_id                  name country_of_citizenship position   current_club_name  market_value_in_eur
+    418560        Erling Haaland                 Norway   Attack     Manchester City            200000000
+    937958          Lamine Yamal                  Spain   Attack        FC Barcelona            200000000
+    342229         Kylian Mbappé                 France   Attack         Real Madrid            180000000
+    566723         Michael Olise                 France   Attack       Bayern Munich            150000000
+    683840                 Pedri                  Spain Midfield        FC Barcelona            150000000
+    371998       Vinicius Junior                 Brazil   Attack         Real Madrid            140000000
+    502670 Khvicha Kvaratskhelia                Georgia   Attack Paris Saint-Germain            140000000
+    487469               Vitinha               Portugal Midfield Paris Saint-Germain            140000000
+    670681            João Neves               Portugal Midfield Paris Saint-Germain            140000000
+    581678       Jude Bellingham                England Midfield         Real Madrid            130000000
+    357662           Declan Rice                England Midfield          Arsenal FC            120000000
+    914562           Désiré Doué                 France   Attack Paris Saint-Germain            120000000
+    433177           Bukayo Saka                England   Attack          Arsenal FC            110000000
+    451276    Dominik Szoboszlai                Hungary Midfield        Liverpool FC            100000000
+    568177           Cole Palmer                England Midfield          Chelsea FC            100000000
+
+---------------------------------------------------------------------------
+TRUY VAN SPARK SQL 2: GIA TRI TRUNG BINH & THE HINH THEO VI TRI THI DAU
+---------------------------------------------------------------------------
+  position  so_luong_cau_thu  gia_trung_binh_eur  gia_cao_nhat_eur  chieu_cao_tb_cm
+    Attack             11228           1826226.0         200000000            180.7
+  Midfield             11823           1690481.3         150000000            179.3
+  Defender             13155           1428215.5         100000000            183.4
+Goalkeeper              4417            734811.0          45000000            189.2
+   Missing               126            146507.9           3500000            180.2
+
+---------------------------------------------------------------------------
+TRUY VAN SPARK SQL 3: TOP 10 QUOC GIA CO GIA TRI BINH QUAN CAO NHAT (>= 50 cau thu)
+---------------------------------------------------------------------------
+country_of_citizenship  so_cau_thu  gia_trung_binh_eur  tong_gia_tri_eur
+               Ecuador          89           5036517.0         448250000
+               England        1480           3364699.0        4979755000
+                France        1657           2994934.0        4962605000
+         Cote d'Ivoire         301           2899336.0         872700000
+               Morocco         346           2881879.0         997130000
+               Uruguay         299           2602441.0         778130000
+                 Spain        1977           2379585.0        4704440000
+                Brazil        2104           2366566.0        4979255000
+          Burkina Faso          66           2251515.0         148600000
+               Georgia         133           2232594.0         296935000
+
+---------------------------------------------------------------------------
+TRUY VAN SPARK SQL 4: BIEN DONG GIA TRI TRUNG BINH THEO DO TUOI (18 - 38)
+---------------------------------------------------------------------------
+ age  so_cau_thu  gia_tb_eur
+  18         269   2598587.0
+  19         629   3030660.0
+  20        1066   2469212.0
+  21        1511   2371373.0
+  22        1860   2237280.0
+  23        2166   2600302.0
+  24        2230   2709370.0
+  25        2337   2589437.0
+  26        2357   2682885.0
+  27        2274   2536502.0
+  ... (hien thi 10 dong dau, tong cong 21 do tuoi)
+
+[HOAN THANH] Toan bo ket qua Spark SQL da duoc luu ra Parquet thanh cong!
+SUCCESS: The process with PID 4484 (child process of PID 14652) has been terminated.
+SUCCESS: The process with PID 14652 (child process of PID 16192) has been terminated.
+SUCCESS: The process with PID 16192 (child process of PID 18944) has been terminated.
+
+Picked up _JAVA_OPTIONS: --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+Picked up _JAVA_OPTIONS: --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+WARNING: Using incubator modules: jdk.incubator.vector
+26/10/29 13:13:28 WARN Shell: Did not find winutils.exe: java.io.FileNotFoundException: java.io.FileNotFoundException: HADOOP_HOME and hadoop.home.dir are unset. -see https://cwiki.apache.org/confluence/display/HADOOP2/WindowsProblems
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/10/29 13:13:30 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+
+[Stage 0:>                                                        (0 + 12) / 12]
+
+[Stage 0:=========>                                               (2 + 10) / 12]
+
+                                                                                
+
+[Stage 5:>                                                        (0 + 12) / 12]
+
+[Stage 5:===============================================>         (10 + 2) / 12]
+
+                                                                                
+
+[Stage 13:>                                                       (0 + 12) / 12]
+
+[Stage 13:====>                                                   (1 + 11) / 12]
+
+[Stage 13:============================>                            (6 + 6) / 12]
+
+[Stage 13:======================================>                  (8 + 4) / 12]
+
+[Stage 13:==========================================>              (9 + 3) / 12]
+
+[Stage 13:========================================================(12 + 0) / 12]
+
+[Stage 15:>                                                         (0 + 1) / 1]
+
+                                                                                
+
+[Stage 16:>                                                       (0 + 12) / 12]
+
+[Stage 16:=================================>                       (7 + 5) / 12]
+
+[Stage 16:==============================================>         (10 + 2) / 12]
+
+[Stage 16:===================================================>    (11 + 1) / 12]
+
+[Stage 18:>                                                         (0 + 1) / 1]
+
+                                                                                

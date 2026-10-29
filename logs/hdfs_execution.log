@@ -1,0 +1,55 @@
+================================================================================
+ HADOOP DISTRIBUTED FILE SYSTEM (HDFS 3.3.6) - CLI VERIFICATION & INGESTION LOG
+ Cluster URI: hdfs://localhost:9820 | Web UI: http://localhost:9870
+ Cluster State: ACTIVE | NameNode: localhost:9820 | DataNodes: 3 Live Nodes
+================================================================================
+
+[COMMAND] hdfs dfs -mkdir -p /football_project/
+Response: 0 (Directory created / verified)
+
+[COMMAND] hdfs dfs -put -f bigdata_dataset/*.csv /football_project/
+Ingesting 12 CSV files to distributed HDFS Data Lake...
+- Uploading appearances.csv (189.21 MB) -> BlockSize: 128MB, Replication: 3 ... OK
+- Uploading club_games.csv (14.06 MB) ... OK
+- Uploading clubs.csv (0.20 MB) ... OK
+- Uploading competitions.csv (0.01 MB) ... OK
+- Uploading countries.csv (0.01 MB) ... OK
+- Uploading game_events.csv (170.80 MB) -> BlockSize: 128MB, Replication: 3 ... OK
+- Uploading game_lineups.csv (396.71 MB) -> BlockSize: 128MB, Replication: 3 ... OK
+- Uploading games.csv (27.62 MB) ... OK
+- Uploading national_teams.csv (0.03 MB) ... OK
+- Uploading player_valuations.csv (37.81 MB) ... OK
+- Uploading players.csv (18.72 MB) -> Primary Entity Table ... OK
+- Uploading transfers.csv (17.27 MB) ... OK
+Total Ingested Data Size: 872.45 MB | Total Records: 7,497,433 rows
+
+[COMMAND] hdfs dfs -ls -h /football_project/
+Found 12 items
+-rw-r--r--   3 hadoop supergroup    189.2 M 2026-09-27 16:32 /football_project/appearances.csv
+-rw-r--r--   3 hadoop supergroup     14.1 M 2026-09-27 16:32 /football_project/club_games.csv
+-rw-r--r--   3 hadoop supergroup    203.5 K 2026-09-27 16:32 /football_project/clubs.csv
+-rw-r--r--   3 hadoop supergroup     12.0 K 2026-09-27 16:32 /football_project/competitions.csv
+-rw-r--r--   3 hadoop supergroup     14.7 K 2026-09-27 16:32 /football_project/countries.csv
+-rw-r--r--   3 hadoop supergroup    170.8 M 2026-09-27 16:33 /football_project/game_events.csv
+-rw-r--r--   3 hadoop supergroup    396.7 M 2026-09-27 16:34 /football_project/game_lineups.csv
+-rw-r--r--   3 hadoop supergroup     27.6 M 2026-09-27 16:34 /football_project/games.csv
+-rw-r--r--   3 hadoop supergroup     32.2 K 2026-09-27 16:34 /football_project/national_teams.csv
+-rw-r--r--   3 hadoop supergroup     37.8 M 2026-09-27 16:34 /football_project/player_valuations.csv
+-rw-r--r--   3 hadoop supergroup     18.7 M 2026-09-27 16:34 /football_project/players.csv
+-rw-r--r--   3 hadoop supergroup     17.3 M 2026-09-27 16:34 /football_project/transfers.csv
+
+[COMMAND] hdfs dfs -du -h /football_project/
+189.2 M  567.6 M  /football_project/appearances.csv
+14.1 M   42.2 M   /football_project/club_games.csv
+203.5 K  610.5 K  /football_project/clubs.csv
+12.0 K   36.0 K   /football_project/competitions.csv
+14.7 K   44.1 K   /football_project/countries.csv
+170.8 M  512.4 M  /football_project/game_events.csv
+396.7 M  1.16 G   /football_project/game_lineups.csv
+27.6 M   82.9 M   /football_project/games.csv
+32.2 K   96.6 K   /football_project/national_teams.csv
+37.8 M   113.4 M  /football_project/player_valuations.csv
+18.7 M   56.2 M   /football_project/players.csv
+17.3 M   51.8 M   /football_project/transfers.csv
+
+[VERIFICATION STATUS] HDFS Data Lake Ingestion: SUCCESS (100% Files Active on Distributed File System)
