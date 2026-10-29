@@ -640,9 +640,7 @@ if page in pages_with_year_filter:
 # ═════════════════════════════════════════════════════════════════════════════
 if page == "Bản đồ ứng dụng Big Data":
     st.subheader("Bản đồ Kiến trúc Hạ tầng & Dòng chảy Dữ liệu End-to-End")
-    st.markdown("""
-    Trang này giải trình toàn cảnh **Hạ tầng Phân tán Chuẩn Big Data** và **Luồng hoạt động từ Thu thập, Nạp dữ liệu vào HDFS Data Lake, Tính toán phân tán Spark, Bắt sóng Kafka, Điều phối Airflow đến Phục vụ Web**.
-    """)
+    st.caption("Mô hình phân tán chuẩn Enterprise phục vụ Báo cáo Cuối kỳ Môn học Công nghệ Dữ liệu lớn (Big Data)")
 
     # ── 4 THẺ SỐ LIỆU NỀN TẢNG BIG DATA (CHỈ TAY KHI MỞ ĐẦU) ──────────────────
     kpi1, kpi2, kpi3, kpi4 = st.columns(4)
@@ -685,159 +683,90 @@ if page == "Bản đồ ứng dụng Big Data":
     ])
 
     # ══════════════════════════════════════════════════════════════════════════
-    # TAB 1: BẢN ĐỒ HẠ TẦNG CỤM BIG DATA (TOPOLOGY CHI TIẾT)
+    # TAB 1: BẢN ĐỒ HẠ TẦNG CỤM BIG DATA (100% NATIVE STREAMLIT, 0 LỖI CODE)
     # ══════════════════════════════════════════════════════════════════════════
     with tab_infra:
-        st.markdown("#### Sơ đồ Kiến trúc Hạ tầng 5 Cụm Máy chủ Phân tán")
-        st.markdown("""
-        Toàn bộ hệ thống được triển khai theo mô hình **Kiến trúc Lambda Phân tán Enterprise**, phân định rõ ràng giữa các tầng máy chủ:
-        """)
+        st.markdown("#### Sơ đồ Kiến trúc Hạ tầng 5 Cụm Máy chủ Phân tán (Lambda Architecture)")
+        st.caption("Phân định rõ ràng vai trò và cổng dịch vụ giữa các tầng máy chủ trong đề tài")
 
-        # Khung Đồ họa Hạ tầng (CSS Grid & Flexbox)
-        st.markdown("""
-        <div style="background: #0F172A; border-radius: 12px; padding: 22px; color: #F8FAFC; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+        # ── CỤM 1: HADOOP HDFS DATA LAKE ──
+        with st.container(border=True):
+            st.markdown("##### 📁 CỤM 1: LƯU TRỮ PHÂN TÁN HADOOP HDFS 3.x (DATA LAKE LAYER)")
+            st.caption("Quản lý và lưu trữ 12 tệp CSV thô (872.5 MB, gần 7.5 triệu bản ghi). Block size: 128 MB | Replication factor: 3")
             
-            <!-- CỤM 1: LƯU TRỮ HDFS -->
-            <div style="background: #1E293B; border-left: 5px solid #2563EB; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span style="font-weight: 800; color: #60A5FA; font-size: 0.95rem;">
-                        📁 CỤM 1: LƯU TRỮ PHÂN TÁN HADOOP HDFS 3.x (DATA LAKE LAYER)
-                    </span>
-                    <span style="background: #1D4ED8; color: #FFFFFF; font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; font-weight: 700;">
-                        REPLICATION FACTOR = 3 · BLOCK 128 MB
-                    </span>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
-                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">MASTER (BỘ NÃO)</div>
-                        <div style="font-weight: 800; color: #38BDF8; font-size: 0.9rem;">HDFS NameNode</div>
-                        <div style="font-family: monospace; font-size: 0.72rem; color: #CBD5E1;">Port 9820 · Web 9870</div>
-                        <div style="font-size: 0.68rem; color: #4ADE80; margin-top: 4px;">Lưu Metadata trong RAM</div>
-                    </div>
-                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">WORKER 1 (KHO ĐĨA)</div>
-                        <div style="font-weight: 800; color: #4ADE80; font-size: 0.9rem;">DataNode-01</div>
-                        <div style="font-family: monospace; font-size: 0.72rem; color: #CBD5E1;">Port 9864 · /default-rack</div>
-                        <div style="font-size: 0.68rem; color: #FACC15; margin-top: 4px;">Lưu 18 Blocks (872.5 MB)</div>
-                    </div>
-                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">WORKER 2 (KHO ĐĨA)</div>
-                        <div style="font-weight: 800; color: #4ADE80; font-size: 0.9rem;">DataNode-02</div>
-                        <div style="font-family: monospace; font-size: 0.72rem; color: #CBD5E1;">Port 9865 · /default-rack</div>
-                        <div style="font-size: 0.68rem; color: #FACC15; margin-top: 4px;">Lưu 18 Blocks (872.5 MB)</div>
-                    </div>
-                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">WORKER 3 (KHO ĐĨA)</div>
-                        <div style="font-weight: 800; color: #4ADE80; font-size: 0.9rem;">DataNode-03</div>
-                        <div style="font-family: monospace; font-size: 0.72rem; color: #CBD5E1;">Port 9866 · /rack-02</div>
-                        <div style="font-size: 0.68rem; color: #FACC15; margin-top: 4px;">Lưu 18 Blocks (872.5 MB)</div>
-                    </div>
-                </div>
-            </div>
+            c1, c2, c3, c4 = st.columns(4)
+            with c1:
+                st.metric("NameNode Master", "Cổng 9820 IPC", "Web UI: 9870")
+                st.caption("Quản lý Metadata cây thư mục trong RAM")
+            with c2:
+                st.metric("DataNode-01", "872.5 MB", "18 Blocks (128MB)")
+                st.caption("Host: 127.0.0.1:9864 | Rack: /default-rack")
+            with c3:
+                st.metric("DataNode-02", "872.5 MB", "18 Blocks (128MB)")
+                st.caption("Host: 127.0.0.1:9865 | Rack: /default-rack")
+            with c4:
+                st.metric("DataNode-03", "872.5 MB", "18 Blocks (128MB)")
+                st.caption("Host: 127.0.0.1:9866 | Rack: /rack-02")
+            
+            st.info("💡 **Cơ chế Chống mất dữ liệu (Fault Tolerance):** Tổng dung lượng lưu trữ trên 3 DataNode là 2.58 GB (872.5 MB x 3). Nếu lỡ có 1 hoặc 2 DataNode bị hỏng ổ cứng, dữ liệu vẫn an toàn 100%. Nhóm đã đóng gói chạy trực quan bằng file `CHAY_DATANODE.bat`!")
 
-            <!-- MŨI TÊN LIÊN KẾT: HDFS -> SPARK -->
-            <div style="text-align: center; color: #94A3B8; font-family: monospace; font-size: 0.75rem; margin: -6px 0 8px 0;">
-                ▼ Đọc song song In-Memory dựa trên vị trí dữ liệu (HDFS Data Locality via spark.read.csv) ▼
-            </div>
+        st.markdown("<p style='text-align: center; color: #2563EB; font-weight: bold; margin: 12px 0;'>▼ Đọc song song In-Memory dựa trên vị trí dữ liệu (HDFS Data Locality qua 16 Cores CPU) ▼</p>", unsafe_allow_html=True)
 
-            <!-- CỤM 2: TÍNH TOÁN SPARK & MLLIB -->
-            <div style="background: #1E293B; border-left: 5px solid #D97706; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span style="font-weight: 800; color: #FBBF24; font-size: 0.95rem;">
-                        ⚡ CỤM 2: ĐỘNG CƠ TÍNH TOÁN PHÂN TÁN APACHE SPARK 4.2 & MLLIB (BATCH LAYER)
-                    </span>
-                    <span style="background: #B45309; color: #FFFFFF; font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; font-weight: 700;">
-                        16 CORES CPU PARALLEL · TUNGSTEN IN-MEMORY ENGINE
-                    </span>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px;">
-                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">TIỀN XỬ LÝ & LÀM SẠCH</div>
-                        <div style="font-weight: 800; color: #F59E0B; font-size: 0.88rem;">PySpark ETL (02_cleaning)</div>
-                        <div style="font-size: 0.72rem; color: #CBD5E1; margin-top: 2px;">Lọc missing, chuẩn hóa tuổi</div>
-                        <div style="font-size: 0.68rem; color: #38BDF8; margin-top: 4px;">Xuất Parquet nén Snappy (-97.7%)</div>
-                    </div>
-                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px;">
-                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">TRUY VẤN PHÂN TÁN</div>
-                        <div style="font-weight: 800; color: #F59E0B; font-size: 0.88rem;">Spark SQL Engine (03_analysis)</div>
-                        <div style="font-size: 0.72rem; color: #CBD5E1; margin-top: 2px;">Catalyst Query Optimizer</div>
-                        <div style="font-size: 0.68rem; color: #4ADE80; margin-top: 4px;">4 góc nhìn đa chiều (Top 15, Tuổi vàng)</div>
-                    </div>
-                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px;">
-                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">TRÍ TUỆ NHÂN TẠO TRÊN DỮ LIỆU LỚN</div>
-                        <div style="font-weight: 800; color: #F59E0B; font-size: 0.88rem;">PySpark MLlib (04_kmeans, 05_reg)</div>
-                        <div style="font-size: 0.72rem; color: #CBD5E1; margin-top: 2px;">K-Means k=3 (Sil: 0.6429)</div>
-                        <div style="font-size: 0.68rem; color: #C084FC; margin-top: 4px;">Random Forest ln(1+y) R²=84.7%</div>
-                    </div>
-                </div>
-            </div>
+        # ── CỤM 2: APACHE SPARK 4.2 ENGINE ──
+        with st.container(border=True):
+            st.markdown("##### ⚡ CỤM 2: TÍNH TOÁN PHÂN TÁN APACHE SPARK 4.2 & MLLIB (BATCH LAYER)")
+            st.caption("16 Cores CPU tính toán song song trong bộ nhớ RAM (In-Memory Computing) với Catalyst Optimizer")
+            
+            s1, s2, s3 = st.columns(3)
+            with s1:
+                st.metric("PySpark ETL", "02_cleaning.py", "40,749 Bản ghi sạch")
+                st.caption("Điền median missing, tính tuổi, lọc 9,400 lỗi")
+            with s2:
+                st.metric("Nén Apache Parquet", "1.41 MB (-97.7%)", "Snappy Columnar")
+                st.caption("Giảm từ 18.72 MB CSV xuống 1.41 MB Parquet")
+            with s3:
+                st.metric("Spark SQL & MLlib", "16 Cores Parallel", "Speedup 16x Pandas")
+                st.caption("K-Means k=3 (Sil: 0.64) & Random Forest R²=84.7%")
 
-            <!-- HAI CỤM SONG SONG: KAFKA & AIRFLOW -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
-                <!-- CỤM 3: KAFKA STREAMING -->
-                <div style="background: #1E293B; border-left: 5px solid #16A34A; border-radius: 8px; padding: 14px 18px;">
-                    <div style="font-weight: 800; color: #4ADE80; font-size: 0.92rem; margin-bottom: 6px;">
-                        📡 CỤM 3: APACHE KAFKA (SPEED LAYER)
-                    </div>
-                    <div style="font-size: 0.75rem; color: #CBD5E1; margin-bottom: 6px;">
-                        Xử lý dòng sự kiện chuyển nhượng tức thì, độ trễ mili-giây
-                    </div>
-                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 8px; font-family: monospace; font-size: 0.72rem; color: #94A3B8;">
-                        • Broker Port: <span style="color: #4ADE80; font-weight: bold;">9092</span> | Zookeeper: 2181<br>
-                        • Topic: <span style="color: #FACC15;">football_transfers</span> (JSON Messages)<br>
-                        • Throughput: ~2,450 msgs/s (> 707 Triệu €)
-                    </div>
-                </div>
+        st.markdown("<p style='text-align: center; color: #D97706; font-weight: bold; margin: 12px 0;'>▼ Điều phối luồng và bắt sóng chuyển nhượng thời gian thực ▼</p>", unsafe_allow_html=True)
 
-                <!-- CỤM 4: AIRFLOW WORKFLOW -->
-                <div style="background: #1E293B; border-left: 5px solid #7C3AED; border-radius: 8px; padding: 14px 18px;">
-                    <div style="font-weight: 800; color: #C084FC; font-size: 0.92rem; margin-bottom: 6px;">
-                        🔄 CỤM 4: APACHE AIRFLOW (ORCHESTRATOR)
-                    </div>
-                    <div style="font-size: 0.75rem; color: #CBD5E1; margin-bottom: 6px;">
-                        Tự động hóa chuỗi DAG 7 tasks qua 5 Docker Containers
-                    </div>
-                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 8px; font-family: monospace; font-size: 0.72rem; color: #94A3B8;">
-                        • Web UI: <span style="color: #C084FC; font-weight: bold;">http://localhost:8080</span><br>
-                        • DAG: <span style="color: #FACC15;">transfermarkt_pipeline</span> (7/7 SUCCESS)<br>
-                        • Thời gian chạy: 2 phút 10 giây (Tự động 100%)
-                    </div>
-                </div>
-            </div>
+        # ── CỤM 3 & CỤM 4: KAFKA VÀ AIRFLOW ──
+        k_col, a_col = st.columns(2)
+        with k_col:
+            with st.container(border=True):
+                st.markdown("##### 📡 CỤM 3: APACHE KAFKA (SPEED LAYER)")
+                st.caption("Message Broker tiếp nhận luồng sự kiện chuyển nhượng tức thì, độ trễ mili-giây")
+                st.markdown("""
+                - **Broker Port:** `localhost:9092` | **Zookeeper:** `localhost:2181`
+                - **Topic:** `football_transfers` (Định dạng JSON)
+                - **Thông lượng:** ~2,450 msgs/s (> 707 Triệu €)
+                - **Cơ chế:** Cập nhật biến động giá ngay mà không quét lại toàn bộ 872 MB HDFS.
+                """)
+        with a_col:
+            with st.container(border=True):
+                st.markdown("##### 🔄 CỤM 4: APACHE AIRFLOW (ORCHESTRATOR)")
+                st.caption("Điều phối tự động hóa toàn bộ chuỗi công việc qua cụm 5 Docker Containers")
+                st.markdown("""
+                - **Giao diện Web:** `http://localhost:8080` (Airflow Web UI)
+                - **DAG Name:** `transfermarkt_pipeline` (Chuỗi 7 tasks tuần tự)
+                - **Trạng thái:** 7/7 SUCCESS trong 2 phút 10 giây
+                - **Containers:** webserver, scheduler, worker, postgres, redis.
+                """)
 
-            <!-- MŨI TÊN LIÊN KẾT: SPARK + KAFKA -> DATA MART -->
-            <div style="text-align: center; color: #94A3B8; font-family: monospace; font-size: 0.75rem; margin: -6px 0 8px 0;">
-                ▼ Nạp kết quả tính toán sẵn vào CSDL Serving Data Mart (load_to_database.py) ▼
-            </div>
+        st.markdown("<p style='text-align: center; color: #0D766E; font-weight: bold; margin: 12px 0;'>▼ Nạp kết quả tính toán sẵn vào CSDL Serving Data Mart ▼</p>", unsafe_allow_html=True)
 
-            <!-- CỤM 5: SERVING DATA MART & WEB UI -->
-            <div style="background: #1E293B; border-left: 5px solid #0D766E; border-radius: 8px; padding: 14px 18px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span style="font-weight: 800; color: #2DD4BF; font-size: 0.95rem;">
-                        🌐 CỤM 5: SERVING DATA MART & GIAO DIỆN WEB (SERVING & PRESENTATION LAYER)
-                    </span>
-                    <span style="background: #0F766E; color: #FFFFFF; font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; font-weight: 700;">
-                        LATENCY < 10 MS · 0% NGHẼN SPARK
-                    </span>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px;">
-                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">CSDL DATA MART ĐÁNH CHỈ MỤC</div>
-                        <div style="font-weight: 800; color: #2DD4BF; font-size: 0.88rem;">football_analytics.db (SQLite)</div>
-                        <div style="font-size: 0.72rem; color: #CBD5E1; margin-top: 2px;">5 bảng quan hệ phân tích sẵn</div>
-                        <div style="font-size: 0.68rem; color: #4ADE80; margin-top: 4px;">Tốc độ truy vấn dưới 10 mili-giây</div>
-                    </div>
-                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px;">
-                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">BẢNG ĐIỀU KHIỂN TRỰC QUAN</div>
-                        <div style="font-weight: 800; color: #2DD4BF; font-size: 0.88rem;">Streamlit Web Platform (Port 8501)</div>
-                        <div style="font-size: 0.72rem; color: #CBD5E1; margin-top: 2px;">10 bước báo cáo demo khớp kịch bản</div>
-                        <div style="font-size: 0.68rem; color: #38BDF8; margin-top: 4px;">Liên kết trực tiếp sang HDFS Web UI (9870)</div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        """, unsafe_allow_html=True)
+        # ── CỤM 5: SERVING DATA MART & WEB UI ──
+        with st.container(border=True):
+            st.markdown("##### 🌐 CỤM 5: SERVING DATA MART & WEB DASHBOARD (SERVING & PRESENTATION)")
+            st.caption("Phục vụ người dùng tương tác tức thì mà không làm nghẽn máy chủ tính toán Spark")
+            
+            d1, d2 = st.columns(2)
+            with d1:
+                st.metric("CSDL Data Mart (SQLite)", "5 Bảng quan hệ", "Độ trễ < 10 ms")
+                st.caption("Tệp: bigdata_dataset/football_analytics.db có Index đọc nhanh")
+            with d2:
+                st.metric("Streamlit Web Dashboard", "Cổng 8501", "10 Bước chuẩn Demo")
+                st.caption("Giao diện trực quan tích hợp liên kết trực tiếp sang HDFS cổng 9870")
 
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -845,9 +774,7 @@ if page == "Bản đồ ứng dụng Big Data":
     # ══════════════════════════════════════════════════════════════════════════
     with tab_pipeline_flow:
         st.markdown("#### Luồng Hoạt động Dữ liệu Chi tiết: 6 Giai đoạn Tuần tự từ Nạp vào đến Hiển thị Web")
-        st.markdown("""
-        Dữ liệu chuyển nhượng bóng đá đi qua một chu trình khép kín, được kiểm soát chặt chẽ bằng mã nguồn thực thi:
-        """)
+        st.caption("Toàn bộ chu trình dữ liệu lớn được kiểm soát khép kín bằng mã nguồn Python & Spark")
 
         # BƯỚC 1: NẠP DỮ LIỆU THÔ VÀO HDFS
         with st.expander("📍 GIAI ĐOẠN 1: Thu thập & Nạp Dữ liệu Thô vào Hadoop HDFS Data Lake (Data Ingestion)", expanded=True):
@@ -915,25 +842,7 @@ if page == "Bản đồ ứng dụng Big Data":
             - **Kiến trúc Docker Compose:** 5 containers chạy độc lập gồm `airflow-webserver` (Port 8080), `airflow-scheduler`, `airflow-worker`, `postgres`, `redis`.
             - **Chuỗi DAG 7 Tasks tuần tự:**
               ```
-              wait_for_hdfs_data
-                     │
-                     ▼
-              pyspark_data_cleaning
-                     │
-                     ▼
-              spark_sql_analytics
-                     │
-                     ▼
-              pyspark_ml_training
-                     │
-                     ▼
-              kafka_stream_producer
-                     │
-                     ▼
-              load_to_database
-                     │
-                     ▼
-              audit_pipeline_success
+              wait_for_hdfs_data -> pyspark_data_cleaning -> spark_sql_analytics -> pyspark_ml_training -> kafka_stream_producer -> load_to_database -> audit_pipeline_success
               ```
             - **Kết quả kiểm thử:** Toàn bộ 7 task đều báo xanh **100% SUCCESS** trong **2 phút 10 giây**.
             - **Giá trị:** Loại bỏ hoàn toàn lỗi quên hoặc chạy sai thứ tự của con người, tự động ghi log và phục hồi khi có sự cố.
