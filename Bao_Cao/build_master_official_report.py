@@ -139,13 +139,62 @@ def add_p(doc, text="", size=11, bold=False, italic=False, color=COLOR_DARK,
         apply_font_to_run(r, FONT_MAIN, size_pt=size, bold=bold, italic=italic, color=color)
     return p
 
+def add_bullet_item(doc, text, bold_prefix="", indent_cm=0.5):
+    """
+    Mỗi bullet point là một đoạn văn riêng biệt (Paragraph độc lập).
+    Tuyệt đối không dùng ký tự '\\n' trong đoạn văn Justify để loại bỏ 100% lỗi giãn cách chữ như kẻ bảng!
+    """
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p.paragraph_format.left_indent = Cm(indent_cm)
+    p.paragraph_format.space_before = Pt(1)
+    p.paragraph_format.space_after  = Pt(2)
+    p.paragraph_format.line_spacing = 1.15
+    
+    r_bullet = p.add_run("• ")
+    apply_font_to_run(r_bullet, FONT_MAIN, size_pt=11, bold=True, color=COLOR_TEAL)
+    
+    if bold_prefix:
+        r_pre = p.add_run(bold_prefix + " ")
+        apply_font_to_run(r_pre, FONT_MAIN, size_pt=11, bold=True, color=COLOR_NAVY)
+        
+    r_text = p.add_run(text)
+    apply_font_to_run(r_text, FONT_MAIN, size_pt=11, bold=False, color=COLOR_DARK)
+    return p
+
+def add_numbered_item(doc, num_str, title_prefix, body_text, indent_cm=0.5):
+    """
+    Mỗi mục đánh số là một đoạn văn riêng biệt.
+    """
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p.paragraph_format.left_indent = Cm(indent_cm)
+    p.paragraph_format.space_before = Pt(1)
+    p.paragraph_format.space_after  = Pt(2)
+    p.paragraph_format.line_spacing = 1.15
+    
+    r_num = p.add_run(num_str + " ")
+    apply_font_to_run(r_num, FONT_MAIN, size_pt=11, bold=True, color=COLOR_TEAL)
+    
+    if title_prefix:
+        r_pre = p.add_run(title_prefix + " ")
+        apply_font_to_run(r_pre, FONT_MAIN, size_pt=11, bold=True, color=COLOR_NAVY)
+        
+    r_body = p.add_run(body_text)
+    apply_font_to_run(r_body, FONT_MAIN, size_pt=11, bold=False, color=COLOR_DARK)
+    return p
+
 def add_heading_1(doc, text):
-    return add_p(doc, text, size=13.5, bold=True, color=COLOR_NAVY,
-                 align=WD_ALIGN_PARAGRAPH.LEFT, space_before=12, space_after=3)
+    p = add_p(doc, text, size=13.5, bold=True, color=COLOR_NAVY,
+              align=WD_ALIGN_PARAGRAPH.LEFT, space_before=12, space_after=3)
+    p.paragraph_format.keep_with_next = True
+    return p
 
 def add_heading_2(doc, text):
-    return add_p(doc, text, size=11.5, bold=True, color=COLOR_TEAL,
-                 align=WD_ALIGN_PARAGRAPH.LEFT, space_before=8, space_after=2)
+    p = add_p(doc, text, size=11.5, bold=True, color=COLOR_TEAL,
+              align=WD_ALIGN_PARAGRAPH.LEFT, space_before=8, space_after=2)
+    p.paragraph_format.keep_with_next = True
+    return p
 
 def add_code_box(doc, code_text, caption=""):
     if caption:
@@ -339,9 +388,9 @@ def build_master_document():
 
     add_heading_2(doc, "1.1. Đặt vấn đề và Mục tiêu phân tích / dự đoán")
     add_p(doc, "Thị trường chuyển nhượng bóng đá quốc tế có quy mô giao dịch hàng chục tỷ Euro mỗi năm với mức độ biến động giá trị nhanh chóng. Nhóm giải quyết 3 bài toán trọng tâm:")
-    add_p(doc, "1. Xây dựng Data Lake phân tán trên Hadoop HDFS và thiết kế pipeline PySpark ETL làm sạch, chuẩn hóa hơn 7.49 triệu bản ghi thô từ 12 bảng dữ liệu.\n"
-               "2. Khai phá dữ liệu đa chiều bằng Spark SQL và phân cụm đẳng cấp cầu thủ (K-Means Clustering) thành 3 phân khúc thị trường rõ rệt.\n"
-               "3. Huấn luyện mô hình Random Forest Regressor dự đoán giá trị chuyển nhượng với độ chính xác R2 > 84%, tích hợp Explainable AI (XAI) và bộ máy tìm kiếm cầu thủ theo ngân sách (Scouting Engine).")
+    add_numbered_item(doc, "1.", "Xây dựng Data Lake phân tán:", "Xây dựng Data Lake phân tán trên Hadoop HDFS và thiết kế pipeline PySpark ETL làm sạch, chuẩn hóa hơn 7.49 triệu bản ghi thô từ 12 bảng dữ liệu.")
+    add_numbered_item(doc, "2.", "Khai phá dữ liệu đa chiều:", "Khai phá dữ liệu đa chiều bằng Spark SQL và phân cụm đẳng cấp cầu thủ (K-Means Clustering) thành 3 phân khúc thị trường rõ rệt.")
+    add_numbered_item(doc, "3.", "Huấn luyện học máy & XAI:", "Huấn luyện mô hình Random Forest Regressor dự đoán giá trị chuyển nhượng với độ chính xác R2 > 84%, tích hợp Explainable AI (XAI) và bộ máy tìm kiếm cầu thủ theo ngân sách (Scouting Engine).")
 
     add_heading_2(doc, "1.2. Mô tả chi tiết bộ dữ liệu Transfermarkt (12 bảng CSV, 872.45 MB)")
     add_p(doc, "Bộ dữ liệu được thu thập từ Transfermarkt gồm 12 bảng quan hệ với tổng cộng 7,497,433 bản ghi:")
@@ -365,12 +414,13 @@ def build_master_document():
     add_table_data(doc, "Bảng 1: Thống kê chi tiết 12 bảng dữ liệu Transfermarkt", csv_headers, csv_rows, [0.4, 1.5, 0.9, 0.9, 2.9])
 
     add_heading_2(doc, "1.3. Kiến trúc Lambda 5 lớp phân tầng (Lambda Architecture)")
-    add_p(doc, "Hệ sinh thái Big Data được thiết kế theo mô hình Lambda Architecture gồm 5 lớp chặt chẽ:")
-    add_p(doc, "• Lớp Data Lake (HDFS): Hadoop 3.3.6 lưu trữ dữ liệu thô (Replication factor = 3, Block size = 128MB).\n"
-               "• Lớp Xử lý Lô (Batch Layer - Spark): Apache Spark 4.2 thực hiện ETL làm sạch, phân tích Spark SQL và học máy phân tán MLlib.\n"
-               "• Lớp Xử lý Luồng (Speed Layer - Kafka): Apache Kafka 3.x tại cổng 9092, topic football_transfers tiếp nhận dòng giao dịch JSON.\n"
-               "• Lớp Điều phối (Orchestration - Airflow): Apache Airflow 2.10 chạy Docker Compose điều phối DAG 7 task tuần tự 100% SUCCESS.\n"
-               "• Lớp Phục vụ (Serving & UI): Xuất kết quả sang Parquet Snappy và SQLite (football_analytics.db), phục vụ Web Dashboard Streamlit phản hồi tức thì < 35ms.")
+    p_intro = add_p(doc, "Hệ sinh thái Big Data được thiết kế theo mô hình Lambda Architecture gồm 5 lớp chặt chẽ:")
+    p_intro.paragraph_format.keep_with_next = True
+    add_bullet_item(doc, "Hadoop 3.3.6 lưu trữ dữ liệu thô an toàn trên cụm phân tán (Replication factor = 3, Block size = 128MB).", bold_prefix="Lớp Data Lake (HDFS):")
+    add_bullet_item(doc, "Apache Spark 4.2 thực hiện ETL làm sạch, phân tích Spark SQL và học máy phân tán MLlib.", bold_prefix="Lớp Xử lý Lô (Batch Layer - Spark):")
+    add_bullet_item(doc, "Apache Kafka 3.x tại cổng 9092, topic football_transfers tiếp nhận dòng giao dịch JSON.", bold_prefix="Lớp Xử lý Luồng (Speed Layer - Kafka):")
+    add_bullet_item(doc, "Apache Airflow 2.10 chạy Docker Compose điều phối DAG 7 task tuần tự 100% SUCCESS.", bold_prefix="Lớp Điều phối (Orchestration - Airflow):")
+    add_bullet_item(doc, "Xuất kết quả sang Parquet Snappy và SQLite (football_analytics.db), phục vụ Web Dashboard Streamlit phản hồi tức thì < 35ms.", bold_prefix="Lớp Phục vụ (Serving & UI):")
 
     doc.add_page_break()
 
@@ -435,10 +485,10 @@ def build_master_document():
 
     add_heading_2(doc, "3.2. Bốn truy vấn phân tích chuyên sâu bằng Spark SQL (Source_Code/03_spark_analysis.py)")
     add_p(doc, "Đăng ký TempView players_clean và thực thi 4 truy vấn phân tán đa chiều:")
-    add_p(doc, "• Q1: Top 15 cầu thủ giá trị cao nhất thế giới (Erling Haaland, Vinicius, Bellingham, Mbappe: 180M - 200M EUR).\n"
-               "• Q2: Định giá trung bình theo 4 vị trí chiến thuật (Attack: 3.2M EUR, Midfield: 2.8M EUR, Defender: 2.1M EUR, Goalkeeper: 1.4M EUR).\n"
-               "• Q3: Top 10 quốc gia sở hữu tổng giá trị cầu thủ lớn nhất thế giới (Anh: 4.8B EUR, Pháp: 4.2B EUR, TBN: 3.9B EUR, Brazil: 3.5B EUR).\n"
-               "• Q4: Phân tích độ tuổi vàng (Peak Age): Giai đoạn 25 - 28 tuổi đạt đỉnh giá trị trung bình 4.85M EUR/cầu thủ.")
+    add_bullet_item(doc, "Top 15 cầu thủ giá trị cao nhất thế giới (Erling Haaland, Vinicius, Bellingham, Mbappe: 180M - 200M EUR).", bold_prefix="Truy vấn 1 (Q1):")
+    add_bullet_item(doc, "Định giá trung bình theo 4 vị trí chiến thuật (Attack: 3.2M EUR, Midfield: 2.8M EUR, Defender: 2.1M EUR, Goalkeeper: 1.4M EUR).", bold_prefix="Truy vấn 2 (Q2):")
+    add_bullet_item(doc, "Top 10 quốc gia sở hữu tổng giá trị cầu thủ lớn nhất thế giới (Anh: 4.8B EUR, Pháp: 4.2B EUR, TBN: 3.9B EUR, Brazil: 3.5B EUR).", bold_prefix="Truy vấn 3 (Q3):")
+    add_bullet_item(doc, "Phân tích độ tuổi vàng (Peak Age): Giai đoạn 25 - 28 tuổi đạt đỉnh giá trị trung bình 4.85M EUR/cầu thủ.", bold_prefix="Truy vấn 4 (Q4):")
 
     log_spark_sql = read_log_file("spark_sql_analysis.log", max_lines=26)
     add_code_box(doc, log_spark_sql, "Log kết quả 4 truy vấn Spark SQL: logs/spark_sql_analysis.log")
@@ -581,10 +631,10 @@ def build_master_document():
     add_table_data(doc, "Bảng 7: Bảng phân công chi tiết và Tỷ lệ đóng góp của 3 thành viên", contrib_headers, contrib_rows, [1.4, 0.9, 0.8, 2.8, 0.8])
 
     add_heading_2(doc, "7.4. Hướng dẫn tái hiện đồ án bằng 1 lệnh duy nhất (README & 1-Click Run)")
-    add_p(doc, "• Bước 1: Cài đặt thư viện: pip install pyspark findspark kafka-python streamlit pandas pyarrow scikit-learn python-docx Pillow\n"
-               "• Bước 2: Chạy toàn bộ chuỗi Pipeline: Nhấp đúp CHAY_PIPELINE.bat (hoặc gõ: python Source_Code/run_pipeline.py)\n"
-               "• Bước 3: Khởi chạy Web Dashboard: Nhấp đúp CHAY_WEB.bat (hoặc gõ: streamlit run Source_Code/08_dashboard_streamlit.py)\n"
-               "• Bước 4: Khởi động Airflow: cd airflow && docker compose up -d (truy cập http://localhost:8080)")
+    add_bullet_item(doc, "pip install pyspark findspark kafka-python streamlit pandas pyarrow scikit-learn python-docx Pillow", bold_prefix="Bước 1 (Cài đặt thư viện):")
+    add_bullet_item(doc, "Nhấp đúp CHAY_PIPELINE.bat (hoặc gõ: python Source_Code/run_pipeline.py)", bold_prefix="Bước 2 (Chạy chuỗi Pipeline):")
+    add_bullet_item(doc, "Nhấp đúp CHAY_WEB.bat (hoặc gõ: streamlit run Source_Code/08_dashboard_streamlit.py)", bold_prefix="Bước 3 (Khởi chạy Web Dashboard):")
+    add_bullet_item(doc, "cd airflow && docker compose up -d (truy cập http://localhost:8080)", bold_prefix="Bước 4 (Khởi động cụm Airflow):")
 
     add_heading_2(doc, "7.5. Tuyên bố tuân thủ an toàn bảo mật thông tin (Security Compliance)")
     add_p(doc, "Nhóm sinh viên cam kết: Toàn bộ mã nguồn, cấu hình Docker và tài liệu nộp KHÔNG chứa bất kỳ mật khẩu (passwords), API key, token truy cập hoặc private key nào.")
