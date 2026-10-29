@@ -46,6 +46,7 @@ INCLUDE_ITEMS = [
     ("Source_Code/06_kafka_producer.py", "Source_Code/06_kafka_producer.py"),
     ("Source_Code/07_kafka_consumer.py", "Source_Code/07_kafka_consumer.py"),
     ("Source_Code/08_dashboard_streamlit.py", "Source_Code/08_dashboard_streamlit.py"),
+    ("Source_Code/hdfs_web_ui_server.py", "Source_Code/hdfs_web_ui_server.py"),
     ("Source_Code/load_to_database.py", "Source_Code/load_to_database.py"),
     ("Source_Code/run_pipeline.py", "Source_Code/run_pipeline.py"),
 
