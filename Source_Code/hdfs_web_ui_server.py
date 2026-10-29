@@ -3,11 +3,12 @@
 hdfs_web_ui_server.py
 =====================
 Máy chủ Web UI mô phỏng Apache Hadoop 3.3.6 HDFS NameNode & DataNodes (Cổng 9870).
-Cung cấp khả năng trình diễn DataNode trực quan nhất:
-1. Giao diện Web HDFS chuẩn tại http://localhost:9870/#tab-datanode
-2. Sơ đồ Tô-pô mạng trực quan (Cluster Topology) với nhịp tim Heartbeat phát sáng động
-3. Công cụ Thử nghiệm Chịu lỗi sống (Fault Tolerance Live Demo): Thử tắt / bật lại DataNode
-4. Màn hình Console dòng lệnh hiển thị nhịp tim (Heartbeats) thời gian thực giữa NameNode và 3 DataNodes
+TÍCH HỢP TOÀN DIỆN TRỰC TIẾP TẠI CỔNG 9870:
+1. 🏛️ Toàn cảnh Hạ tầng 5 Cụm Máy chủ Big Data (Cluster Infrastructure Topology)
+2. 🏢 Giám sát Cụm 3 DataNodes (Live Cluster, Heartbeat nhấp nháy & Bộ thử nghiệm Chịu lỗi Fault Tolerance)
+3. 🔄 Luồng Hoạt động Dữ liệu End-to-End 6 Giai đoạn (Từ Nạp HDFS qua lệnh hdfs dfs -put đến Phục vụ Web)
+4. 📁 Khám phá Thư mục Data Lake (/football_project/ với 12 tệp CSV, 872.5 MB)
+5. 📋 Bảng Ma trận 7 Trụ cột Công nghệ Big Data & Vấn đề Giải quyết trong Thực tế
 """
 
 import sys
@@ -29,15 +30,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hadoop HDFS NameNode & DataNodes - localhost:9870</title>
+    <title>Hadoop HDFS & Big Data Infrastructure - localhost:9870</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: #F8FAFC; color: #1E293B; }
         .navbar-hadoop { background-color: #1B365D; border-bottom: 3px solid #0D766E; }
-        .nav-tabs .nav-link { color: #475569; font-weight: 600; font-size: 0.95rem; }
-        .nav-tabs .nav-link.active { color: #1B365D; border-color: #CBD5E1 #CBD5E1 #FFFFFF; border-top: 3px solid #2563EB; font-weight: 700; }
-        .card-stat { border-radius: 8px; border: 1px solid #E2E8F0; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .nav-tabs .nav-link { color: #475569; font-weight: 600; font-size: 0.92rem; padding: 10px 16px; }
+        .nav-tabs .nav-link.active { color: #1B365D; border-color: #CBD5E1 #CBD5E1 #FFFFFF; border-top: 3px solid #2563EB; font-weight: 700; background-color: #FFFFFF; }
+        .card-stat { border-radius: 8px; border: 1px solid #E2E8F0; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
         .table-datanode th { background-color: #0F172A; color: #FFFFFF; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; }
         .badge-live { background-color: #DCFCE7; color: #166534; border: 1px solid #86EFAC; font-weight: 700; padding: 5px 10px; border-radius: 6px; }
         .badge-dead { background-color: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; font-weight: 700; padding: 5px 10px; border-radius: 6px; }
@@ -90,37 +91,57 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             border: 2px solid #DC2626 !important;
             background: #FEF2F2 !important;
         }
+
+        /* Infra Card on Tab 1 */
+        .cluster-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            transition: transform 0.2s;
+        }
+        .cluster-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08);
+        }
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-dark navbar-hadoop px-4 py-2">
-        <div class="container-fluid d-flex justify-content-between">
-            <span class="navbar-brand d-flex align-items-center gap-2">
-                <i class="fa-solid fa-server text-info fs-4"></i>
-                <span class="fw-bold fs-5">Hadoop HDFS Management Console</span>
-                <span class="badge bg-success ms-2">HDFS 3.3.6 · ACTIVE</span>
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <span class="navbar-brand d-flex align-items-center gap-2 mb-0">
+                <i class="fa-solid fa-server text-info fs-3"></i>
+                <div>
+                    <div class="fw-bold fs-5 line-height-1">Hadoop HDFS & Big Data Infrastructure Console</div>
+                    <div class="small text-white-50" style="font-size: 0.75rem;">Học phần: Công nghệ Dữ liệu lớn (Big Data) · GV: ThS. Huỳnh Thái Học · HUIT</div>
+                </div>
             </span>
-            <span class="text-white-50 mono">
-                Cluster URI: <b class="text-white">hdfs://localhost:9820</b> | Web UI: <b class="text-info">Port 9870</b>
-            </span>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-white-50 mono small d-none d-md-inline">
+                    NameNode IPC: <b class="text-white">hdfs://localhost:9820</b> | Web UI: <b class="text-info">Port 9870</b>
+                </span>
+                <a href="http://localhost:8501" target="_blank" class="btn btn-warning btn-sm fw-bold shadow-sm">
+                    <i class="fa-solid fa-gauge-high me-1"></i> Mở Web Dashboard (Port 8501)
+                </a>
+            </div>
         </div>
     </nav>
 
     <!-- Sub-header Alert Banner -->
     <div class="container-fluid px-4 py-2 bg-light border-bottom">
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
             <span class="small text-muted">
-                <i class="fa-solid fa-graduation-cap text-primary me-1"></i>
-                Học phần: <b>Công nghệ Dữ liệu lớn (Big Data)</b> · GV: <b>ThS. Huỳnh Thái Học</b> · Nhóm 5 (HUIT)
+                <i class="fa-solid fa-layer-group text-primary me-1"></i>
+                Hạ tầng Tích hợp Toàn diện: <b>Hadoop HDFS (9820/9870) · Spark 4.2 (16 Cores) · Kafka (9092) · Airflow (8080) · SQLite Data Mart</b>
             </span>
             <div class="d-flex gap-2">
-                <span class="badge bg-primary text-white" id="badgeClusterState">
-                    <i class="fa-solid fa-shield-halved me-1"></i> 3 Live DataNodes · Replication: 3
+                <span class="badge bg-success" id="badgeClusterState">
+                    <span class="pulse-active"></span> 3 Live DataNodes · Replication: 3
                 </span>
-                <a href="http://localhost:8501" target="_blank" class="badge bg-dark text-white text-decoration-none">
-                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Web Dashboard (8501)
-                </a>
+                <span class="badge bg-primary">Dung lượng: 872.5 MB / 7,497,433 dòng</span>
             </div>
         </div>
     </div>
@@ -130,18 +151,28 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <!-- Navigation Tabs -->
         <ul class="nav nav-tabs mb-4" id="hdfsTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
-                    <i class="fa-solid fa-chart-pie me-1"></i> 1. Tổng quan Cụm (Overview)
+                <button class="nav-link active" id="infra-tab" data-bs-toggle="tab" data-bs-target="#infra" type="button" role="tab">
+                    <i class="fa-solid fa-network-wired me-1 text-primary"></i> <b>1. Toàn cảnh Hạ tầng 5 Cụm Big Data</b>
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="datanodes-tab" data-bs-toggle="tab" data-bs-target="#datanodes" type="button" role="tab">
-                    <i class="fa-solid fa-hard-drive me-1 text-success"></i> <b>2. Danh sách DataNodes & Mô phỏng Trực quan</b>
+                <button class="nav-link" id="datanodes-tab" data-bs-toggle="tab" data-bs-target="#datanodes" type="button" role="tab">
+                    <i class="fa-solid fa-hard-drive me-1 text-success"></i> <b>2. Giám sát Cụm 3 DataNodes & Thử nghiệm Chịu lỗi</b>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pipeline-tab" data-bs-toggle="tab" data-bs-target="#pipeline" type="button" role="tab">
+                    <i class="fa-solid fa-diagram-project me-1 text-warning"></i> <b>3. Luồng Hoạt động Dữ liệu Chi tiết (Từ Nạp đến Phục vụ)</b>
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="explorer-tab" data-bs-toggle="tab" data-bs-target="#explorer" type="button" role="tab">
-                    <i class="fa-solid fa-folder-open me-1 text-warning"></i> 3. Khám phá Data Lake (/football_project/)
+                    <i class="fa-solid fa-folder-open me-1 text-info"></i> <b>4. Khám phá Thư mục Data Lake (/football_project/)</b>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="matrix-tab" data-bs-toggle="tab" data-bs-target="#matrix" type="button" role="tab">
+                    <i class="fa-solid fa-table-cells me-1 text-secondary"></i> <b>5. Ma trận 7 Trụ cột & Nghiệp vụ Áp dụng</b>
                 </button>
             </li>
         </ul>
@@ -149,64 +180,202 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <!-- Tab Content -->
         <div class="tab-content" id="hdfsTabContent">
             
-            <!-- TAB 1: OVERVIEW -->
-            <div class="tab-pane fade" id="overview" role="tabpanel">
+            <!-- ══════════════════════════════════════════════════════════════════
+                 TAB 1: TOÀN CẢNH HẠ TẦNG 5 CỤM BIG DATA (TÍCH HỢP ĐÚNG YÊU CẦU CỦA BẠN)
+                 ══════════════════════════════════════════════════════════════════ -->
+            <div class="tab-pane fade show active" id="infra" role="tabpanel">
                 <div class="row g-3 mb-4">
                     <div class="col-md-3">
                         <div class="card card-stat p-3">
-                            <span class="text-muted small text-uppercase fw-bold">Trạng thái NameNode</span>
-                            <h3 class="text-success fw-bold my-1"><i class="fa-solid fa-circle-check"></i> ACTIVE</h3>
-                            <span class="small text-secondary mono">Port IPC: 9820 | HTTP: 9870</span>
+                            <span class="text-muted small text-uppercase fw-bold">Hadoop HDFS Data Lake</span>
+                            <h3 class="text-primary fw-bold my-1">872.45 MB</h3>
+                            <span class="small text-secondary">12 tệp CSV thô · 7,497,433 dòng</span>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card card-stat p-3">
-                            <span class="text-muted small text-uppercase fw-bold">Tổng Live DataNodes</span>
-                            <h3 class="text-primary fw-bold my-1" id="kpiDatanodesCount">3 / 3 Nodes</h3>
-                            <span class="small text-success fw-semibold"><i class="fa-solid fa-heart-pulse"></i> 100% Hoạt động bình thường</span>
+                            <span class="text-muted small text-uppercase fw-bold">Apache Spark 4.2 Engine</span>
+                            <h3 class="text-warning fw-bold my-1">16 Cores Parallel</h3>
+                            <span class="small text-success fw-semibold"><i class="fa-solid fa-bolt"></i> Nhanh gấp 16.0x Pandas</span>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card card-stat p-3">
-                            <span class="text-muted small text-uppercase fw-bold">Dung lượng Data Lake</span>
-                            <h3 class="text-dark fw-bold my-1">872.45 MB</h3>
-                            <span class="small text-muted">12 tệp CSV thô · 7,497,433 dòng</span>
+                            <span class="text-muted small text-uppercase fw-bold">Kafka Streaming (9092)</span>
+                            <h3 class="text-success fw-bold my-1">> 707 Triệu €</h3>
+                            <span class="small text-muted">Topic: football_transfers (JSON)</span>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card card-stat p-3">
-                            <span class="text-muted small text-uppercase fw-bold">Dung lượng Đĩa vật lý</span>
-                            <h3 class="text-danger fw-bold my-1">2.58 GB</h3>
-                            <span class="small text-secondary">Replication Factor = 3 (Bản sao)</span>
+                            <span class="text-muted small text-uppercase fw-bold">Airflow 2.10 (Docker)</span>
+                            <h3 class="text-danger fw-bold my-1">7/7 SUCCESS</h3>
+                            <span class="small text-secondary">2m 10s Tự động hóa hoàn toàn</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="card card-stat p-4 mb-4">
-                    <h5 class="fw-bold mb-3"><i class="fa-solid fa-info-circle text-primary me-2"></i>Chi tiết Cấu hình Hadoop HDFS Data Lake</h5>
-                    <div class="row">
+                <!-- CỤM 1: HADOOP HDFS DATA LAKE -->
+                <div class="cluster-card" style="border-left: 5px solid #2563EB;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="fw-bold text-primary mb-0">
+                            <i class="fa-solid fa-server me-2"></i>CỤM 1: LƯU TRỮ PHÂN TÁN HADOOP HDFS 3.x (DATA LAKE LAYER)
+                        </h5>
+                        <span class="badge bg-primary">Block Size: 128 MB · Replication Factor: 3</span>
+                    </div>
+                    <p class="text-muted small mb-3">
+                        Nhiệm vụ: Quản lý và lưu trữ 12 tệp CSV thô (872.5 MB, gần 7.5 triệu bản ghi). Phân tách thành 18 khối nhị phân và nhân bản 3 lần sang 3 DataNode (tổng 2.58 GB).
+                    </p>
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <div class="p-2 border rounded bg-light text-center">
+                                <span class="badge bg-primary small text-uppercase">MASTER (BỘ NÃO)</span>
+                                <div class="fw-bold mt-1 text-dark">HDFS NameNode</div>
+                                <div class="mono small text-secondary">Port IPC: 9820 | Web: 9870</div>
+                                <div class="small text-success mt-1">Lưu Metadata cây thư mục trong RAM</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-2 border rounded bg-light text-center">
+                                <span class="badge bg-success small text-uppercase">WORKER 1 (KHO ĐĨA)</span>
+                                <div class="fw-bold mt-1 text-dark">DataNode-01</div>
+                                <div class="mono small text-secondary">Port 9864 · /default-rack</div>
+                                <div class="small text-primary mt-1">Lưu 18 Blocks (872.5 MB)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-2 border rounded bg-light text-center">
+                                <span class="badge bg-success small text-uppercase">WORKER 2 (KHO ĐĨA)</span>
+                                <div class="fw-bold mt-1 text-dark">DataNode-02</div>
+                                <div class="mono small text-secondary">Port 9865 · /default-rack</div>
+                                <div class="small text-primary mt-1">Lưu 18 Blocks (872.5 MB)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-2 border rounded bg-light text-center">
+                                <span class="badge bg-success small text-uppercase">WORKER 3 (KHO ĐĨA)</span>
+                                <div class="fw-bold mt-1 text-dark">DataNode-03</div>
+                                <div class="mono small text-secondary">Port 9866 · /rack-02</div>
+                                <div class="small text-primary mt-1">Lưu 18 Blocks (872.5 MB)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center text-muted fw-bold my-2 mono small">
+                    ▼ Đọc song song In-Memory dựa trên vị trí dữ liệu (HDFS Data Locality qua 16 Cores CPU) ▼
+                </div>
+
+                <!-- CỤM 2: APACHE SPARK 4.2 -->
+                <div class="cluster-card" style="border-left: 5px solid #D97706;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="fw-bold text-warning mb-0" style="color: #B45309 !important;">
+                            <i class="fa-solid fa-bolt me-2"></i>CỤM 2: ĐỘNG CƠ TÍNH TOÁN PHÂN TÁN APACHE SPARK 4.2 & MLLIB (BATCH LAYER)
+                        </h5>
+                        <span class="badge bg-warning text-dark">16 Cores Parallel · Tungsten In-Memory Engine</span>
+                    </div>
+                    <p class="text-muted small mb-3">
+                        Nhiệm vụ: 16 Cores CPU tính toán song song trong bộ nhớ RAM, tối ưu hóa kế hoạch thực thi logic và vật lý qua Catalyst Optimizer.
+                    </p>
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <div class="p-2 border rounded bg-light">
+                                <div class="fw-bold text-dark"><i class="fa-solid fa-broom me-1 text-warning"></i> PySpark ETL (02_cleaning.py)</div>
+                                <div class="small text-secondary mt-1">Điền median missing, chuẩn hóa tuổi từ ngày sinh, lọc 9,400 lỗi -> Giữ 40,749 bản ghi sạch.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-2 border rounded bg-light">
+                                <div class="fw-bold text-dark"><i class="fa-solid fa-file-zipper me-1 text-success"></i> Nén Parquet Snappy (Columnar)</div>
+                                <div class="small text-secondary mt-1">Dung lượng giảm từ 18.72 MB CSV xuống 1.41 MB Parquet (-97.7% dung lượng đĩa), tăng tốc đọc gấp 5 lần.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-2 border rounded bg-light">
+                                <div class="fw-bold text-dark"><i class="fa-solid fa-brain me-1 text-primary"></i> Spark SQL & PySpark MLlib</div>
+                                <div class="small text-secondary mt-1">K-Means k=3 (Sil: 0.6429) phân 3 đẳng cấp cầu thủ + Random Forest ln(1+y) R²=84.68% & Scouting Engine.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center text-muted fw-bold my-2 mono small">
+                    ▼ Điều phối luồng dữ liệu tự động và bắt sóng sự kiện chuyển nhượng thời gian thực ▼
+                </div>
+
+                <!-- CỤM 3 & CỤM 4: KAFKA VÀ AIRFLOW -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="cluster-card h-100" style="border-left: 5px solid #16A34A;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="fw-bold text-success mb-0"><i class="fa-solid fa-satellite-dish me-2"></i>CỤM 3: APACHE KAFKA (SPEED LAYER)</h6>
+                                <span class="badge bg-success">Port 9092</span>
+                            </div>
+                            <p class="small text-muted mb-2">
+                                Message Broker tiếp nhận luồng sự kiện chuyển nhượng trực tiếp dạng JSON, độ trễ mili-giây.
+                            </p>
+                            <ul class="small mono text-secondary mb-0">
+                                <li>Topic: <b>football_transfers</b> (Throughput ~2,450 msgs/s)</li>
+                                <li>Producer: <code>06_kafka_producer.py</code></li>
+                                <li>Consumer: <code>07_kafka_consumer.py</code> (> 707M €)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="cluster-card h-100" style="border-left: 5px solid #7C3AED;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="fw-bold mb-0" style="color: #7C3AED;"><i class="fa-solid fa-arrows-spin me-2"></i>CỤM 4: APACHE AIRFLOW (ORCHESTRATOR)</h6>
+                                <span class="badge bg-dark">Docker Compose</span>
+                            </div>
+                            <p class="small text-muted mb-2">
+                                Điều phối lập lịch tự động toàn bộ Data Pipeline qua cụm 5 container Docker Compose.
+                            </p>
+                            <ul class="small mono text-secondary mb-0">
+                                <li>Airflow Web UI: <b>http://localhost:8080</b></li>
+                                <li>DAG Name: <b>transfermarkt_pipeline</b></li>
+                                <li>Trạng thái: <b>7/7 Tasks SUCCESS</b> (2 phút 10 giây)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center text-muted fw-bold my-2 mono small">
+                    ▼ Nạp kết quả tính toán sẵn vào CSDL Serving Data Mart ▼
+                </div>
+
+                <!-- CỤM 5: SERVING DATA MART & WEB UI -->
+                <div class="cluster-card" style="border-left: 5px solid #0D766E;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="fw-bold text-info mb-0" style="color: #0D766E !important;">
+                            <i class="fa-solid fa-chart-line me-2"></i>CỤM 5: SERVING DATA MART & WEB DASHBOARD (SERVING & PRESENTATION)
+                        </h5>
+                        <span class="badge bg-secondary">Độ trễ < 10 ms · 0% Nghẽn Spark</span>
+                    </div>
+                    <div class="row g-2">
                         <div class="col-md-6">
-                            <table class="table table-sm table-borderless">
-                                <tr><td class="text-muted" width="40%">Cluster ID:</td><td class="mono fw-bold">CID-84b2c1f9-football-lake</td></tr>
-                                <tr><td class="text-muted">Block Pool ID:</td><td class="mono fw-bold">BP-1940234857-localhost-9820</td></tr>
-                                <tr><td class="text-muted">Block Size mặc định:</td><td class="mono fw-bold text-primary">128 MB</td></tr>
-                                <tr><td class="text-muted">Hệ số nhân bản (Replication):</td><td class="mono fw-bold text-success">3 (Mặc định)</td></tr>
-                            </table>
+                            <div class="p-2 border rounded bg-light">
+                                <div class="fw-bold text-dark">CSDL Serving Data Mart (SQLite)</div>
+                                <div class="small text-secondary mt-1">
+                                    Tệp <code>bigdata_dataset/football_analytics.db</code> chứa 5 bảng quan hệ phân tích sẵn có đánh chỉ mục (Index) tối ưu.
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <table class="table table-sm table-borderless">
-                                <tr><td class="text-muted" width="40%">Tổng số khối (Blocks):</td><td class="mono fw-bold">18 Blocks (54 Replicated Blocks)</td></tr>
-                                <tr><td class="text-muted">Dead DataNodes:</td><td class="mono fw-bold text-success" id="kpiDeadNodes">0</td></tr>
-                                <tr><td class="text-muted">Khối bị lỗi (Corrupt Blocks):</td><td class="mono fw-bold text-success">0</td></tr>
-                                <tr><td class="text-muted">Đường dẫn Data Lake:</td><td class="mono fw-bold text-danger">/football_project/</td></tr>
-                            </table>
+                            <div class="p-2 border rounded bg-light">
+                                <div class="fw-bold text-dark">Streamlit Web Dashboard (Cổng 8501)</div>
+                                <div class="small text-secondary mt-1">
+                                    Giao diện trực quan 10 bước chuẩn Báo cáo Demo, kết nối mượt mà với CSDL Serving dưới 10ms.
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 2: DATANODES & MÔ PHỎNG TRỰC QUAN -->
-            <div class="tab-pane fade show active" id="datanodes" role="tabpanel">
+            <!-- ══════════════════════════════════════════════════════════════════
+                 TAB 2: GIÁM SÁT CỤM 3 DATANODES & THỬ NGHIỆM CHỊU LỖI
+                 ══════════════════════════════════════════════════════════════════ -->
+            <div class="tab-pane fade" id="datanodes" role="tabpanel">
                 
                 <!-- BỘ ĐIỀU KHIỂN THỬ NGHIỆM CHỊU LỖI TRỰC QUAN -->
                 <div class="card card-stat p-3 mb-4 bg-light border-primary">
@@ -222,10 +391,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                             </div>
                         </div>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-outline-danger btn-sm fw-bold" id="btnSimulateCrash" onclick="simulateCrash()">
+                            <button class="btn btn-outline-danger btn-sm fw-bold shadow-sm" id="btnSimulateCrash" onclick="simulateCrash()">
                                 <i class="fa-solid fa-power-off me-1"></i> Tắt thử DataNode-02 (Giả lập sập ổ cứng)
                             </button>
-                            <button class="btn btn-success btn-sm fw-bold" id="btnRestoreNode" onclick="restoreNode()" style="display:none;">
+                            <button class="btn btn-success btn-sm fw-bold shadow-sm" id="btnRestoreNode" onclick="restoreNode()" style="display:none;">
                                 <i class="fa-solid fa-rotate me-1"></i> Khôi phục DataNode-02 (Cắm lại điện)
                             </button>
                         </div>
@@ -269,7 +438,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                     <!-- Dây nối nhịp tim -->
                     <div class="text-center text-muted small my-2">
                         <i class="fa-solid fa-arrow-down-long text-primary fs-5 mx-3"></i>
-                        <span class="badge bg-light text-dark border mono">Heartbeat (3s) & Data Locality Block Transfers</span>
+                        <span class="badge bg-light text-dark border mono">Heartbeat (3.0s) & Block Replication</span>
                         <i class="fa-solid fa-arrow-down-long text-primary fs-5 mx-3"></i>
                     </div>
 
@@ -414,7 +583,87 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 </div>
             </div>
 
-            <!-- TAB 3: EXPLORER -->
+            <!-- ══════════════════════════════════════════════════════════════════
+                 TAB 3: LUỒNG HOẠT ĐỘNG DỮ LIỆU END-TO-END (6 GIAI ĐOẠN)
+                 ══════════════════════════════════════════════════════════════════ -->
+            <div class="tab-pane fade" id="pipeline" role="tabpanel">
+                <div class="card card-stat p-4 mb-4">
+                    <h5 class="fw-bold text-primary mb-3">
+                        <i class="fa-solid fa-diagram-project me-2"></i>Quy trình 6 Giai đoạn Luồng Dữ liệu End-to-End từ Nạp vào đến Phục vụ
+                    </h5>
+                    
+                    <div class="timeline">
+                        <!-- BƯỚC 1 -->
+                        <div class="border-start border-primary border-3 ps-3 pb-3 mb-2">
+                            <span class="badge bg-primary">GIAI ĐOẠN 1</span>
+                            <h6 class="fw-bold text-dark mt-1">Thu thập & Nạp Dữ liệu Thô vào HDFS Data Lake (Data Ingestion)</h6>
+                            <p class="small text-muted mb-1">
+                                • Nguồn dữ liệu: 12 CSV Transfermarkt (~872.5 MB, gần 7.5 triệu dòng).<br>
+                                • Lệnh thực thi: <code>hdfs dfs -put bigdata_dataset/*.csv /football_project/raw/</code><br>
+                                • NameNode chia 18 blocks nhị phân 128MB, nhân bản 3 lần sang 3 DataNodes để chống mất mát dữ liệu.
+                            </p>
+                        </div>
+
+                        <!-- BƯỚC 2 -->
+                        <div class="border-start border-warning border-3 ps-3 pb-3 mb-2">
+                            <span class="badge bg-warning text-dark">GIAI ĐOẠN 2</span>
+                            <h6 class="fw-bold text-dark mt-1">PySpark Batch ETL & Tối ưu hóa Nén Cột Parquet</h6>
+                            <p class="small text-muted mb-1">
+                                • Mã nguồn: <code>Source_Code/02_data_cleaning.py</code><br>
+                                • Spark tận dụng Data Locality đọc song song từ 3 DataNode qua 16 Cores CPU In-Memory.<br>
+                                • Làm sạch, điền median missing values, chuẩn hóa tuổi từ ngày sinh, lọc 9,400 bản ghi lỗi -> 40,749 bản ghi sạch.<br>
+                                • Xuất tệp <code>cleaned_players.parquet</code> nén Snappy: Dung lượng giảm từ 18.72 MB xuống 1.41 MB (<b>tiết kiệm 97.7% ổ đĩa</b>) và tăng tốc độ đọc AI gấp 5 lần!
+                            </p>
+                        </div>
+
+                        <!-- BƯỚC 3 -->
+                        <div class="border-start border-info border-3 ps-3 pb-3 mb-2">
+                            <span class="badge bg-info text-dark">GIAI ĐOẠN 3</span>
+                            <h6 class="fw-bold text-dark mt-1">Phân tích Spark SQL & Huấn luyện Trí tuệ Nhân tạo PySpark MLlib</h6>
+                            <p class="small text-muted mb-1">
+                                • Mã nguồn: <code>03_spark_analysis.py</code>, <code>04_ml_kmeans.py</code>, <code>05_ml_regression.py</code><br>
+                                • Spark SQL: 4 góc nhìn đa chiều (Top 15 siêu sao, 4 vị trí thi đấu, Quốc gia, Độ tuổi vàng 25-28).<br>
+                                • MLlib K-Means: k=3 phân đoạn thị trường thành 3 đẳng cấp rõ rệt (Silhouette 0.6429).<br>
+                                • Random Forest Regressor: Biến đổi logarit ln(1+y) đạt R² = 84.68% & Bộ công cụ Săn ngọc quý giá hời (Scouting Engine).
+                            </p>
+                        </div>
+
+                        <!-- BƯỚC 4 -->
+                        <div class="border-start border-success border-3 ps-3 pb-3 mb-2">
+                            <span class="badge bg-success">GIAI ĐOẠN 4</span>
+                            <h6 class="fw-bold text-dark mt-1">Bắt sóng Chuyển nhượng Thời gian thực (Apache Kafka Speed Layer)</h6>
+                            <p class="small text-muted mb-1">
+                                • Mã nguồn: <code>06_kafka_producer.py</code>, <code>07_kafka_consumer.py</code><br>
+                                • Topic <code>football_transfers</code> cổng 9092 bắt ngay các bản tin chuyển nhượng JSON mới phát sinh, cộng dồn luồng tiền (> 707 triệu Euro) nạp vào Serving Layer mà không phải chạy lại toàn bộ mẻ dữ liệu lịch sử 872 MB.
+                            </p>
+                        </div>
+
+                        <!-- BƯỚC 5 -->
+                        <div class="border-start border-danger border-3 ps-3 pb-3 mb-2">
+                            <span class="badge bg-danger">GIAI ĐOẠN 5</span>
+                            <h6 class="fw-bold text-dark mt-1">Điều phối Tự động hóa Toàn diện (Apache Airflow Orchestration)</h6>
+                            <p class="small text-muted mb-1">
+                                • Mã nguồn: <code>airflow/dags/transfermarkt_pipeline.py</code> chạy qua 5 containers Docker Compose.<br>
+                                • Chuỗi DAG 7 tasks tuần tự hoàn thành 100% SUCCESS trong 2 phút 10 giây, loại bỏ hoàn toàn sai sót thủ công của con người.
+                            </p>
+                        </div>
+
+                        <!-- BƯỚC 6 -->
+                        <div class="border-start border-dark border-3 ps-3">
+                            <span class="badge bg-dark">GIAI ĐOẠN 6</span>
+                            <h6 class="fw-bold text-dark mt-1">Đổ vào Serving Data Mart & Phục vụ Web dưới 10ms</h6>
+                            <p class="small text-muted mb-0">
+                                • Mã nguồn: <code>Source_Code/load_to_database.py</code> nạp kết quả vào <code>football_analytics.db</code> (SQLite có Index).<br>
+                                • Web Streamlit tại cổng 8501 đọc dữ liệu tức thì dưới 10ms, cho phép người dùng lướt web mượt mà không làm đơ máy chủ tính toán Spark.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════════════
+                 TAB 4: KHÁM PHÁ THƯ MỤC DATA LAKE (/football_project/)
+                 ══════════════════════════════════════════════════════════════════ -->
             <div class="tab-pane fade" id="explorer" role="tabpanel">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold mb-0"><i class="fa-solid fa-folder text-warning me-2"></i>Thư mục Data Lake: /football_project/</h5>
@@ -451,18 +700,88 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 </div>
             </div>
 
+            <!-- ══════════════════════════════════════════════════════════════════
+                 TAB 5: MA TRẬN 7 TRỤ CỘT CÔNG NGHỆ & GIẢI QUYẾT BÀI TOÁN
+                 ══════════════════════════════════════════════════════════════════ -->
+            <div class="tab-pane fade" id="matrix" role="tabpanel">
+                <div class="card card-stat p-0 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 small">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Trụ cột Công nghệ</th>
+                                    <th>Tôi hiểu gì về nó? (Bản chất kỹ thuật)</th>
+                                    <th>Áp dụng vào Đề tài ra sao?</th>
+                                    <th>Vấn đề Giải quyết trong Thực tế?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold text-primary">1. Hadoop HDFS (NameNode & DataNode)</td>
+                                    <td>NameNode giữ metadata cây thư mục trong RAM. 3 DataNodes lưu các khối 128MB vật lý trên đĩa.</td>
+                                    <td>Quản lý Data Lake 12 CSV (872.5 MB, 7.5M dòng) chia 18 blocks, nhân bản 3 lần sang 3 DataNodes.</td>
+                                    <td><b>Chống mất dữ liệu:</b> Hỏng 1-2 node vẫn an toàn.<br><b>Xóa nghẽn I/O:</b> Cấp dữ liệu song song cho Spark.</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-warning">2. Apache Spark 4.2 (PySpark Engine)</td>
+                                    <td>Tính toán phân tán In-Memory với Catalyst Optimizer, song song hóa trên đa luồng CPU.</td>
+                                    <td>16 Cores CPU song song làm sạch 50k cầu thủ và chạy 4 truy vấn Spark SQL đa chiều.</td>
+                                    <td>Nhanh gấp <b>16.0 lần Pandas</b> (0.78s vs 12.45s trên 200k dòng). Không bao giờ bị tràn RAM (OOM).</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-success">3. Apache Parquet (Snappy Columnar)</td>
+                                    <td>Lưu trữ hướng cột nén Snappy; chỉ nạp đúng cột cần tính, bỏ qua các cột thừa.</td>
+                                    <td>Xuất tệp cleaned_players.parquet (1.41 MB) từ 18.7 MB CSV thô cho ML và Web.</td>
+                                    <td><b>Tiết kiệm 97.7% ổ đĩa</b> (18.7M -> 1.41M). Tăng tốc độ đọc dữ liệu nạp vào AI gấp 5 lần.</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-info">4. Machine Learning (MLlib & Scikit)</td>
+                                    <td>K-Means gom cụm k=3; Random Forest biến đổi ln(1+y) chống hiện tượng lệch phải nặng nề.</td>
+                                    <td>Phân khúc 3 đẳng cấp cầu thủ (Sil: 0.64); Dự đoán giá R²=84.7% & Scouting Engine săn ngọc quý.</td>
+                                    <td>Xóa bỏ định giá cầu thủ bằng cảm tính. Tự động phát hiện cầu thủ giỏi bị định giá thấp giúp CLB tiết kiệm tiền.</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-primary">5. Apache Kafka (Speed Layer)</td>
+                                    <td>Message Broker Publish/Subscribe thời gian thực, độ trễ mili-giây, chịu tải ngàn tin/giây.</td>
+                                    <td>Cổng 9092, topic football_transfers tiếp nhận liên tục giao dịch chuyển nhượng JSON.</td>
+                                    <td>Cập nhật biến động giá tức thì mà không phải quét lại toàn bộ 872 MB kho dữ liệu lịch sử.</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-danger">6. Apache Airflow (Orchestration)</td>
+                                    <td>Điều phối lập lịch tự động chuỗi công việc dưới dạng đồ thị có hướng không chu trình (DAG).</td>
+                                    <td>DAG transfermarkt_pipeline gồm 7 task tuần tự chạy qua 5 container Docker Compose.</td>
+                                    <td>Tự động hóa 100%, loại bỏ sai sót của con người, tự kiểm tra điều kiện và tự phục hồi khi có lỗi.</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-secondary">7. SQLite Data Mart (Serving Layer)</td>
+                                    <td>CSDL Serving phục vụ dữ liệu đã tính toán sẵn (Pre-computed) có đánh chỉ mục (Index).</td>
+                                    <td>football_analytics.db lưu 5 bảng quan hệ phân tích, phục vụ người dùng tương tác Web.</td>
+                                    <td>Web phản hồi dưới 10ms, lướt mượt mà không bị đơ giật, không chiếm tài nguyên máy chủ Spark.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Hỗ trợ tự động mở Tab DataNodes nếu URL có hash #tab-datanode
+        // Hỗ trợ tự động mở Tab tương ứng nếu URL có hash
         window.addEventListener('DOMContentLoaded', () => {
             if (window.location.hash === '#tab-datanode') {
                 const triggerEl = document.querySelector('#datanodes-tab');
                 if (triggerEl) bootstrap.Tab.getOrCreateInstance(triggerEl).show();
+            } else if (window.location.hash === '#tab-pipeline') {
+                const triggerEl = document.querySelector('#pipeline-tab');
+                if (triggerEl) bootstrap.Tab.getOrCreateInstance(triggerEl).show();
             } else if (window.location.hash === '#tab-explorer') {
                 const triggerEl = document.querySelector('#explorer-tab');
+                if (triggerEl) bootstrap.Tab.getOrCreateInstance(triggerEl).show();
+            } else if (window.location.hash === '#tab-matrix') {
+                const triggerEl = document.querySelector('#matrix-tab');
                 if (triggerEl) bootstrap.Tab.getOrCreateInstance(triggerEl).show();
             }
         });
@@ -471,8 +790,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         setInterval(() => {
             const sec1 = Math.floor(Math.random() * 2) + 1;
             const sec3 = Math.floor(Math.random() * 2) + 1;
-            document.getElementById('contactDn1').innerText = sec1 + ' giây trước';
-            document.getElementById('contactDn3').innerText = sec3 + ' giây trước';
+            const c1 = document.getElementById('contactDn1');
+            const c3 = document.getElementById('contactDn3');
+            if (c1) c1.innerText = sec1 + ' giây trước';
+            if (c3) c3.innerText = sec3 + ' giây trước';
             const cell2 = document.getElementById('contactDn2');
             if (cell2 && cell2.innerText !== 'MẤT KẾT NỐI') {
                 const sec2 = Math.floor(Math.random() * 2) + 1;
@@ -504,9 +825,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             // Cập nhật badge tổng
             document.getElementById('badgeClusterState').className = 'badge bg-warning text-dark';
             document.getElementById('badgeClusterState').innerHTML = '<i class="fa-solid fa-triangle-exclamation me-1"></i> 2/3 DataNodes Live (Fault Tolerant Active)';
-            document.getElementById('kpiDatanodesCount').innerText = '2 / 3 Nodes';
-            document.getElementById('kpiDeadNodes').innerText = '1 (DataNode-02)';
-            document.getElementById('kpiDeadNodes').className = 'mono fw-bold text-danger';
         }
 
         // Kịch bản khôi phục DataNode-02
@@ -531,11 +849,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             document.getElementById('contactDn2').innerText = '1 giây trước';
             
             // Khôi phục badge tổng
-            document.getElementById('badgeClusterState').className = 'badge bg-primary text-white';
-            document.getElementById('badgeClusterState').innerHTML = '<i class="fa-solid fa-shield-halved me-1"></i> 3 Live DataNodes · Replication: 3';
-            document.getElementById('kpiDatanodesCount').innerText = '3 / 3 Nodes';
-            document.getElementById('kpiDeadNodes').innerText = '0';
-            document.getElementById('kpiDeadNodes').className = 'mono fw-bold text-success';
+            document.getElementById('badgeClusterState').className = 'badge bg-success text-white';
+            document.getElementById('badgeClusterState').innerHTML = '<span class="pulse-active"></span> 3 Live DataNodes · Replication: 3';
         }
     </script>
 </body>
@@ -550,14 +865,12 @@ class HDFSHandler(BaseHTTPRequestHandler):
         self.wfile.write(HTML_TEMPLATE.encode("utf-8"))
 
     def log_message(self, format, *args):
-        # In log truy cập ngắn gọn khi có người dùng truy cập
         now = datetime.now().strftime("%H:%M:%S")
         msg = format % args
         if "GET" in msg:
             print(f"[HDFS-AUDIT {now}] Client truy cap Web UI: {msg.split()[0]} {msg.split()[1]}")
 
 def heartbeat_loop():
-    """Vòng lặp gửi nhịp tim (Heartbeat) định kỳ in ra console để người dùng quan sát trực quan"""
     counter = 1
     while True:
         time.sleep(4.0)
@@ -570,9 +883,10 @@ def run_server():
     try:
         httpd = HTTPServer(server_address, HDFSHandler)
         print("=" * 75)
-        print("   HADOOP HDFS DISTRIBUTED CLUSTER (NAMENODE & 3 DATANODES) IS RUNNING")
+        print("   HADOOP HDFS & BIG DATA INFRASTRUCTURE CONSOLE (PORT 9870) IS RUNNING")
         print(f"   NameNode IPC Port : hdfs://localhost:9820")
         print(f"   Web UI Port       : http://localhost:{PORT}")
+        print(f"   Xem Toan bo Ha tang: http://localhost:{PORT}")
         print(f"   Xem DataNode      : http://localhost:{PORT}/#tab-datanode")
         print("=" * 75)
         print("[OK] Khoi dong NameNode (Master) tai cong 9820 thanh cong.")
@@ -583,7 +897,6 @@ def run_server():
         print("-" * 75)
         print("He thong dang gui Nhip tim (Heartbeats) lien tuc giua 3 DataNodes va NameNode:")
         
-        # Chạy thread in heartbeat console
         hb_thread = threading.Thread(target=heartbeat_loop, daemon=True)
         hb_thread.start()
         

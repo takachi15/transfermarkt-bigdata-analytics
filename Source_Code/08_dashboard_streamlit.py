@@ -674,6 +674,21 @@ if page == "Bản đồ ứng dụng Big Data":
         )
 
     st.markdown("---")
+    st.markdown("""
+<div style="background: #EFF6FF; border: 2px solid #2563EB; border-radius: 8px; padding: 12px 18px; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+    <div>
+        <span style="font-weight: 800; color: #1E3A8A; font-size: 0.95rem;">
+            🚀 BẢNG ĐIỀU KHIỂN HẠ TẦNG BIG DATA ĐÃ TÍCH HỢP TRỰC TIẾP TẠI CỔNG 9870:
+        </span>
+        <div style="font-size: 0.82rem; color: #3B82F6; margin-top: 2px;">
+            Xem toàn cảnh 5 cụm máy chủ, nhịp tim DataNodes nhấp nháy, kiểm thử chịu lỗi và luồng nạp dữ liệu tại: <b>http://localhost:9870</b>
+        </div>
+    </div>
+    <a href="http://localhost:9870" target="_blank" style="background: #1B365D; color: #FFFFFF; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 0.88rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        🔗 Mở Giao diện Cổng 9870
+    </a>
+</div>
+""", unsafe_allow_html=True)
 
     # ── TABS ĐIỀU HƯỚNG TRỰC QUAN ─────────────────────────────────────────────
     tab_infra, tab_pipeline_flow, tab_matrix_tech = st.tabs([
