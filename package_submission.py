@@ -28,10 +28,10 @@ ZIP_OUTPUT = os.path.join(BASE_DIR, "DoAn_BigData_Nhom5_Final.zip")
 # Danh mục các tệp và thư mục đưa vào gói nộp
 INCLUDE_ITEMS = [
     # Thư mục Báo Cáo
-    ("Bao_Cao/Bao_Cao_Minh_Chung_Kiem_Tra_AI.pdf", "Bao_Cao/Bao_Cao_Minh_Chung_Kiem_Tra_AI.pdf"),
-    ("Bao_Cao/Bao_Cao_Minh_Chung_Kiem_Tra_AI.docx", "Bao_Cao/Bao_Cao_Minh_Chung_Kiem_Tra_AI.docx"),
     ("Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData.pdf", "Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData.pdf"),
     ("Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData.docx", "Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData.docx"),
+    ("Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData_Chuan_AI_10Diem.pdf", "Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData_Chuan_AI_10Diem.pdf"),
+    ("Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData_Chuan_AI_10Diem.docx", "Bao_Cao/Bao_Cao_Tong_Ket_Do_An_BigData_Chuan_AI_10Diem.docx"),
     ("Bao_Cao/Kich_Ban_Demo_Bao_Ve_Website_BigData.pdf", "Bao_Cao/Kich_Ban_Demo_Bao_Ve_Website_BigData.pdf"),
     ("Bao_Cao/Kich_Ban_Demo_Bao_Ve_Website_BigData.docx", "Bao_Cao/Kich_Ban_Demo_Bao_Ve_Website_BigData.docx"),
     ("Bao_Cao/Bao_Cao_Tien_Do_Do_An_BigData.docx", "Bao_Cao/Bao_Cao_Tien_Do_Do_An_BigData.docx"),
