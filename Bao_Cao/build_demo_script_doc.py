@@ -23,8 +23,7 @@ if hasattr(sys.stderr, 'reconfigure'):
     sys.stderr.reconfigure(encoding='utf-8')
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-OUT_DOCX = os.path.join(BASE_DIR, "Kich_Ban_Demo_Bao_Ve_Website_BigData.docx")
-OUT_DOCX_FRIENDLY = os.path.join(BASE_DIR, "Kich_Ban_Demo_Bao_Cao_Cuoi_Ky_BigData.docx")
+OUT_DOCX = os.path.join(BASE_DIR, "Kich_Ban_Demo_Bao_Cao_Cuoi_Ky_BigData.docx")
 
 FONT_MAIN = "Times New Roman"
 FONT_CODE = "Consolas"
@@ -496,10 +495,9 @@ def build_demo_document():
     for idx, tip in enumerate(tips):
         add_p(doc, f"• Mẹo {idx+1}: {tip}", size=10, space_before=1, space_after=3)
 
-    # Lưu tệp DOCX cả 2 tên để tiện dùng và tương thích 100%
+    # Lưu tệp DOCX
     doc.save(OUT_DOCX)
-    doc.save(OUT_DOCX_FRIENDLY)
-    print(f"[HOÀN THÀNH] ĐÃ TẠO TỆP KỊCH BẢN DEMO BÁO CÁO CUỐI KỲ TẠI:\n - {OUT_DOCX}\n - {OUT_DOCX_FRIENDLY}")
+    print(f"[HOÀN THÀNH] ĐÃ TẠO TỆP KỊCH BẢN DEMO BÁO CÁO CUỐI KỲ TẠI: {OUT_DOCX}")
 
 if __name__ == "__main__":
     build_demo_document()
