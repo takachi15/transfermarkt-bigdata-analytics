@@ -451,25 +451,45 @@ rf_model_loaded = load_rf_model()
 # ── 4. Sidebar Điều Hướng ─────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("### TRANSFERMARKT BIG DATA")
-    st.caption("Hạ tầng phân tích dữ liệu phân tán")
+    st.caption("Hạ tầng phân tích dữ liệu phân tán chuẩn Enterprise")
     st.markdown("---")
     
+    # Danh mục các trang được sắp xếp 100% khớp theo thứ tự Kịch bản Thuyết trình Demo:
     pages_list = [
         "Bản đồ ứng dụng Big Data",
-        "Tổng quan thị trường",
-        "Benchmark hiệu năng Spark vs Pandas",
         "Quản trị dữ liệu HDFS Data Lake",
-        "Điều phối Airflow Workflow",
-        "Xu hướng thị trường theo năm",
-        "So sánh đối đầu cầu thủ",
-        "Bảng xếp hạng định giá",
+        "Benchmark hiệu năng Spark vs Pandas",
+        "Tổng quan thị trường",
         "Phân tích Spark SQL",
         "Phân cụm K-Means",
         "Dự đoán định giá (ML)",
         "Dòng dữ liệu Kafka Streaming",
+        "Điều phối Airflow Workflow",
         "Truy vấn CSDL Data Mart",
+        "Xu hướng thị trường theo năm",
+        "So sánh đối đầu cầu thủ",
+        "Bảng xếp hạng định giá",
         "Thông tin hệ thống",
     ]
+
+    display_labels = {
+        "Bản đồ ứng dụng Big Data": "1. Bản đồ Kiến trúc & Tổng quan",
+        "Quản trị dữ liệu HDFS Data Lake": "2. Quản trị HDFS Data Lake",
+        "Benchmark hiệu năng Spark vs Pandas": "3. Benchmark Spark vs Pandas",
+        "Tổng quan thị trường": "4. Tổng quan thị trường (PySpark ETL)",
+        "Phân tích Spark SQL": "5. Phân tích Spark SQL",
+        "Phân cụm K-Means": "6. Phân cụm K-Means (MLlib)",
+        "Dự đoán định giá (ML)": "7. Dự đoán định giá (ML & XAI)",
+        "Dòng dữ liệu Kafka Streaming": "8. Dòng dữ liệu Kafka Streaming",
+        "Điều phối Airflow Workflow": "9. Điều phối Airflow Workflow",
+        "Truy vấn CSDL Data Mart": "10. Truy vấn CSDL Data Mart",
+        "Xu hướng thị trường theo năm": "• Xu hướng thị trường theo năm",
+        "So sánh đối đầu cầu thủ": "• So sánh đối đầu cầu thủ",
+        "Bảng xếp hạng định giá": "• Bảng xếp hạng định giá",
+        "Thông tin hệ thống": "• Thông tin hệ thống",
+    }
+
+    st.markdown("##### 10 BƯỚC BÁO CÁO DEMO")
 
     # Khởi tạo giá trị ban đầu từ URL Query Param (khi mở link hoặc F5 refresh)
     if "main_navigation_radio" not in st.session_state:
@@ -480,8 +500,9 @@ with st.sidebar:
             st.session_state["main_navigation_radio"] = pages_list[0]
 
     page = st.radio(
-        "Danh mục chức năng:",
+        "Chọn phân hệ trình diễn:",
         pages_list,
+        format_func=lambda x: display_labels.get(x, x),
         key="main_navigation_radio"
     )
 
@@ -501,7 +522,7 @@ st.markdown("""
 <div class="top-navbar">
     <div>
         <h1 class="brand-title">HỆ THỐNG PHÂN TÍCH DỮ LIỆU LỚN THỊ TRƯỜNG BÓNG ĐÁ</h1>
-        <p class="brand-subtitle">Hạ tầng phân tán xử lý 7,497,433 bản ghi trên Apache Spark & Hadoop HDFS</p>
+        <p class="brand-subtitle">Học phần: Công nghệ Dữ liệu lớn (Big Data) — GV: ThS. Huỳnh Thái Học — Nhóm 5</p>
     </div>
     <div class="status-group">
         <span class="badge-active">HDFS: 872.5 MB</span>
@@ -511,6 +532,34 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
+# ── 5.1. Breadcrumb Banner Đồng Bộ 100% Thứ Tự Kịch Bản ──────────────────────
+demo_step_meta = {
+    "Bản đồ ứng dụng Big Data": ("BƯỚC 1/10", "BẢN ĐỒ KIẾN TRÚC LAMBDA 5 LỚP & TỔNG QUAN ĐỀ TÀI", "Đặng Duy Lợi (Trưởng nhóm)"),
+    "Quản trị dữ liệu HDFS Data Lake": ("BƯỚC 2/10", "QUẢN TRỊ KHO DỮ LIỆU HDFS DATA LAKE (12 CSV, 7.5 TRIỆU DÒNG)", "Đặng Duy Lợi"),
+    "Benchmark hiệu năng Spark vs Pandas": ("BƯỚC 3/10", "BENCHMARK HIỆU NĂNG THỰC NGHIỆM: SPARK 4.2 VS PANDAS (16x SPEEDUP)", "Đặng Duy Lợi"),
+    "Tổng quan thị trường": ("BƯỚC 4/10", "PYSPARK ETL LÀM SẠCH, NÉN PARQUET & BỘ LỌC NIÊN ĐỘ 2023 - NAY", "Chu Văn Quốc Trung"),
+    "Phân tích Spark SQL": ("BƯỚC 5/10", "TRUY VẤN PHÂN TÁN SPARK SQL ĐA CHIỀU (TOP 15, VỊ TRÍ, ĐỘ TUỔI VÀNG)", "Chu Văn Quốc Trung"),
+    "Phân cụm K-Means": ("BƯỚC 6/10", "PHÂN CỤM CẦU THỦ BẰNG PYSPARK MLLIB (K-MEANS, k=3 TỐI ƯU)", "Chu Văn Quốc Trung"),
+    "Dự đoán định giá (ML)": ("BƯỚC 7/10", "DỰ ĐOÁN ĐỊNH GIÁ RANDOM FOREST (R²=84.7%) & SĂN CẦU THỦ GIÁ HỜI", "Chu Văn Quốc Trung"),
+    "Dòng dữ liệu Kafka Streaming": ("BƯỚC 8/10", "DÒNG DỮ LIỆU CHUYỂN NHƯỢNG THỜI GIAN THỰC (KAFKA CỔNG 9092)", "Nguyễn Thế Quang"),
+    "Điều phối Airflow Workflow": ("BƯỚC 9/10", "ĐIỀU PHỐI QUY TRÌNH DATA PIPELINE TỰ ĐỘNG (AIRFLOW 7 TASKS SUCCESS)", "Nguyễn Thế Quang"),
+    "Truy vấn CSDL Data Mart": ("BƯỚC 10/10", "SERVING DATA MART SQLITE (ĐỘ TRỄ < 10MS) & KẾT LUẬN BÁO CÁO", "Nguyễn Thế Quang"),
+}
+
+if page in demo_step_meta:
+    s_step, s_title, s_speaker = demo_step_meta[page]
+    st.markdown(f"""
+    <div style="background: linear-gradient(90deg, #F8FAFC 0%, #EFF6FF 100%); border-left: 4px solid #1B365D; border-radius: 6px; padding: 10px 16px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        <div>
+            <span style="background: #1B365D; color: #FFFFFF; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; margin-right: 8px; text-transform: uppercase;">{s_step}</span>
+            <span style="font-weight: 700; color: #0F172A; font-size: 0.95rem;">{s_title}</span>
+        </div>
+        <div style="font-size: 0.82rem; color: #64748B;">
+            Thành viên trình bày: <b style="color: #0D766E;">{s_speaker}</b>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # ── 6. Xử lý Bộ Lọc Niên Độ Chỉ Ở Những Trang Cần Thiết ───────────────────────
@@ -590,16 +639,83 @@ if page in pages_with_year_filter:
 # TRANG MỚI: BẢN ĐỒ ỨNG DỤNG BIG DATA (LÀM RÕ 100% CÁC PHẦN ÁP DỤNG BIG DATA)
 # ═════════════════════════════════════════════════════════════════════════════
 if page == "Bản đồ ứng dụng Big Data":
-    st.subheader("Bản đồ Kiến trúc & Minh chứng Ứng dụng Big Data")
+    st.subheader("Bản đồ Kiến trúc & Tổng quan Đề tài Big Data")
     st.markdown("""
-    Trang này giải trình chi tiết **cách hệ thống vận dụng công nghệ Dữ liệu lớn (Big Data) vào từng thành phần nghiệp vụ**,  
-    đối chiếu trực tiếp giữa **Bài toán thực tế**, **Công nghệ Big Data sử dụng**, và **Mã nguồn thực thi**.
+    Trang này giải trình toàn cảnh **Kiến trúc Lambda 5 lớp phân tán**, đối chiếu trực tiếp giữa **Bài toán thực tế thị trường chuyển nhượng bóng đá**, **Công nghệ Big Data sử dụng**, và **Mã nguồn thực thi**.
     """)
+
+    # ── 4 THẺ SỐ LIỆU BIG DATA NỀN TẢNG (CHỈ TAY KHI MỞ ĐẦU) ──────────────────
+    kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+    with kpi1:
+        st.metric(
+            label="Hadoop HDFS Data Lake",
+            value="872.5 MB",
+            delta="12 CSV · 7,497,433 Dòng",
+            help="Lưu trữ phân tán trên HDFS với Block size 128MB, Replication factor 3"
+        )
+    with kpi2:
+        st.metric(
+            label="Apache Spark 4.2 Engine",
+            value="16 Cores Parallel",
+            delta="Nhanh gấp 16.0x Pandas",
+            help="Động cơ tính toán phân tán In-Memory với Catalyst Optimizer"
+        )
+    with kpi3:
+        st.metric(
+            label="Apache Kafka Streaming",
+            value="Cổng 9092",
+            delta="> 707M € Luồng tiền",
+            help="Tầng xử lý luồng sự kiện thời gian thực (Speed Layer) topic football_transfers"
+        )
+    with kpi4:
+        st.metric(
+            label="Apache Airflow 2.10 DAG",
+            value="7/7 SUCCESS",
+            delta="2m 10s Tự động hóa",
+            help="Điều phối quy trình End-to-End tự động qua cụm 5 container Docker Compose"
+        )
 
     st.markdown("---")
 
+    # ── 5 KHỐI TẦNG KIẾN TRÚC LAMBDA TRỰC QUAN ────────────────────────────────
+    st.markdown("#### 1. Mô hình Kiến trúc Lambda 5 Lớp Phân tán")
+    st.markdown("""
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
+        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-top: 4px solid #2563EB; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+            <div style="font-size: 0.72rem; font-weight: 700; color: #2563EB; text-transform: uppercase;">TẦNG 1: LƯU TRỮ PHÂN TÁN</div>
+            <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; margin: 4px 0;">Hadoop HDFS 3.x</div>
+            <div style="font-size: 0.8rem; color: #64748B;">12 tệp CSV thô (~872.5 MB), 7,497,433 dòng. Block 128MB, Rep 3.</div>
+            <div style="margin-top: 8px; font-family: monospace; font-size: 0.72rem; color: #0D766E;">HDFS CLI: /football_project/</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-top: 4px solid #D97706; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+            <div style="font-size: 0.72rem; font-weight: 700; color: #D97706; text-transform: uppercase;">TẦNG 2: XỬ LÝ MẺ PHÂN TÁN</div>
+            <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; margin: 4px 0;">Apache Spark 4.2</div>
+            <div style="font-size: 0.8rem; color: #64748B;">16 Cores song song. PySpark ETL làm sạch nén Parquet (-97.7%) & Spark SQL.</div>
+            <div style="margin-top: 8px; font-family: monospace; font-size: 0.72rem; color: #0D766E;">02_data_cleaning.py, 03_spark_analysis.py</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-top: 4px solid #16A34A; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+            <div style="font-size: 0.72rem; font-weight: 700; color: #16A34A; text-transform: uppercase;">TẦNG 3: XỬ LÝ LUỒNG TỐC ĐỘ</div>
+            <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; margin: 4px 0;">Apache Kafka 3.x</div>
+            <div style="font-size: 0.8rem; color: #64748B;">Topic football_transfers cổng 9092. Bắt sóng chuyển nhượng thời gian thực.</div>
+            <div style="margin-top: 8px; font-family: monospace; font-size: 0.72rem; color: #0D766E;">06_kafka_producer.py, 07_kafka_consumer.py</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-top: 4px solid #7C3AED; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+            <div style="font-size: 0.72rem; font-weight: 700; color: #7C3AED; text-transform: uppercase;">TẦNG 4: HỌC MÁY TRÊN BIG DATA</div>
+            <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; margin: 4px 0;">PySpark MLlib & Scikit</div>
+            <div style="font-size: 0.8rem; color: #64748B;">K-Means k=3 (Silhouette 0.6429). Random Forest R²=84.7% & Scouting Engine.</div>
+            <div style="margin-top: 8px; font-family: monospace; font-size: 0.72rem; color: #0D766E;">04_ml_kmeans.py, 05_ml_regression.py</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-top: 4px solid #0D766E; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+            <div style="font-size: 0.72rem; font-weight: 700; color: #0D766E; text-transform: uppercase;">TẦNG 5: ĐIỀU PHỐI & PHỤC VỤ</div>
+            <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; margin: 4px 0;">Airflow & SQLite Mart</div>
+            <div style="font-size: 0.8rem; color: #64748B;">DAG 7 tasks Docker 100% SUCCESS. CSDL SQLite phản hồi Web dưới 10ms.</div>
+            <div style="margin-top: 8px; font-family: monospace; font-size: 0.72rem; color: #0D766E;">transfermarkt_pipeline.py, load_to_database.py</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     # Bảng 5 Lớp Kiến trúc Big Data
-    st.markdown("#### 1. Ma trận 5 Lớp Công nghệ Big Data trong Đề tài")
+    st.markdown("#### 2. Ma trận Chi tiết 5 Lớp Công nghệ Big Data trong Đề tài")
     matrix_data = pd.DataFrame({
         "Tầng kiến trúc": [
             "Tầng 1: Thu thập & Lưu trữ phân tán",
@@ -640,7 +756,7 @@ if page == "Bản đồ ứng dụng Big Data":
     st.dataframe(matrix_data, use_container_width=True, hide_index=True)
 
     st.markdown("---")
-    st.markdown("#### 2. Dòng chảy dữ liệu End-to-End từ HDFS đến Giao diện Web")
+    st.markdown("#### 3. Dòng chảy dữ liệu End-to-End từ HDFS đến Giao diện Web")
     st.markdown("""
     ```
     [12 Tệp CSV Data Lake - 7,497,433 dòng (~872 MB)]

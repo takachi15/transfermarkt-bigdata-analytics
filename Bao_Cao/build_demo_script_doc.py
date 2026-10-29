@@ -290,14 +290,17 @@ def build_demo_document():
     add_p(doc, "Bảng tra cứu nhanh giúp nhóm phối hợp nhịp nhàng: người thuyết trình nói đến đâu, bạn ngồi máy tính bấm ngay Tab và URL đó:")
 
     timeline_data = [
-        ("Phần 1: Mở đầu\n(00:00 - 01:00 | 60s)", "Trang chủ / Header", "http://localhost:8501", "Đặng Duy Lợi"),
-        ("Phần 2: Kiến trúc & HDFS\n(01:00 - 02:30 | 90s)", "Bản đồ ứng dụng Big Data\nQuản trị dữ liệu HDFS Data Lake", "http://localhost:8501/?page=Bản+đồ+ứng+dụng+Big+Data\nhttp://localhost:8501/?page=Quản+trị+dữ+liệu+HDFS+Data+Lake", "Đặng Duy Lợi"),
-        ("Phần 3: Benchmark Spark vs Pandas\n(02:30 - 04:00 | 90s)", "Benchmark hiệu năng Spark vs Pandas", "http://localhost:8501/?page=Benchmark+hiệu+năng+Spark+vs+Pandas", "Đặng Duy Lợi"),
-        ("Phần 4: PySpark ETL & Spark SQL\n(04:00 - 05:30 | 90s)", "Tổng quan thị trường\nPhân tích Spark SQL", "http://localhost:8501/?page=Tổng+quan+thị+trường\nhttp://localhost:8501/?page=Phân+tích+Spark+SQL", "Chu Văn Quốc Trung"),
-        ("Phần 5: Machine Learning & Săn cầu thủ\n(05:30 - 07:30 | 120s)", "Phân cụm K-Means\nDự đoán định giá (ML)", "http://localhost:8501/?page=Phân+cụm+K-Means\nhttp://localhost:8501/?page=Dự+đoán+định+giá+(ML)", "Chu Văn Quốc Trung"),
-        ("Phần 6: Kafka Streaming & Airflow\n(07:30 - 08:30 | 60s)", "Dòng dữ liệu Kafka Streaming\nĐiều phối Airflow Workflow", "http://localhost:8501/?page=Dòng+dữ+liệu+Kafka+Streaming\nhttp://localhost:8501/?page=Điều+phối+Airflow+Workflow", "Nguyễn Thế Quang"),
-        ("Phần 7: CSDL Data Mart & Kết luận\n(08:30 - 09:30 | 60s)", "Truy vấn CSDL Data Mart", "http://localhost:8501/?page=Truy+vấn+CSDL+Data+Mart", "Nguyễn Thế Quang"),
-        ("Phần 8: Trả lời câu hỏi của Thầy\n(09:30 - 14:00 | 5 phút)", "Toàn bộ Dashboard & Terminal Logs", "Cổng 8501, 9870, 8080", "Cả 3 thành viên")
+        ("Bước 1: Tổng quan & Mở đầu\n(00:00 - 01:00 | 60s)", "1. Bản đồ Kiến trúc & Tổng quan", "http://localhost:8501", "Đặng Duy Lợi"),
+        ("Bước 2: Khám phá HDFS Data Lake\n(01:00 - 02:30 | 90s)", "2. Quản trị dữ liệu HDFS Data Lake", "http://localhost:8501/?page=Quản+trị+dữ+liệu+HDFS+Data+Lake", "Đặng Duy Lợi"),
+        ("Bước 3: Benchmark Spark vs Pandas\n(02:30 - 04:00 | 90s)", "3. Benchmark hiệu năng Spark vs Pandas", "http://localhost:8501/?page=Benchmark+hiệu+năng+Spark+vs+Pandas", "Đặng Duy Lợi"),
+        ("Bước 4: PySpark ETL & Lọc niên độ\n(04:00 - 05:00 | 60s)", "4. Tổng quan thị trường (PySpark ETL)", "http://localhost:8501/?page=Tổng+quan+thị+trường", "Chu Văn Quốc Trung"),
+        ("Bước 5: Phân tích Spark SQL\n(05:00 - 06:00 | 60s)", "5. Phân tích Spark SQL", "http://localhost:8501/?page=Phân+tích+Spark+SQL", "Chu Văn Quốc Trung"),
+        ("Bước 6: Phân cụm K-Means\n(06:00 - 06:45 | 45s)", "6. Phân cụm K-Means (MLlib)", "http://localhost:8501/?page=Phân+cụm+K-Means", "Chu Văn Quốc Trung"),
+        ("Bước 7: Định giá ML & Săn cầu thủ\n(06:45 - 07:45 | 60s)", "7. Dự đoán định giá (ML & XAI)", "http://localhost:8501/?page=Dự+đoán+định+giá+(ML)", "Chu Văn Quốc Trung"),
+        ("Bước 8: Dòng dữ liệu Kafka Streaming\n(07:45 - 08:30 | 45s)", "8. Dòng dữ liệu Kafka Streaming", "http://localhost:8501/?page=Dòng+dữ+liệu+Kafka+Streaming", "Nguyễn Thế Quang"),
+        ("Bước 9: Điều phối Airflow Workflow\n(08:30 - 09:15 | 45s)", "9. Điều phối Airflow Workflow", "http://localhost:8501/?page=Điều+phối+Airflow+Workflow", "Nguyễn Thế Quang"),
+        ("Bước 10: CSDL Data Mart & Tổng kết\n(09:15 - 10:00 | 45s)", "10. Truy vấn CSDL Data Mart", "http://localhost:8501/?page=Truy+vấn+CSDL+Data+Mart", "Nguyễn Thế Quang"),
+        ("Vấn đáp: Trả lời câu hỏi của Thầy\n(10:00 - 15:00 | 5 phút)", "Toàn bộ Dashboard & Terminal Logs", "Sẵn sàng các cổng 8501, 9870, 8080", "Cả 3 thành viên")
     ]
     add_table_data(doc, ["Phân đoạn & Thời gian", "Bấm Tab trên Sidebar", "Địa chỉ URL tương ứng", "Thành viên nói"], timeline_data, [1.7, 1.8, 1.9, 1.1])
 
@@ -308,7 +311,7 @@ def build_demo_document():
 
     # ── PHẦN 1 ───────────────────────────────────────────────────────────
     add_heading_2(doc, "Phần 1: Mở đầu & Khởi chạy hệ thống 1-Click (1 phút | Đặng Duy Lợi)")
-    add_url_box(doc, "Trang chủ Web Dashboard", "http://localhost:8501")
+    add_url_box(doc, "1. Bản đồ Kiến trúc & Tổng quan", "http://localhost:8501")
 
     add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
         "1. Mở trình duyệt Chrome/Edge đang chạy URL: http://localhost:8501.",
@@ -324,13 +327,13 @@ def build_demo_document():
 
     # ── PHẦN 2 ───────────────────────────────────────────────────────────
     add_heading_2(doc, "Phần 2: Kiến trúc Lambda 5 lớp & Kho dữ liệu HDFS (1.5 phút | Đặng Duy Lợi)")
-    add_url_box(doc, "Bản đồ ứng dụng Big Data & Quản trị dữ liệu HDFS Data Lake",
+    add_url_box(doc, "1. Bản đồ Kiến trúc & Tổng quan (Sơ đồ) + 2. Quản trị dữ liệu HDFS Data Lake",
                 "http://localhost:8501/?page=Bản+đồ+ứng+dụng+Big+Data",
                 secondary_url="http://localhost:8501/?page=Quản+trị+dữ+liệu+HDFS+Data+Lake (HDFS Web UI: http://localhost:9870)")
 
     add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
-        "1. Trên Sidebar bên trái, bấm chọn menu: 'Bản đồ ứng dụng Big Data' -> Chỉ vào sơ đồ 5 lớp công nghệ.",
-        "2. Tiếp tục bấm chọn menu: 'Quản trị dữ liệu HDFS Data Lake'.",
+        "1. Trên Sidebar bên trái, bấm chọn menu: '1. Bản đồ Kiến trúc & Tổng quan' -> Chỉ vào 4 thẻ số liệu và sơ đồ 5 lớp công nghệ.",
+        "2. Tiếp tục bấm chọn menu: '2. Quản trị dữ liệu HDFS Data Lake'.",
         "3. Tại ô chọn bảng, lần lượt bấm chọn 'game_lineups.csv' và 'players.csv' để xem số dòng và bảng dữ liệu mẫu."
     ], box_type="action")
 
@@ -347,10 +350,10 @@ def build_demo_document():
 
     # ── PHẦN 3 ───────────────────────────────────────────────────────────
     add_heading_2(doc, "Phần 3: Benchmark Spark 4.2 vs Pandas - Trả lời: Sao phải dùng Big Data? (1.5 phút | Đặng Duy Lợi)")
-    add_url_box(doc, "Benchmark hiệu năng Spark vs Pandas", "http://localhost:8501/?page=Benchmark+hiệu+năng+Spark+vs+Pandas")
+    add_url_box(doc, "3. Benchmark hiệu năng Spark vs Pandas", "http://localhost:8501/?page=Benchmark+hiệu+năng+Spark+vs+Pandas")
 
     add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
-        "1. Bấm chọn menu: 'Benchmark hiệu năng Spark vs Pandas'.",
+        "1. Bấm chọn menu: '3. Benchmark hiệu năng Spark vs Pandas'.",
         "2. Bấm chuột vào nút màu đỏ: 'Chạy kiểm tra tốc độ đọc 200,000 bản ghi'.",
         "3. Đợi 1 giây thanh tiến trình chạy xong, chỉ tay vào biểu đồ cột so sánh thời gian."
     ], box_type="action")
@@ -369,13 +372,13 @@ def build_demo_document():
 
     # ── PHẦN 4 ───────────────────────────────────────────────────────────
     add_heading_2(doc, "Phần 4: PySpark ETL, Bộ lọc Niên độ & Spark SQL (1.5 phút | Chu Văn Quốc Trung)")
-    add_url_box(doc, "Tổng quan thị trường & Phân tích Spark SQL",
+    add_url_box(doc, "4. Tổng quan thị trường (PySpark ETL) & 5. Phân tích Spark SQL",
                 "http://localhost:8501/?page=Tổng+quan+thị+trường",
                 secondary_url="http://localhost:8501/?page=Phân+tích+Spark+SQL")
 
     add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
-        "1. Bấm menu: 'Tổng quan thị trường' -> Tích vào ô 'Chỉ lấy niên độ gần nhất (2023 - Nay)', chỉ vào thẻ thống kê: 22,751 cầu thủ đang đá với tổng định giá 16.5 tỷ Euro.",
-        "2. Bấm menu: 'Phân tích Spark SQL' -> Bấm chuyển giữa 4 tab: Top 15 siêu sao, Vị trí thi đấu, Quốc gia, Độ tuổi. Bấm thử nút 'Trang tiếp ▶' trên bảng phân trang."
+        "1. Bấm menu: '4. Tổng quan thị trường (PySpark ETL)' -> Tích vào ô 'Chỉ lấy niên độ gần nhất (2023 - Nay)', chỉ vào thẻ thống kê: 22,751 cầu thủ đang đá với tổng định giá 16.5 tỷ Euro.",
+        "2. Bấm menu: '5. Phân tích Spark SQL' -> Bấm chuyển giữa 4 tab: Top 15 siêu sao, Vị trí thi đấu, Quốc gia, Độ tuổi. Bấm thử nút 'Trang tiếp ▶' trên bảng phân trang."
     ], box_type="action")
 
     add_callout_box(doc, "LỜI THOẠI MẪU (NÓI CÁI HIỂU LIỀN)", [
@@ -393,13 +396,13 @@ def build_demo_document():
 
     # ── PHẦN 5 ───────────────────────────────────────────────────────────
     add_heading_2(doc, "Phần 5: Machine Learning - K-Means & Săn cầu thủ giá hời (2 phút | Chu Văn Quốc Trung)")
-    add_url_box(doc, "Phân cụm K-Means & Dự đoán định giá (ML)",
+    add_url_box(doc, "6. Phân cụm K-Means & 7. Dự đoán định giá (ML & XAI)",
                 "http://localhost:8501/?page=Phân+cụm+K-Means",
                 secondary_url="http://localhost:8501/?page=Dự+đoán+định+giá+(ML)")
 
     add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
-        "1. Bấm menu: 'Phân cụm K-Means' -> Chỉ vào biểu đồ 3 cụm màu sắc và điểm Silhouette Score k=3 đạt 0.6429.",
-        "2. Bấm menu: 'Dự đoán định giá (ML)':",
+        "1. Bấm menu: '6. Phân cụm K-Means (MLlib)' -> Chỉ vào biểu đồ 3 cụm màu sắc và điểm Silhouette Score k=3 đạt 0.6429.",
+        "2. Bấm menu: '7. Dự đoán định giá (ML & XAI)':",
         "   - Tại ô chọn cầu thủ: Gõ tên 'Erling Haaland' (hoặc chọn 'Lamine Yamal') -> Xem AI dự đoán giá và 5 bước giải thích XAI.",
         "   - Cuộn xuống tính năng 'Săn cầu thủ theo Ngân sách (Scouting Engine)': Kéo thanh ngân sách về 35 triệu EUR, chọn Vị trí 'Attack', tích ô 'Chỉ tìm cầu thủ Kèo hời' -> Xem danh sách cầu thủ hiện ra."
     ], box_type="action")
@@ -419,13 +422,13 @@ def build_demo_document():
 
     # ── PHẦN 6 ───────────────────────────────────────────────────────────
     add_heading_2(doc, "Phần 6: Kafka Streaming & Điều phối Airflow DAG (1 phút | Nguyễn Thế Quang)")
-    add_url_box(doc, "Dòng dữ liệu Kafka Streaming & Điều phối Airflow Workflow",
+    add_url_box(doc, "8. Dòng dữ liệu Kafka Streaming & 9. Điều phối Airflow Workflow",
                 "http://localhost:8501/?page=Dòng+dữ+liệu+Kafka+Streaming",
                 secondary_url="http://localhost:8501/?page=Điều+phối+Airflow+Workflow (Airflow UI: http://localhost:8080)")
 
     add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
-        "1. Bấm menu: 'Dòng dữ liệu Kafka Streaming' -> Xem các dòng tin JSON giao dịch phát trực tiếp thời gian thực (15 thương vụ, tổng 707 triệu Euro).",
-        "2. Bấm menu: 'Điều phối Airflow Workflow' -> Chỉ vào sơ đồ 7 task tuần tự và trạng thái 100% SUCCESS màu xanh lá."
+        "1. Bấm menu: '8. Dòng dữ liệu Kafka Streaming' -> Xem các dòng tin JSON giao dịch phát trực tiếp thời gian thực (15 thương vụ, tổng 707 triệu Euro).",
+        "2. Bấm menu: '9. Điều phối Airflow Workflow' -> Chỉ vào sơ đồ 7 task tuần tự và trạng thái 100% SUCCESS màu xanh lá."
     ], box_type="action")
 
     add_callout_box(doc, "LỜI THOẠI MẪU (NÓI CÁI HIỂU LIỀN)", [
@@ -441,10 +444,10 @@ def build_demo_document():
 
     # ── PHẦN 7 ───────────────────────────────────────────────────────────
     add_heading_2(doc, "Phần 7: CSDL Data Mart & Kết luận (1 phút | Nguyễn Thế Quang)")
-    add_url_box(doc, "Truy vấn CSDL Data Mart", "http://localhost:8501/?page=Truy+vấn+CSDL+Data+Mart")
+    add_url_box(doc, "10. Truy vấn CSDL Data Mart", "http://localhost:8501/?page=Truy+vấn+CSDL+Data+Mart")
 
     add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
-        "1. Bấm menu: 'Truy vấn CSDL Data Mart'.",
+        "1. Bấm menu: '10. Truy vấn CSDL Data Mart'.",
         "2. Tại ô chọn truy vấn mẫu, chọn: 'Top 10 cầu thủ có giá trị cao nhất' -> Bấm nút 'Thực thi truy vấn SQL' -> Kết quả hiện ra ngay lập tức."
     ], box_type="action")
 
