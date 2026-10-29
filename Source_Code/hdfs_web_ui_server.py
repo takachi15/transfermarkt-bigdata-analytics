@@ -558,6 +558,76 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                     </div>
                 </div>
 
+                <!-- VAI TRÒ CỦA NAMENODE & DATANODE (GIẢI THÍCH CHO GIẢNG VIÊN HIỂU LIỀN) -->
+                <div class="card card-stat p-4 mb-4 border-primary shadow-sm" style="background: #F0F9FF; border-left: 6px solid #0284C7 !important;">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <i class="fa-solid fa-graduation-cap text-primary fs-3"></i>
+                        <div>
+                            <h5 class="fw-bold text-primary mb-0">VAI TRÒ CỦA NAMENODE & DATANODE TRONG HỆ THỐNG BIG DATA</h5>
+                            <span class="small text-secondary">Giải thích bản chất kỹ thuật, hình tượng đời thực & 3 bài toán sống còn được giải quyết (Báo cáo ThS. Huỳnh Thái Học)</span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- CỘT 1: NAMENODE -->
+                        <div class="col-md-4">
+                            <div class="p-3 bg-white border border-primary rounded h-100 shadow-sm">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <span class="badge bg-primary fs-6">🧠 NAMENODE</span>
+                                    <span class="badge bg-light text-dark border">Master (Port 9820/9870)</span>
+                                </div>
+                                <div class="p-2 mb-2 bg-light rounded small text-dark fst-italic border-start border-primary border-3">
+                                    <b>Hình tượng đời thực:</b> Là <b>"Thủ thư thư viện"</b> — Không vác sách, chỉ ngồi bàn giấy giữ cuốn sổ mục lục (Metadata) trong RAM để điều phối toàn cụm.
+                                </div>
+                                <h6 class="fw-bold text-primary small text-uppercase mb-2">3 Trách nhiệm Kỹ thuật Cốt lõi:</h6>
+                                <ul class="small text-secondary ps-3 mb-0">
+                                    <li><b>1. Quản lý Namespace:</b> Lưu giữ toàn bộ cây thư mục <code>/football_project/</code>, quyền hạn, kích thước 12 file CSV trong bộ nhớ RAM.</li>
+                                    <li><b>2. Ánh xạ Khối (Block Mapping):</b> Quản lý bảng ánh xạ xem 18 blocks (blk_*) đang nằm ở DataNode nào trong cụm.</li>
+                                    <li><b>3. Giám sát nhịp tim (Heartbeat 3.0s):</b> Lắng nghe tín hiệu sống còn từ 3 DataNodes; nếu 1 node sập, tự động ra lệnh sao chép lại (Re-replication).</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- CỘT 2: DATANODE -->
+                        <div class="col-md-4">
+                            <div class="p-3 bg-white border border-success rounded h-100 shadow-sm">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <span class="badge bg-success fs-6">🏢 DATANODE</span>
+                                    <span class="badge bg-light text-dark border">Workers (Port 9864-9866)</span>
+                                </div>
+                                <div class="p-2 mb-2 bg-light rounded small text-dark fst-italic border-start border-success border-3">
+                                    <b>Hình tượng đời thực:</b> Là <b>"Các kệ sách / Công nhân kho"</b> — Chứa trực tiếp các thùng hàng (khối nhị phân 128 MB) trên đĩa cứng vật lý.
+                                </div>
+                                <h6 class="fw-bold text-success small text-uppercase mb-2">3 Trách nhiệm Kỹ thuật Cốt lõi:</h6>
+                                <ul class="small text-secondary ps-3 mb-0">
+                                    <li><b>1. Lưu trữ Khối vật lý:</b> Trực tiếp lưu trữ 18 blocks nhị phân 128MB (blk_*) kèm tệp mã băm toàn vẹn dữ liệu <code>.meta</code>.</li>
+                                    <li><b>2. Cấp phát I/O trực tiếp cho Spark:</b> Khi Spark đọc dữ liệu, Spark đọc thẳng từ DataNode (Data Locality) mà không đi qua NameNode để tránh nghẽn.</li>
+                                    <li><b>3. Gửi Heartbeat định kỳ:</b> Cứ 3 giây gửi báo cáo dung lượng và danh sách block còn sống về NameNode.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- CỘT 3: 3 BÀI TOÁN GIẢI QUYẾT -->
+                        <div class="col-md-4">
+                            <div class="p-3 bg-white border border-danger rounded h-100 shadow-sm">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <span class="badge bg-danger fs-6">🛡️ VẤN ĐỀ GIẢI QUYẾT</span>
+                                    <span class="badge bg-light text-dark border">Thực tế Đề tài</span>
+                                </div>
+                                <div class="p-2 mb-2 bg-light rounded small text-dark fst-italic border-start border-danger border-3">
+                                    <b>Áp dụng vào Đề tài:</b> Quản lý 12 tệp CSV (872.5 MB, 7.5M dòng) chia 18 blocks, nhân bản 3 lần sang 3 DataNode (tổng 2.58 GB).
+                                </div>
+                                <h6 class="fw-bold text-danger small text-uppercase mb-2">3 Bài toán Sống còn được Giải quyết:</h6>
+                                <ul class="small text-secondary ps-3 mb-0">
+                                    <li><b>1. Chống mất dữ liệu (Fault Tolerance):</b> Nếu 1 hoặc 2 DataNode bị cháy ổ cứng, dữ liệu giải đấu vẫn an toàn 100% trên node còn lại.</li>
+                                    <li><b>2. Xóa nghẽn cổ chai I/O ổ đĩa:</b> Cả 3 DataNode cùng phát dữ liệu đồng thời cho 16 Cores CPU của Spark đọc song song.</li>
+                                    <li><b>3. Mở rộng ngang (Horizontal Scalability):</b> Khi dữ liệu tăng lên hàng chục GB, chỉ cần cắm thêm DataNode mới vào cụm mà không cần mua máy đắt tiền.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- CẤU TRÚC BLOCK VẬT LÝ TRÊN ĐĨA -->
                 <div class="card card-stat p-3 mb-3 bg-light">
                     <h6 class="fw-bold mb-2"><i class="fa-solid fa-microchip text-primary me-2"></i>Bản chất Kỹ thuật: Cơ chế lưu trữ bên trong đĩa cứng của mỗi DataNode</h6>
