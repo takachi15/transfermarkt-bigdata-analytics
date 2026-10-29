@@ -69,6 +69,7 @@ INCLUDE_ITEMS = [
     ("README.md", "README.md"),
     ("requirements.txt", "requirements.txt"),
     ("CHAY_WEB.bat", "CHAY_WEB.bat"),
+    ("CHAY_DATANODE.bat", "CHAY_DATANODE.bat"),
     ("CHAY_PIPELINE.bat", "CHAY_PIPELINE.bat"),
 
     # Output dataset cốt lõi

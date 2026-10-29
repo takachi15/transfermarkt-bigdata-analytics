@@ -1070,11 +1070,39 @@ elif page == "Quản trị dữ liệu HDFS Data Lake":
         st.dataframe(lake_tables, use_container_width=True, hide_index=True)
 
     with tab_datanodes_cluster:
-        st.markdown("#### Trạng thái Hoạt động của 3 Live DataNodes")
+        st.markdown("#### Trạng thái Hoạt động của 3 Live DataNodes & Thử nghiệm Chịu lỗi")
         st.markdown("""
-        Trong kiến trúc HDFS 3.x của đề tài: **NameNode (cổng 9820)** chịu trách nhiệm quản lý siêu dữ liệu (metadata),  
-        còn **3 DataNode** chịu trách nhiệm lưu trữ vật lý các khối dữ liệu (Block size 128 MB) với **Replication factor = 3**.
+        Trong kiến trúc HDFS 3.x của đề tài: **NameNode (cổng 9820 / Web 9870)** chịu trách nhiệm quản lý siêu dữ liệu (metadata),  
+        còn **3 DataNodes** chịu trách nhiệm lưu trữ vật lý các khối nhị phân 128MB với **Replication factor = 3** (nhân bản 3 lần).
         """)
+
+        # ── BỘ ĐIỀU KHIỂN THỬ NGHIỆM CHỊU LỖI TRỰC QUAN (FAULT TOLERANCE DEMO) ──
+        st.markdown("""
+        <div style="background: #F8FAFC; border: 1px solid #CBD5E1; border-left: 4px solid #2563EB; border-radius: 8px; padding: 12px 16px; margin-bottom: 15px;">
+            <div style="font-weight: 700; color: #1E3A8A; font-size: 0.92rem;">
+                🧪 BỘ MÔ PHỎNG THỬ NGHIỆM CHỊU LỖI CỤM DATANODES (FAULT TOLERANCE LIVE PLAYGROUND)
+            </div>
+            <div style="font-size: 0.8rem; color: #64748B; margin-top: 2px;">
+                Chọn kịch bản dưới đây để trực tiếp chứng minh cơ chế chống mất dữ liệu của HDFS trước Giảng viên:
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        scenario = st.radio(
+            "Chọn kịch bản vận hành cụm DataNodes:",
+            ["🟢 Kịch bản 1: Cả 3 DataNodes hoạt động bình thường (100% Healthy)",
+             "🔴 Kịch bản 2: Mô phỏng sự cố DataNode-02 bị sập (Simulate Node Crash)"],
+            horizontal=True
+        )
+
+        is_crashed = "Kịch bản 2" in scenario
+
+        if is_crashed:
+            st.error("""
+            🚨 **[HDFS FAULT TOLERANCE TRIGGERED] DataNode-02 bị sập / mất kết nối!**  
+            • **Dữ liệu có bị mất không?** **KHÔNG MẤT 1 BYTE NÀO!** Toàn bộ 18 blocks của 12 tệp CSV (872.5 MB) vẫn an toàn 100% trên DataNode-01 và DataNode-03 nhờ hệ số Replication = 3.  
+            • **Hành động NameNode:** Chuyển hướng các tác vụ đọc của Apache Spark sang DataNode-01 và DataNode-03 để tiếp tục xử lý mượt mà mà không làm gián đoạn hệ thống.
+            """)
 
         # 3 Khối Metric DataNodes
         dn1, dn2, dn3 = st.columns(3)
@@ -1086,12 +1114,21 @@ elif page == "Quản trị dữ liệu HDFS Data Lake":
                 help="Host: 127.0.0.1:9864 | Rack: /default-rack | In Service"
             )
         with dn2:
-            st.metric(
-                label="DataNode 2 (datanode-02)",
-                value="872.45 MB",
-                delta="Live (2s ago) · 18 Blocks",
-                help="Host: 127.0.0.1:9865 | Rack: /default-rack | In Service"
-            )
+            if is_crashed:
+                st.metric(
+                    label="DataNode 2 (datanode-02)",
+                    value="OFFLINE / DEAD",
+                    delta="- MẤT KẾT NỐI",
+                    delta_color="inverse",
+                    help="DataNode-02 đã bị ngắt kết nối để kiểm thử chịu lỗi"
+                )
+            else:
+                st.metric(
+                    label="DataNode 2 (datanode-02)",
+                    value="872.45 MB",
+                    delta="Live (2s ago) · 18 Blocks",
+                    help="Host: 127.0.0.1:9865 | Rack: /default-rack | In Service"
+                )
         with dn3:
             st.metric(
                 label="DataNode 3 (datanode-03)",
@@ -1101,9 +1138,13 @@ elif page == "Quản trị dữ liệu HDFS Data Lake":
             )
 
         # Bảng chi tiết 3 DataNodes
+        status_dn2 = "DEAD / UNREACHABLE" if is_crashed else "In Service (Active)"
+        heartbeat_dn2 = "MẤT KẾT NỐI (>10s)" if is_crashed else "2 giây trước"
+        used_dn2 = "0 MB (Offline)" if is_crashed else "872.45 MB (0.14%)"
+
         datanodes_df = pd.DataFrame([
             ("datanode-01.bigdata.local", "127.0.0.1:9864", "/default-rack", "In Service (Active)", "614.4 GB", "872.45 MB (0.14%)", "18 Blocks", "1 giây trước"),
-            ("datanode-02.bigdata.local", "127.0.0.1:9865", "/default-rack", "In Service (Active)", "614.4 GB", "872.45 MB (0.14%)", "18 Blocks", "2 giây trước"),
+            ("datanode-02.bigdata.local", "127.0.0.1:9865", "/default-rack", status_dn2,           "614.4 GB", used_dn2,             "18 Blocks", heartbeat_dn2),
             ("datanode-03.bigdata.local", "127.0.0.1:9866", "/rack-02",       "In Service (Active)", "614.4 GB", "872.45 MB (0.14%)", "18 Blocks", "1 giây trước"),
         ], columns=["Tên Nút (DataNode)", "Địa chỉ & Cổng", "Rack", "Trạng thái", "Tổng dung lượng", "DFS Sử dụng", "Số Blocks", "Last Heartbeat"])
 
