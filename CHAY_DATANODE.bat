@@ -14,9 +14,9 @@ echo [2/3] Dang khoi dong cum 3 Live DataNodes:
 echo       - DataNode-01: 127.0.0.1:9864 (IPC 9866) -^> /default-rack [18 Blocks]
 echo       - DataNode-02: 127.0.0.1:9865 (IPC 9867) -^> /default-rack [18 Blocks]
 echo       - DataNode-03: 127.0.0.1:9866 (IPC 9869) -^> /rack-02      [18 Blocks]
-echo [3/3] Dang tu dong mo trinh duyet HDFS Web UI: http://localhost:9870/#tab-datanode
+echo [3/3] Dang tu dong mo trinh duyet: http://localhost:9870
 echo.
-start http://localhost:9870/#tab-datanode
+start http://localhost:9870
 echo =========================================================================
 echo    CUM DANG HOAT DONG VA GUI NHIP TIM (HEARTBEATS) LIEN TUC
 echo    (De dung cum: Nhan Ctrl+C tren cua so nay)
