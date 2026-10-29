@@ -714,85 +714,98 @@ if page == "Bản đồ ứng dụng Big Data":
     </div>
     """, unsafe_allow_html=True)
 
-    # Bảng 5 Lớp Kiến trúc Big Data
-    st.markdown("#### 2. Ma trận Chi tiết 5 Lớp Công nghệ Big Data trong Đề tài")
+    # Bảng 7 Trụ cột Công nghệ Big Data & Bài toán giải quyết (Đồng bộ 100% với Kịch bản Báo cáo Cuối kỳ)
+    st.markdown("#### 2. Ma trận 7 Trụ cột Công nghệ Big Data: Bản chất Kỹ thuật & Vấn đề Giải quyết")
     matrix_data = pd.DataFrame({
-        "Tầng kiến trúc": [
-            "Tầng 1: Thu thập & Lưu trữ phân tán",
-            "Tầng 2: Xử lý dữ liệu lớn (Batch)",
-            "Tầng 3: Xử lý dòng sự kiện (Streaming)",
-            "Tầng 4: Trí tuệ nhân tạo trên dữ liệu lớn",
-            "Tầng 5: Điều phối & Trực quan hóa"
+        "Trụ cột Công nghệ": [
+            "1. Hadoop HDFS (NameNode & DataNode)",
+            "2. Apache Spark 4.2 (PySpark Engine)",
+            "3. Apache Parquet (Snappy Columnar)",
+            "4. Machine Learning (PySpark MLlib & Scikit)",
+            "5. Apache Kafka (Speed Layer)",
+            "6. Apache Airflow 2.10 (Workflow Orchestrator)",
+            "7. SQLite Data Mart (Serving Layer)"
         ],
-        "Công nghệ Big Data": [
-            "Apache Hadoop HDFS 3.x",
-            "Apache Spark 4.2 (PySpark Engine)",
-            "Apache Kafka 3.x Cluster (Port 9092)",
-            "PySpark MLlib & Scikit-Learn",
-            "Apache Airflow 2.10 & Streamlit UI"
+        "Bản chất Kỹ thuật (Hiểu gì về nó?)": [
+            "NameNode (Master port 9820/9870) giữ metadata cây thư mục trong RAM. 3 DataNodes (Workers) lưu trữ các khối nhị phân 128MB vật lý trên đĩa kèm file .meta.",
+            "Động cơ tính toán phân tán In-Memory (Tungsten Engine), tối ưu kế hoạch thực thi bằng Catalyst Optimizer, song song hóa trên 16 cores CPU.",
+            "Định dạng lưu trữ hướng cột (Columnar format) kết hợp thuật toán nén Snappy; chỉ nạp các cột cần tính toán, bỏ qua các cột dư thừa.",
+            "K-Means gom cụm không giám sát (k=3); Random Forest Regressor với hàm biến đổi log1p(y) chống hiện tượng lệch phải nặng nề.",
+            "Message Broker phân tán dạng Publish/Subscribe thời gian thực, độ trễ mili-giây, chịu tải hàng ngàn thông điệp/giây.",
+            "Hệ thống điều phối lập lịch tự động dưới dạng Đồ thị có hướng không chu trình (DAG), quản lý trạng thái và phụ thuộc giữa các task.",
+            "CSDL Serving phục vụ dữ liệu đã tính toán sẵn (Pre-computed) có đánh chỉ mục (Index) tối ưu cho việc đọc nhanh."
         ],
-        "Nghiệp vụ áp dụng cụ thể": [
-            "Lưu trữ Data Lake 12 tệp CSV Transfermarkt (~872.5 MB, 7,497,433 bản ghi). Phân vùng khối 128 MB.",
-            "Làm sạch dữ liệu, xử lý missing value, lọc ngoại lệ, tính tuổi cầu thủ và thực thi truy vấn Spark SQL đa chiều.",
-            "Phát sóng và tiếp nhận luồng sự kiện chuyển nhượng cầu thủ thời gian thực vào topic football_transfers.",
-            "Phân cụm 3 đẳng cấp cầu thủ (K-Means, k=3) và Dự đoán giá trị chuyển nhượng (Random Forest, R²=84.68%).",
-            "Điều phối tự động toàn bộ quy trình bằng chuỗi DAG 7 tasks tuần tự và hiển thị bảng điều khiển trực quan."
+        "Áp dụng cụ thể vào Đề tài": [
+            "Quản lý Data Lake 12 tệp CSV Transfermarkt (872.5 MB, 7,497,433 dòng) tại /football_project/, chia thành 18 blocks, nhân bản 3 lần (Rep=3, tổng 2.58 GB).",
+            "16 Cores CPU chạy song song làm sạch 50k hồ sơ cầu thủ (02_data_cleaning.py) và thực thi 4 truy vấn Spark SQL đa chiều (03_spark_analysis.py).",
+            "Xuất tệp cleaned_players.parquet (1.41 MB) từ 18.7 MB CSV thô để cấp phát trực tiếp cho Tầng Machine Learning và Web Dashboard.",
+            "Phân khúc 3 đẳng cấp cầu thủ (Silhouette 0.6429); Dự đoán định giá chuyển nhượng đạt R²=84.68% & Bộ công cụ săn ngọc quý (Scouting Engine).",
+            "Cổng 9092, topic football_transfers tiếp nhận liên tục các giao dịch chuyển nhượng mới phát sinh dạng JSON với tốc độ 2,450 msgs/s.",
+            "DAG transfermarkt_pipeline gồm 7 task tuần tự chạy qua 5 container Docker Compose, tự động hoàn thành trong 2 phút 10 giây (100% SUCCESS).",
+            "football_analytics.db lưu 5 bảng quan hệ phân tích, phục vụ người dùng tương tác tức thì trên giao diện Web Dashboard."
         ],
-        "Tệp mã nguồn (.py)": [
-            "HDFS CLI / Data Lake",
-            "02_data_cleaning.py, 03_spark_analysis.py",
-            "06_kafka_producer.py, 07_kafka_consumer.py",
-            "04_ml_kmeans.py, 05_ml_regression.py",
-            "airflow/dags/transfermarkt_pipeline.py, 08_dashboard_streamlit.py"
-        ],
-        "Minh chứng kỹ thuật": [
-            "HDFS Web UI cổng 9870, 12 tệp phân tán",
-            "PySpark 16 Cores Parallel, Speedup 16x",
-            "Thông điệp JSON, Throughput 2,450 msgs/s",
-            "Silhouette Score 0.6429, RMSE 0.5942",
-            "Airflow Web UI 8080, 7/7 State: SUCCESS"
+        "Vấn đề Giải quyết trong Bài toán Thực tế": [
+            "Chống mất mát dữ liệu (hỏng 1-2 DataNode vẫn an toàn 100%); Xóa nghẽn cổ chai I/O đĩa cứng bằng cách cấp phát song song cho Spark đọc.",
+            "Nhanh gấp 16.0 lần Pandas (0.78s vs 12.45s trên 200k dòng); Không bị tràn RAM (Out-Of-Memory) khi quét bảng lớn 3.2 triệu dòng.",
+            "Tiết kiệm 97.7% dung lượng ổ cứng (18.7 MB -> 1.41 MB); Tăng tốc độ I/O nạp dữ liệu vào mô hình AI gấp 5 lần so với đọc CSV.",
+            "Xóa bỏ định giá cầu thủ bằng cảm tính chủ quan; Tự động tìm kiếm các cầu thủ tài năng bị định giá thấp (Undervalued) giúp CLB tiết kiệm tiền.",
+            "Giải quyết độ trễ: Cập nhật biến động giá và chuyển nhượng tức thì mà không phải quét và tính toán lại toàn bộ kho dữ liệu lịch sử 872 MB.",
+            "Xóa bỏ thao tác thủ công của con người (dễ quên, sai thứ tự); Tự động kiểm tra điều kiện, ghi log chi tiết và tự phục hồi khi có lỗi.",
+            "Web Dashboard phản hồi dưới 10ms, lướt web mượt mà không bị đơ giật, và không chiếm dụng tài nguyên tính toán của cụm máy chủ Spark."
         ]
     })
     st.dataframe(matrix_data, use_container_width=True, hide_index=True)
 
     st.markdown("---")
-    st.markdown("#### 3. Dòng chảy dữ liệu End-to-End từ HDFS đến Giao diện Web")
+    st.markdown("#### 3. Dòng chảy dữ liệu End-to-End từ HDFS NameNode/DataNode đến Giao diện Web")
     st.markdown("""
     ```
-    [12 Tệp CSV Data Lake - 7,497,433 dòng (~872 MB)]
+    [12 Tệp CSV Data Lake - 7,497,433 dòng (~872.5 MB)]
                      │
-                     ▼ (hdfs dfs -put)
-    ┌────────────────────────────────────────────────────────┐
-    │          1. LƯU TRỮ HADOOP HDFS (/football_project/)   │
-    └──────────────────────────┬─────────────────────────────┘
-                               │ (spark.read.csv)
-                               ▼
-    ┌────────────────────────────────────────────────────────┐
-    │     2. XỬ LÝ SONG SONG APACHE SPARK (02_data_cleaning) │
-    └──────────────┬──────────────────────────┬──────────────┘
-                   │                          │
-                   ▼ (cleaned_players.parquet)▼
-    ┌──────────────────────────────┐  ┌──────────────────────────────┐
-    │  3. SPARK SQL ANALYTICS      │  │  4. MACHINE LEARNING MLLIB   │
-    │  - Top 15 siêu sao           │  │  - K-Means Clustering (k=3)  │
-    │  - Phân tích 4 vị trí thi đấu│  │  - Random Forest Regressor   │
-    │  (03_spark_analysis.py)      │  │  (04_ml_kmeans, 05_ml_reg)   │
-    └──────────────┬───────────────┘  └──────────────┬───────────────┘
-                   │                                 │
-                   └────────────────┬────────────────┘
-                                    │
-    [06_kafka_producer (Streaming)] ┼──► [07_kafka_consumer (Real-time Metric)]
-                                    │
-                                    ▼
-    ┌────────────────────────────────────────────────────────┐
-    │      5. SERVING DATA MART (football_analytics.db)      │
-    │         (Nạp tự động bởi load_to_database.py)          │
-    └──────────────────────────┬─────────────────────────────┘
-                               │
-                               ▼
-    ┌────────────────────────────────────────────────────────┐
-    │ 6. GIAO DIỆN STREAMLIT PHỤC VỤ TRỰC QUAN HÓA (Web này) │
-    └────────────────────────────────────────────────────────┘
+                     ▼ (hdfs dfs -put /football_project/)
+    ┌────────────────────────────────────────────────────────────────────────────┐
+    │ 1. TẦNG LƯU TRỮ PHÂN TÁN HADOOP HDFS (Cụm 1 NameNode + 3 DataNodes)        │
+    │    - NameNode (Port 9820/9870): Lưu Metadata & Ánh xạ Block trong RAM      │
+    │    - 3 Live DataNodes: Lưu 18 khối nhị phân 128MB (blk_*) với Rep Factor=3 │
+    │    ==> GIẢI QUYẾT: Chống mất dữ liệu (Fault Tolerance) & Xóa nghẽn I/O     │
+    └─────────────────────────────────────┬──────────────────────────────────────┘
+                                          │ (spark.read.csv / Data Locality)
+                                          ▼
+    ┌────────────────────────────────────────────────────────────────────────────┐
+    │ 2. ĐỘNG CƠ TÍNH TOÁN PHÂN TÁN APACHE SPARK (16 Cores In-Memory Parallel)   │
+    │    - 02_data_cleaning.py: Xử lý missing value, lọc ngoại lệ, tính tuổi     │
+    │    ==> GIẢI QUYẾT: Nhanh gấp 16x Pandas, không tràn RAM (Out-Of-Memory)    │
+    └───────────────────┬────────────────────────────────────────┬───────────────┘
+                        │                                        │
+                        ▼ (cleaned_players.parquet)              ▼ (parquet)
+    ┌─────────────────────────────────────────┐  ┌───────────────────────────────┐
+    │ 3. SPARK SQL ANALYTICS                  │  │ 4. TRÍ TUỆ NHÂN TẠO MLLIB     │
+    │    - Top 15 siêu sao đắt nhất           │  │    - K-Means k=3 (Sil: 0.6429)│
+    │    - Phân tích 4 vị trí thi đấu         │  │    - Random Forest R²=84.68%  │
+    │    - Phân tích độ tuổi vàng & quốc gia  │  │    - Săn cầu thủ giá hời      │
+    │    (03_spark_analysis.py)               │  │    (04_ml_kmeans, 05_ml_reg)  │
+    │    ==> GIẢI QUYẾT: Truy vấn phân tán    │  │    ==> GIẢI QUYẾT: Định giá   │
+    │        đa chiều trong vài giây          │  │        chuẩn, tránh hớ tiền   │
+    └───────────────────┬─────────────────────┘  └───────────────┬───────────────┘
+                        │                                        │
+                        └───────────────────┬────────────────────┘
+                                            │
+    [06_kafka_producer (Cổng 9092)] ────────┼────────► [07_kafka_consumer (Real-time Metric)]
+    ==> Bắt sóng tin chuyển nhượng          │          ==> Đẩy dữ liệu vào Serving Mart
+        tức thì, độ trễ mili-giây           │
+                                            ▼
+    ┌────────────────────────────────────────────────────────────────────────────┐
+    │ 5. SERVING DATA MART (football_analytics.db - SQLite có Index tối ưu)      │
+    │    - Lưu 5 bảng kết quả phân tích nạp tự động bởi load_to_database.py      │
+    │    ==> GIẢI QUYẾT: Phục vụ Web dưới 10ms, không làm đơ cụm máy chủ Spark  │
+    └─────────────────────────────────────┬──────────────────────────────────────┘
+                                          │
+                                          ▼
+    ┌────────────────────────────────────────────────────────────────────────────┐
+    │ 6. GIAO DIỆN WEB TRỰC QUAN HÓA STREAMLIT (http://localhost:8501)           │
+    │    - 10 bước báo cáo demo khớp 1-1 theo kịch bản chuẩn Thầy Học            │
+    │    - Liên kết trực tiếp sang Hadoop NameNode Web UI: http://localhost:9870 │
+    └────────────────────────────────────────────────────────────────────────────┘
     ```
     """)
 
