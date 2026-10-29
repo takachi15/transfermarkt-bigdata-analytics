@@ -309,19 +309,23 @@ def build_demo_document():
     add_heading_1(doc, "2. Kịch bản chi tiết từng bước Demo (Đi thẳng vào Công nghệ & Giải quyết vấn đề)")
 
     # ── BƯỚC 1 ───────────────────────────────────────────────────────────
-    add_heading_2(doc, "Bước 1: Tổng quan đề tài & Khởi chạy 1-Click (1 phút | Đặng Duy Lợi)")
-    add_url_box(doc, "1. Bản đồ Kiến trúc & Tổng quan", "http://localhost:8501")
+    add_heading_2(doc, "Bước 1: Giải trình Hạ tầng Cụm & Luồng Dữ liệu End-to-End (1 phút | Đặng Duy Lợi)")
+    add_url_box(doc, "1. Bản đồ Kiến trúc & Tổng quan", "http://localhost:8501/?page=Bản+đồ+ứng+dụng+Big+Data")
 
     add_callout_box(doc, "THAO TÁC MÀN HÌNH", [
         "1. Mở trình duyệt Chrome/Edge đang chạy URL: http://localhost:8501 (Nhấn F11 bật Toàn màn hình).",
-        "2. Chỉ tay vào 4 thẻ số liệu Big Data nền tảng: HDFS (872.5 MB), Spark 4.2 (16 Cores), Kafka (Port 9092), Airflow (7 Tasks SUCCESS).",
-        "3. Cuộn nhẹ chỉ vào sơ đồ 5 lớp công nghệ Lambda Architecture."
+        "2. Chỉ tay vào 4 thẻ số liệu Big Data nền tảng: HDFS (872.5 MB, 7.5M dòng), Spark 4.2 (16 Cores), Kafka (Port 9092), Airflow (7 Tasks SUCCESS).",
+        "3. Bấm Tab 1: '🏛️ Bản đồ Hạ tầng Cụm Big Data' -> Chỉ vào 5 cụm máy chủ phân tán: HDFS (NameNode 9820 & 3 DataNodes), Spark 16 Cores, Kafka 9092, Airflow Docker, Data Mart.",
+        "4. Bấm Tab 2: '🔄 Luồng Hoạt động Dữ liệu Chi tiết' -> Mở rộng 6 giai đoạn tuần tự từ Nạp HDFS (hdfs dfs -put), PySpark ETL, Parquet Snappy (-97.7%), Spark SQL & MLlib, Kafka Streaming đến Data Mart."
     ], box_type="action")
 
     add_callout_box(doc, "LỜI THOẠI NÓI CÁI HIỂU LIỀN", [
         "\"Kính chào Thầy Huỳnh Thái Học và các bạn! Nhóm 5 xin báo cáo bài tập lớn môn Công nghệ Dữ liệu lớn với đề tài: Xây dựng Data Pipeline phân tích thị trường chuyển nhượng bóng đá quốc tế.\"",
-        "\"Bài toán thực tế nhóm giải quyết: Trước đây dữ liệu bóng đá cực kỳ rời rạc và việc định giá cầu thủ chủ yếu dựa trên cảm tính. Nhóm đã ứng dụng đầy đủ 7 công nghệ Big Data phân tán để tự động hóa trọn vẹn vòng đời dữ liệu: từ lưu trữ HDFS, tính toán phân tán Spark, bắt tin thời gian thực Kafka, điều phối Airflow đến phục vụ trực quan trên Web.\"",
-        "\"Toàn bộ hệ thống được nhóm đóng gói 1-Click tự động khởi chạy cả 2 máy chủ Web Dashboard (8501) và HDFS NameNode (9870) qua file CHAY_WEB.bat. Sau đây nhóm xin đi sâu vào từng công nghệ cốt lõi!\""
+        "\"Thưa Thầy, đề tài của nhóm xây dựng trọn vẹn hạ tầng phân tán 5 cụm máy chủ và luồng dữ liệu khép kín qua 6 giai đoạn:\"",
+        "\"1. Giai đoạn nạp dữ liệu: 12 tệp CSV Transfermarkt nặng 872.5 MB với gần 7.5 triệu bản ghi được nạp vào HDFS Data Lake bằng lệnh hdfs dfs -put, chia thành 18 blocks 128MB và nhân bản 3 lần sang cả 3 DataNode để chống mất dữ liệu.\"",
+        "\"2. Giai đoạn tính toán phân tán: 16 Cores CPU của Apache Spark đọc song song các khối dữ liệu theo cơ chế Data Locality, làm sạch và nén sang định dạng Parquet Snappy chỉ còn 1.41 MB (tiết kiệm đến 97.7% ổ cứng).\"",
+        "\"3. Tiếp đó dữ liệu chạy qua Spark SQL đa chiều, thuật toán MLlib K-Means và Random Forest định giá khách quan, kết hợp luồng sự kiện thời gian thực Kafka qua cổng 9092, toàn bộ được điều phối tự động bởi Airflow DAG 7 tasks và phục vụ Web qua SQLite Data Mart dưới 10 mili-giây!\"",
+        "\"Toàn bộ hệ thống được nhóm đóng gói 1-Click qua file CHAY_WEB.bat và CHAY_DATANODE.bat. Sau đây nhóm xin đi sâu vào từng tầng công nghệ!\""
     ], box_type="speech")
 
     # ── BƯỚC 2 ───────────────────────────────────────────────────────────

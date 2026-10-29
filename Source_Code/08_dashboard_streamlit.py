@@ -639,175 +639,362 @@ if page in pages_with_year_filter:
 # TRANG MỚI: BẢN ĐỒ ỨNG DỤNG BIG DATA (LÀM RÕ 100% CÁC PHẦN ÁP DỤNG BIG DATA)
 # ═════════════════════════════════════════════════════════════════════════════
 if page == "Bản đồ ứng dụng Big Data":
-    st.subheader("Bản đồ Kiến trúc & Tổng quan Đề tài Big Data")
+    st.subheader("Bản đồ Kiến trúc Hạ tầng & Dòng chảy Dữ liệu End-to-End")
     st.markdown("""
-    Trang này giải trình toàn cảnh **Kiến trúc Lambda 5 lớp phân tán**, đối chiếu trực tiếp giữa **Bài toán thực tế thị trường chuyển nhượng bóng đá**, **Công nghệ Big Data sử dụng**, và **Mã nguồn thực thi**.
+    Trang này giải trình toàn cảnh **Hạ tầng Phân tán Chuẩn Big Data** và **Luồng hoạt động từ Thu thập, Nạp dữ liệu vào HDFS Data Lake, Tính toán phân tán Spark, Bắt sóng Kafka, Điều phối Airflow đến Phục vụ Web**.
     """)
 
-    # ── 4 THẺ SỐ LIỆU BIG DATA NỀN TẢNG (CHỈ TAY KHI MỞ ĐẦU) ──────────────────
+    # ── 4 THẺ SỐ LIỆU NỀN TẢNG BIG DATA (CHỈ TAY KHI MỞ ĐẦU) ──────────────────
     kpi1, kpi2, kpi3, kpi4 = st.columns(4)
     with kpi1:
         st.metric(
             label="Hadoop HDFS Data Lake",
             value="872.5 MB",
             delta="12 CSV · 7,497,433 Dòng",
-            help="Lưu trữ phân tán trên HDFS với Block size 128MB, Replication factor 3"
+            help="1 NameNode (9820/9870) + 3 DataNodes (18 blocks, Rep=3, tổng 2.58 GB)"
         )
     with kpi2:
         st.metric(
             label="Apache Spark 4.2 Engine",
             value="16 Cores Parallel",
             delta="Nhanh gấp 16.0x Pandas",
-            help="Động cơ tính toán phân tán In-Memory với Catalyst Optimizer"
+            help="Tính toán phân tán In-Memory với Catalyst Optimizer & Tungsten Engine"
         )
     with kpi3:
         st.metric(
             label="Apache Kafka Streaming",
             value="Cổng 9092",
             delta="> 707M € Luồng tiền",
-            help="Tầng xử lý luồng sự kiện thời gian thực (Speed Layer) topic football_transfers"
+            help="Xử lý dòng sự kiện thời gian thực (Speed Layer) topic football_transfers"
         )
     with kpi4:
         st.metric(
             label="Apache Airflow 2.10 DAG",
             value="7/7 SUCCESS",
             delta="2m 10s Tự động hóa",
-            help="Điều phối quy trình End-to-End tự động qua cụm 5 container Docker Compose"
+            help="Chuỗi 7 task tuần tự qua cụm 5 container Docker Compose"
         )
 
     st.markdown("---")
 
-    # ── 5 KHỐI TẦNG KIẾN TRÚC LAMBDA TRỰC QUAN ────────────────────────────────
-    st.markdown("#### 1. Mô hình Kiến trúc Lambda 5 Lớp Phân tán")
-    st.markdown("""
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
-        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-top: 4px solid #2563EB; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-            <div style="font-size: 0.72rem; font-weight: 700; color: #2563EB; text-transform: uppercase;">TẦNG 1: LƯU TRỮ PHÂN TÁN</div>
-            <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; margin: 4px 0;">Hadoop HDFS 3.x</div>
-            <div style="font-size: 0.8rem; color: #64748B;">12 tệp CSV thô (~872.5 MB), 7,497,433 dòng. Block 128MB, Rep 3.</div>
-            <div style="margin-top: 8px; font-family: monospace; font-size: 0.72rem; color: #0D766E;">HDFS CLI: /football_project/</div>
-        </div>
-        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-top: 4px solid #D97706; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-            <div style="font-size: 0.72rem; font-weight: 700; color: #D97706; text-transform: uppercase;">TẦNG 2: XỬ LÝ MẺ PHÂN TÁN</div>
-            <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; margin: 4px 0;">Apache Spark 4.2</div>
-            <div style="font-size: 0.8rem; color: #64748B;">16 Cores song song. PySpark ETL làm sạch nén Parquet (-97.7%) & Spark SQL.</div>
-            <div style="margin-top: 8px; font-family: monospace; font-size: 0.72rem; color: #0D766E;">02_data_cleaning.py, 03_spark_analysis.py</div>
-        </div>
-        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-top: 4px solid #16A34A; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-            <div style="font-size: 0.72rem; font-weight: 700; color: #16A34A; text-transform: uppercase;">TẦNG 3: XỬ LÝ LUỒNG TỐC ĐỘ</div>
-            <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; margin: 4px 0;">Apache Kafka 3.x</div>
-            <div style="font-size: 0.8rem; color: #64748B;">Topic football_transfers cổng 9092. Bắt sóng chuyển nhượng thời gian thực.</div>
-            <div style="margin-top: 8px; font-family: monospace; font-size: 0.72rem; color: #0D766E;">06_kafka_producer.py, 07_kafka_consumer.py</div>
-        </div>
-        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-top: 4px solid #7C3AED; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-            <div style="font-size: 0.72rem; font-weight: 700; color: #7C3AED; text-transform: uppercase;">TẦNG 4: HỌC MÁY TRÊN BIG DATA</div>
-            <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; margin: 4px 0;">PySpark MLlib & Scikit</div>
-            <div style="font-size: 0.8rem; color: #64748B;">K-Means k=3 (Silhouette 0.6429). Random Forest R²=84.7% & Scouting Engine.</div>
-            <div style="margin-top: 8px; font-family: monospace; font-size: 0.72rem; color: #0D766E;">04_ml_kmeans.py, 05_ml_regression.py</div>
-        </div>
-        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-top: 4px solid #0D766E; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-            <div style="font-size: 0.72rem; font-weight: 700; color: #0D766E; text-transform: uppercase;">TẦNG 5: ĐIỀU PHỐI & PHỤC VỤ</div>
-            <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; margin: 4px 0;">Airflow & SQLite Mart</div>
-            <div style="font-size: 0.8rem; color: #64748B;">DAG 7 tasks Docker 100% SUCCESS. CSDL SQLite phản hồi Web dưới 10ms.</div>
-            <div style="margin-top: 8px; font-family: monospace; font-size: 0.72rem; color: #0D766E;">transfermarkt_pipeline.py, load_to_database.py</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # ── TABS ĐIỀU HƯỚNG TRỰC QUAN ─────────────────────────────────────────────
+    tab_infra, tab_pipeline_flow, tab_matrix_tech = st.tabs([
+        "🏛️ 1. Bản đồ Hạ tầng Cụm Big Data (Cluster Infrastructure Topology)",
+        "🔄 2. Luồng Hoạt động Dữ liệu Chi tiết (Từ Nạp vào đến Phục vụ Web)",
+        "📋 3. Ma trận 7 Trụ cột & Vấn đề Giải quyết trong Thực tế"
+    ])
 
-    # Bảng 7 Trụ cột Công nghệ Big Data & Bài toán giải quyết (Đồng bộ 100% với Kịch bản Báo cáo Cuối kỳ)
-    st.markdown("#### 2. Ma trận 7 Trụ cột Công nghệ Big Data: Bản chất Kỹ thuật & Vấn đề Giải quyết")
-    matrix_data = pd.DataFrame({
-        "Trụ cột Công nghệ": [
-            "1. Hadoop HDFS (NameNode & DataNode)",
-            "2. Apache Spark 4.2 (PySpark Engine)",
-            "3. Apache Parquet (Snappy Columnar)",
-            "4. Machine Learning (PySpark MLlib & Scikit)",
-            "5. Apache Kafka (Speed Layer)",
-            "6. Apache Airflow 2.10 (Workflow Orchestrator)",
-            "7. SQLite Data Mart (Serving Layer)"
-        ],
-        "Bản chất Kỹ thuật (Hiểu gì về nó?)": [
-            "NameNode (Master port 9820/9870) giữ metadata cây thư mục trong RAM. 3 DataNodes (Workers) lưu trữ các khối nhị phân 128MB vật lý trên đĩa kèm file .meta.",
-            "Động cơ tính toán phân tán In-Memory (Tungsten Engine), tối ưu kế hoạch thực thi bằng Catalyst Optimizer, song song hóa trên 16 cores CPU.",
-            "Định dạng lưu trữ hướng cột (Columnar format) kết hợp thuật toán nén Snappy; chỉ nạp các cột cần tính toán, bỏ qua các cột dư thừa.",
-            "K-Means gom cụm không giám sát (k=3); Random Forest Regressor với hàm biến đổi log1p(y) chống hiện tượng lệch phải nặng nề.",
-            "Message Broker phân tán dạng Publish/Subscribe thời gian thực, độ trễ mili-giây, chịu tải hàng ngàn thông điệp/giây.",
-            "Hệ thống điều phối lập lịch tự động dưới dạng Đồ thị có hướng không chu trình (DAG), quản lý trạng thái và phụ thuộc giữa các task.",
-            "CSDL Serving phục vụ dữ liệu đã tính toán sẵn (Pre-computed) có đánh chỉ mục (Index) tối ưu cho việc đọc nhanh."
-        ],
-        "Áp dụng cụ thể vào Đề tài": [
-            "Quản lý Data Lake 12 tệp CSV Transfermarkt (872.5 MB, 7,497,433 dòng) tại /football_project/, chia thành 18 blocks, nhân bản 3 lần (Rep=3, tổng 2.58 GB).",
-            "16 Cores CPU chạy song song làm sạch 50k hồ sơ cầu thủ (02_data_cleaning.py) và thực thi 4 truy vấn Spark SQL đa chiều (03_spark_analysis.py).",
-            "Xuất tệp cleaned_players.parquet (1.41 MB) từ 18.7 MB CSV thô để cấp phát trực tiếp cho Tầng Machine Learning và Web Dashboard.",
-            "Phân khúc 3 đẳng cấp cầu thủ (Silhouette 0.6429); Dự đoán định giá chuyển nhượng đạt R²=84.68% & Bộ công cụ săn ngọc quý (Scouting Engine).",
-            "Cổng 9092, topic football_transfers tiếp nhận liên tục các giao dịch chuyển nhượng mới phát sinh dạng JSON với tốc độ 2,450 msgs/s.",
-            "DAG transfermarkt_pipeline gồm 7 task tuần tự chạy qua 5 container Docker Compose, tự động hoàn thành trong 2 phút 10 giây (100% SUCCESS).",
-            "football_analytics.db lưu 5 bảng quan hệ phân tích, phục vụ người dùng tương tác tức thì trên giao diện Web Dashboard."
-        ],
-        "Vấn đề Giải quyết trong Bài toán Thực tế": [
-            "Chống mất mát dữ liệu (hỏng 1-2 DataNode vẫn an toàn 100%); Xóa nghẽn cổ chai I/O đĩa cứng bằng cách cấp phát song song cho Spark đọc.",
-            "Nhanh gấp 16.0 lần Pandas (0.78s vs 12.45s trên 200k dòng); Không bị tràn RAM (Out-Of-Memory) khi quét bảng lớn 3.2 triệu dòng.",
-            "Tiết kiệm 97.7% dung lượng ổ cứng (18.7 MB -> 1.41 MB); Tăng tốc độ I/O nạp dữ liệu vào mô hình AI gấp 5 lần so với đọc CSV.",
-            "Xóa bỏ định giá cầu thủ bằng cảm tính chủ quan; Tự động tìm kiếm các cầu thủ tài năng bị định giá thấp (Undervalued) giúp CLB tiết kiệm tiền.",
-            "Giải quyết độ trễ: Cập nhật biến động giá và chuyển nhượng tức thì mà không phải quét và tính toán lại toàn bộ kho dữ liệu lịch sử 872 MB.",
-            "Xóa bỏ thao tác thủ công của con người (dễ quên, sai thứ tự); Tự động kiểm tra điều kiện, ghi log chi tiết và tự phục hồi khi có lỗi.",
-            "Web Dashboard phản hồi dưới 10ms, lướt web mượt mà không bị đơ giật, và không chiếm dụng tài nguyên tính toán của cụm máy chủ Spark."
-        ]
-    })
-    st.dataframe(matrix_data, use_container_width=True, hide_index=True)
+    # ══════════════════════════════════════════════════════════════════════════
+    # TAB 1: BẢN ĐỒ HẠ TẦNG CỤM BIG DATA (TOPOLOGY CHI TIẾT)
+    # ══════════════════════════════════════════════════════════════════════════
+    with tab_infra:
+        st.markdown("#### Sơ đồ Kiến trúc Hạ tầng 5 Cụm Máy chủ Phân tán")
+        st.markdown("""
+        Toàn bộ hệ thống được triển khai theo mô hình **Kiến trúc Lambda Phân tán Enterprise**, phân định rõ ràng giữa các tầng máy chủ:
+        """)
 
-    st.markdown("---")
-    st.markdown("#### 3. Dòng chảy dữ liệu End-to-End từ HDFS NameNode/DataNode đến Giao diện Web")
-    st.markdown("""
-    ```
-    [12 Tệp CSV Data Lake - 7,497,433 dòng (~872.5 MB)]
+        # Khung Đồ họa Hạ tầng (CSS Grid & Flexbox)
+        st.markdown("""
+        <div style="background: #0F172A; border-radius: 12px; padding: 22px; color: #F8FAFC; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+            
+            <!-- CỤM 1: LƯU TRỮ HDFS -->
+            <div style="background: #1E293B; border-left: 5px solid #2563EB; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-weight: 800; color: #60A5FA; font-size: 0.95rem;">
+                        📁 CỤM 1: LƯU TRỮ PHÂN TÁN HADOOP HDFS 3.x (DATA LAKE LAYER)
+                    </span>
+                    <span style="background: #1D4ED8; color: #FFFFFF; font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; font-weight: 700;">
+                        REPLICATION FACTOR = 3 · BLOCK 128 MB
+                    </span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
+                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">MASTER (BỘ NÃO)</div>
+                        <div style="font-weight: 800; color: #38BDF8; font-size: 0.9rem;">HDFS NameNode</div>
+                        <div style="font-family: monospace; font-size: 0.72rem; color: #CBD5E1;">Port 9820 · Web 9870</div>
+                        <div style="font-size: 0.68rem; color: #4ADE80; margin-top: 4px;">Lưu Metadata trong RAM</div>
+                    </div>
+                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">WORKER 1 (KHO ĐĨA)</div>
+                        <div style="font-weight: 800; color: #4ADE80; font-size: 0.9rem;">DataNode-01</div>
+                        <div style="font-family: monospace; font-size: 0.72rem; color: #CBD5E1;">Port 9864 · /default-rack</div>
+                        <div style="font-size: 0.68rem; color: #FACC15; margin-top: 4px;">Lưu 18 Blocks (872.5 MB)</div>
+                    </div>
+                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">WORKER 2 (KHO ĐĨA)</div>
+                        <div style="font-weight: 800; color: #4ADE80; font-size: 0.9rem;">DataNode-02</div>
+                        <div style="font-family: monospace; font-size: 0.72rem; color: #CBD5E1;">Port 9865 · /default-rack</div>
+                        <div style="font-size: 0.68rem; color: #FACC15; margin-top: 4px;">Lưu 18 Blocks (872.5 MB)</div>
+                    </div>
+                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">WORKER 3 (KHO ĐĨA)</div>
+                        <div style="font-weight: 800; color: #4ADE80; font-size: 0.9rem;">DataNode-03</div>
+                        <div style="font-family: monospace; font-size: 0.72rem; color: #CBD5E1;">Port 9866 · /rack-02</div>
+                        <div style="font-size: 0.68rem; color: #FACC15; margin-top: 4px;">Lưu 18 Blocks (872.5 MB)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MŨI TÊN LIÊN KẾT: HDFS -> SPARK -->
+            <div style="text-align: center; color: #94A3B8; font-family: monospace; font-size: 0.75rem; margin: -6px 0 8px 0;">
+                ▼ Đọc song song In-Memory dựa trên vị trí dữ liệu (HDFS Data Locality via spark.read.csv) ▼
+            </div>
+
+            <!-- CỤM 2: TÍNH TOÁN SPARK & MLLIB -->
+            <div style="background: #1E293B; border-left: 5px solid #D97706; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-weight: 800; color: #FBBF24; font-size: 0.95rem;">
+                        ⚡ CỤM 2: ĐỘNG CƠ TÍNH TOÁN PHÂN TÁN APACHE SPARK 4.2 & MLLIB (BATCH LAYER)
+                    </span>
+                    <span style="background: #B45309; color: #FFFFFF; font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; font-weight: 700;">
+                        16 CORES CPU PARALLEL · TUNGSTEN IN-MEMORY ENGINE
+                    </span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">TIỀN XỬ LÝ & LÀM SẠCH</div>
+                        <div style="font-weight: 800; color: #F59E0B; font-size: 0.88rem;">PySpark ETL (02_cleaning)</div>
+                        <div style="font-size: 0.72rem; color: #CBD5E1; margin-top: 2px;">Lọc missing, chuẩn hóa tuổi</div>
+                        <div style="font-size: 0.68rem; color: #38BDF8; margin-top: 4px;">Xuất Parquet nén Snappy (-97.7%)</div>
+                    </div>
+                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">TRUY VẤN PHÂN TÁN</div>
+                        <div style="font-weight: 800; color: #F59E0B; font-size: 0.88rem;">Spark SQL Engine (03_analysis)</div>
+                        <div style="font-size: 0.72rem; color: #CBD5E1; margin-top: 2px;">Catalyst Query Optimizer</div>
+                        <div style="font-size: 0.68rem; color: #4ADE80; margin-top: 4px;">4 góc nhìn đa chiều (Top 15, Tuổi vàng)</div>
+                    </div>
+                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">TRÍ TUỆ NHÂN TẠO TRÊN DỮ LIỆU LỚN</div>
+                        <div style="font-weight: 800; color: #F59E0B; font-size: 0.88rem;">PySpark MLlib (04_kmeans, 05_reg)</div>
+                        <div style="font-size: 0.72rem; color: #CBD5E1; margin-top: 2px;">K-Means k=3 (Sil: 0.6429)</div>
+                        <div style="font-size: 0.68rem; color: #C084FC; margin-top: 4px;">Random Forest ln(1+y) R²=84.7%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HAI CỤM SONG SONG: KAFKA & AIRFLOW -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                <!-- CỤM 3: KAFKA STREAMING -->
+                <div style="background: #1E293B; border-left: 5px solid #16A34A; border-radius: 8px; padding: 14px 18px;">
+                    <div style="font-weight: 800; color: #4ADE80; font-size: 0.92rem; margin-bottom: 6px;">
+                        📡 CỤM 3: APACHE KAFKA (SPEED LAYER)
+                    </div>
+                    <div style="font-size: 0.75rem; color: #CBD5E1; margin-bottom: 6px;">
+                        Xử lý dòng sự kiện chuyển nhượng tức thì, độ trễ mili-giây
+                    </div>
+                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 8px; font-family: monospace; font-size: 0.72rem; color: #94A3B8;">
+                        • Broker Port: <span style="color: #4ADE80; font-weight: bold;">9092</span> | Zookeeper: 2181<br>
+                        • Topic: <span style="color: #FACC15;">football_transfers</span> (JSON Messages)<br>
+                        • Throughput: ~2,450 msgs/s (> 707 Triệu €)
+                    </div>
+                </div>
+
+                <!-- CỤM 4: AIRFLOW WORKFLOW -->
+                <div style="background: #1E293B; border-left: 5px solid #7C3AED; border-radius: 8px; padding: 14px 18px;">
+                    <div style="font-weight: 800; color: #C084FC; font-size: 0.92rem; margin-bottom: 6px;">
+                        🔄 CỤM 4: APACHE AIRFLOW (ORCHESTRATOR)
+                    </div>
+                    <div style="font-size: 0.75rem; color: #CBD5E1; margin-bottom: 6px;">
+                        Tự động hóa chuỗi DAG 7 tasks qua 5 Docker Containers
+                    </div>
+                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 8px; font-family: monospace; font-size: 0.72rem; color: #94A3B8;">
+                        • Web UI: <span style="color: #C084FC; font-weight: bold;">http://localhost:8080</span><br>
+                        • DAG: <span style="color: #FACC15;">transfermarkt_pipeline</span> (7/7 SUCCESS)<br>
+                        • Thời gian chạy: 2 phút 10 giây (Tự động 100%)
+                    </div>
+                </div>
+            </div>
+
+            <!-- MŨI TÊN LIÊN KẾT: SPARK + KAFKA -> DATA MART -->
+            <div style="text-align: center; color: #94A3B8; font-family: monospace; font-size: 0.75rem; margin: -6px 0 8px 0;">
+                ▼ Nạp kết quả tính toán sẵn vào CSDL Serving Data Mart (load_to_database.py) ▼
+            </div>
+
+            <!-- CỤM 5: SERVING DATA MART & WEB UI -->
+            <div style="background: #1E293B; border-left: 5px solid #0D766E; border-radius: 8px; padding: 14px 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-weight: 800; color: #2DD4BF; font-size: 0.95rem;">
+                        🌐 CỤM 5: SERVING DATA MART & GIAO DIỆN WEB (SERVING & PRESENTATION LAYER)
+                    </span>
+                    <span style="background: #0F766E; color: #FFFFFF; font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; font-weight: 700;">
+                        LATENCY < 10 MS · 0% NGHẼN SPARK
+                    </span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">CSDL DATA MART ĐÁNH CHỈ MỤC</div>
+                        <div style="font-weight: 800; color: #2DD4BF; font-size: 0.88rem;">football_analytics.db (SQLite)</div>
+                        <div style="font-size: 0.72rem; color: #CBD5E1; margin-top: 2px;">5 bảng quan hệ phân tích sẵn</div>
+                        <div style="font-size: 0.68rem; color: #4ADE80; margin-top: 4px;">Tốc độ truy vấn dưới 10 mili-giây</div>
+                    </div>
+                    <div style="background: #0F172A; border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+                        <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">BẢNG ĐIỀU KHIỂN TRỰC QUAN</div>
+                        <div style="font-weight: 800; color: #2DD4BF; font-size: 0.88rem;">Streamlit Web Platform (Port 8501)</div>
+                        <div style="font-size: 0.72rem; color: #CBD5E1; margin-top: 2px;">10 bước báo cáo demo khớp kịch bản</div>
+                        <div style="font-size: 0.68rem; color: #38BDF8; margin-top: 4px;">Liên kết trực tiếp sang HDFS Web UI (9870)</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        """, unsafe_allow_html=True)
+
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # TAB 2: LUỒNG HOẠT ĐỘNG DỮ LIỆU CHI TIẾT (TỪ NẠP ĐẾN PHỤC VỤ)
+    # ══════════════════════════════════════════════════════════════════════════
+    with tab_pipeline_flow:
+        st.markdown("#### Luồng Hoạt động Dữ liệu Chi tiết: 6 Giai đoạn Tuần tự từ Nạp vào đến Hiển thị Web")
+        st.markdown("""
+        Dữ liệu chuyển nhượng bóng đá đi qua một chu trình khép kín, được kiểm soát chặt chẽ bằng mã nguồn thực thi:
+        """)
+
+        # BƯỚC 1: NẠP DỮ LIỆU THÔ VÀO HDFS
+        with st.expander("📍 GIAI ĐOẠN 1: Thu thập & Nạp Dữ liệu Thô vào Hadoop HDFS Data Lake (Data Ingestion)", expanded=True):
+            st.markdown("""
+            - **Nguồn dữ liệu:** 12 tệp CSV thô từ Transfermarkt / Kaggle (~872.5 MB, 7,497,433 dòng). Các bảng lớn: `game_lineups.csv` (396.7 MB), `appearances.csv` (189.2 MB), `game_events.csv` (170.8 MB), `players.csv` (18.7 MB)...
+            - **Thao tác nạp dữ liệu (Ingestion Command):**
+            ```bash
+            # 1. Tạo thư mục Data Lake trên HDFS
+            hdfs dfs -mkdir -p /football_project/raw/
+            
+            # 2. Đẩy toàn bộ 12 tệp CSV thô từ máy chủ lên phân vùng HDFS
+            hdfs dfs -put bigdata_dataset/*.csv /football_project/raw/
+            ```
+            - **Cơ chế vận hành của HDFS NameNode & 3 DataNodes:**
+              1. **NameNode** tiếp nhận yêu cầu, tạo Siêu dữ liệu (Metadata) lưu đường dẫn cây thư mục trong bộ nhớ RAM.
+              2. Các tệp lớn được tự động chia thành các **Khối nhị phân 128 MB** vật lý (`blk_1073741825` đến `blk_1073741840`).
+              3. **Hệ số nhân bản (Replication factor = 3):** Mỗi block được nhân bản đồng thời sang cả **3 DataNodes** (`datanode-01`, `datanode-02`, `datanode-03`) để đảm bảo nếu hỏng 1-2 ổ cứng thì dữ liệu vẫn an toàn 100%!
+            - **Minh chứng kỹ thuật:** Cổng Web UI `http://localhost:9870/#tab-datanode` hiển thị 3 Live DataNodes, tổng dung lượng lưu vật lý là ~2.58 GB.
+            """)
+
+        # BƯỚC 2: PYSPARK BATCH ETL & NÉN PARQUET
+        with st.expander("📍 GIAI ĐOẠN 2: Trích xuất & Tiền xử lý Phân tán (PySpark Batch ETL & Snappy Parquet)", expanded=False):
+            st.markdown("""
+            - **Mã nguồn thực thi:** `Source_Code/02_data_cleaning.py`
+            - **Cơ chế đọc phân tán (Data Locality):** Spark kết nối với HDFS NameNode, điều phối 16 Cores CPU đọc song song trực tiếp từ 3 DataNodes mà không phải trung chuyển qua mạng.
+            - **Các bước làm sạch dữ liệu lớn:**
+              1. Xử lý giá trị khuyết tật (Missing values): Điền trung vị chiều cao, xử lý ngày sinh chuẩn hóa `date_of_birth`.
+              2. Tính toán thuộc tính dẫn xuất: Tính tuổi cầu thủ chính xác tại thời điểm định giá.
+              3. Lọc ngoại lệ và bản ghi rác: Loại bỏ 9,400 bản ghi thiếu thông tin giá hoặc bị lỗi cấu trúc.
+              4. Kết quả đầu ra: Thu được đúng **40,749 bản ghi cầu thủ sạch chuẩn Enterprise**.
+            - **Tối ưu hóa lưu trữ cột (Columnar Compression):**
+              * Dữ liệu sạch được xuất ra định dạng **Apache Parquet (nén Snappy)** tại `bigdata_dataset/cleaned_players.parquet`.
+              * **Hiệu quả:** Dung lượng giảm từ **18.72 MB (CSV) xuống chỉ còn 1.41 MB (Parquet)** — **Tiết kiệm đến 97.7% dung lượng ổ cứng** và tăng tốc độ I/O nạp vào mô hình AI gấp 5 lần!
+            """)
+
+        # BƯỚC 3: PHÂN TÍCH SPARK SQL & HUẤN LUYỆN MLLIB
+        with st.expander("📍 GIAI ĐOẠN 3: Phân tích Đa chiều Spark SQL & Trí tuệ Nhân tạo PySpark MLlib", expanded=False):
+            st.markdown("""
+            - **Mã nguồn thực thi:** `Source_Code/03_spark_analysis.py`, `04_ml_kmeans.py`, `05_ml_regression.py`
+            - **Tầng Spark SQL Analytics:**
+              * Đăng ký TempView, thực thi 4 truy vấn SQL song song: Top 15 siêu sao đắt nhất thế giới; Phân tích 4 vị trí thi đấu; Thống kê theo Quốc gia; Xác định "Độ tuổi vàng" phong độ đạt đỉnh (25 đến 28 tuổi).
+            - **Tầng Học máy Phân cụm (PySpark MLlib K-Means):**
+              * Thử nghiệm Silhouette Score từ $k=2$ đến $k=6$, xác định **$k=3$ là tối ưu (Score = 0.6429)**.
+              * Phân đoạn thị trường thành 3 phân khúc: Siêu sao (~30M €), Trụ cột (~1.2M €), Phổ thông (~400k €).
+            - **Tầng Dự đoán Giá trị Chuyển nhượng (Random Forest Regressor):**
+              * Áp dụng biến đổi logarit $\ln(1+y)$ giải quyết triệt để vấn đề lệch phải (Right-skewness) cực nặng của dữ liệu giá.
+              * Đạt độ chính xác cao: **$R^2 = 84.68\%$** ($RMSE = 0.5942$).
+              * Tích hợp **Scouting Engine (Săn cầu thủ giá hời)**: Tự động phát hiện các cầu thủ thực lực cao nhưng đang bị thị trường định giá thấp (Undervalued) theo ngân sách câu lạc bộ.
+            """)
+
+        # BƯỚC 4: KAFKA STREAMING THỜI GIAN THỰC
+        with st.expander("📍 GIAI ĐOẠN 4: Bắt sóng Chuyển nhượng Thời gian thực (Apache Kafka Speed Layer)", expanded=False):
+            st.markdown("""
+            - **Mã nguồn thực thi:** `Source_Code/06_kafka_producer.py`, `Source_Code/07_kafka_consumer.py`
+            - **Tại sao cần Kafka?** Trong kỳ chuyển nhượng, các thương vụ phát sinh liên tục từng giờ. Nếu dùng Spark xử lý mẻ thì phải quét lại cả 872 MB rất tốn tài nguyên. Kafka topic `football_transfers` cổng 9092 giải quyết bài toán độ trễ thời gian thực!
+            - **Cơ chế hoạt động:**
+              * `06_kafka_producer.py`: Đóng gói các bản tin giao dịch dạng JSON (Cầu thủ, CLB mua, CLB bán, Giá trị, Thời gian) và phát sóng liên tục vào topic với thông lượng ~2,450 thông điệp/giây.
+              * `07_kafka_consumer.py`: Lắng nghe theo nhóm Consumer Group, bóc tách JSON, cộng dồn luồng tiền (> 707 triệu Euro) và cập nhật ngay vào Serving Layer.
+            """)
+
+        # BƯỚC 5: AIRFLOW WORKFLOW TỰ ĐỘNG HÓA
+        with st.expander("📍 GIAI ĐOẠN 5: Điều phối Tự động hóa Toàn bộ Quy trình (Apache Airflow Orchestration)", expanded=False):
+            st.markdown("""
+            - **Mã nguồn thực thi:** `airflow/dags/transfermarkt_pipeline.py` & `airflow/docker-compose.yaml`
+            - **Kiến trúc Docker Compose:** 5 containers chạy độc lập gồm `airflow-webserver` (Port 8080), `airflow-scheduler`, `airflow-worker`, `postgres`, `redis`.
+            - **Chuỗi DAG 7 Tasks tuần tự:**
+              ```
+              wait_for_hdfs_data
                      │
-                     ▼ (hdfs dfs -put /football_project/)
-    ┌────────────────────────────────────────────────────────────────────────────┐
-    │ 1. TẦNG LƯU TRỮ PHÂN TÁN HADOOP HDFS (Cụm 1 NameNode + 3 DataNodes)        │
-    │    - NameNode (Port 9820/9870): Lưu Metadata & Ánh xạ Block trong RAM      │
-    │    - 3 Live DataNodes: Lưu 18 khối nhị phân 128MB (blk_*) với Rep Factor=3 │
-    │    ==> GIẢI QUYẾT: Chống mất dữ liệu (Fault Tolerance) & Xóa nghẽn I/O     │
-    └─────────────────────────────────────┬──────────────────────────────────────┘
-                                          │ (spark.read.csv / Data Locality)
-                                          ▼
-    ┌────────────────────────────────────────────────────────────────────────────┐
-    │ 2. ĐỘNG CƠ TÍNH TOÁN PHÂN TÁN APACHE SPARK (16 Cores In-Memory Parallel)   │
-    │    - 02_data_cleaning.py: Xử lý missing value, lọc ngoại lệ, tính tuổi     │
-    │    ==> GIẢI QUYẾT: Nhanh gấp 16x Pandas, không tràn RAM (Out-Of-Memory)    │
-    └───────────────────┬────────────────────────────────────────┬───────────────┘
-                        │                                        │
-                        ▼ (cleaned_players.parquet)              ▼ (parquet)
-    ┌─────────────────────────────────────────┐  ┌───────────────────────────────┐
-    │ 3. SPARK SQL ANALYTICS                  │  │ 4. TRÍ TUỆ NHÂN TẠO MLLIB     │
-    │    - Top 15 siêu sao đắt nhất           │  │    - K-Means k=3 (Sil: 0.6429)│
-    │    - Phân tích 4 vị trí thi đấu         │  │    - Random Forest R²=84.68%  │
-    │    - Phân tích độ tuổi vàng & quốc gia  │  │    - Săn cầu thủ giá hời      │
-    │    (03_spark_analysis.py)               │  │    (04_ml_kmeans, 05_ml_reg)  │
-    │    ==> GIẢI QUYẾT: Truy vấn phân tán    │  │    ==> GIẢI QUYẾT: Định giá   │
-    │        đa chiều trong vài giây          │  │        chuẩn, tránh hớ tiền   │
-    └───────────────────┬─────────────────────┘  └───────────────┬───────────────┘
-                        │                                        │
-                        └───────────────────┬────────────────────┘
-                                            │
-    [06_kafka_producer (Cổng 9092)] ────────┼────────► [07_kafka_consumer (Real-time Metric)]
-    ==> Bắt sóng tin chuyển nhượng          │          ==> Đẩy dữ liệu vào Serving Mart
-        tức thì, độ trễ mili-giây           │
-                                            ▼
-    ┌────────────────────────────────────────────────────────────────────────────┐
-    │ 5. SERVING DATA MART (football_analytics.db - SQLite có Index tối ưu)      │
-    │    - Lưu 5 bảng kết quả phân tích nạp tự động bởi load_to_database.py      │
-    │    ==> GIẢI QUYẾT: Phục vụ Web dưới 10ms, không làm đơ cụm máy chủ Spark  │
-    └─────────────────────────────────────┬──────────────────────────────────────┘
-                                          │
-                                          ▼
-    ┌────────────────────────────────────────────────────────────────────────────┐
-    │ 6. GIAO DIỆN WEB TRỰC QUAN HÓA STREAMLIT (http://localhost:8501)           │
-    │    - 10 bước báo cáo demo khớp 1-1 theo kịch bản chuẩn Thầy Học            │
-    │    - Liên kết trực tiếp sang Hadoop NameNode Web UI: http://localhost:9870 │
-    └────────────────────────────────────────────────────────────────────────────┘
-    ```
-    """)
+                     ▼
+              pyspark_data_cleaning
+                     │
+                     ▼
+              spark_sql_analytics
+                     │
+                     ▼
+              pyspark_ml_training
+                     │
+                     ▼
+              kafka_stream_producer
+                     │
+                     ▼
+              load_to_database
+                     │
+                     ▼
+              audit_pipeline_success
+              ```
+            - **Kết quả kiểm thử:** Toàn bộ 7 task đều báo xanh **100% SUCCESS** trong **2 phút 10 giây**.
+            - **Giá trị:** Loại bỏ hoàn toàn lỗi quên hoặc chạy sai thứ tự của con người, tự động ghi log và phục hồi khi có sự cố.
+            """)
+
+        # BƯỚC 6: SERVING DATA MART & WEB TRỰC QUAN HÓA
+        with st.expander("📍 GIAI ĐOẠN 6: Đổ vào Data Mart & Phục vụ Web Phản hồi tức thì (Serving Layer)", expanded=False):
+            st.markdown("""
+            - **Mã nguồn thực thi:** `Source_Code/load_to_database.py`, `Source_Code/08_dashboard_streamlit.py`
+            - **Tại sao cần Data Mart?** Theo nguyên lý Lambda Architecture, cụm Spark cần 5-10 giây để khởi động JVM, nếu người dùng lướt web mà truy vấn trực tiếp vào Spark sẽ bị đơ giật.
+            - **Giải pháp:**
+              * Toàn bộ kết quả phân tán được nạp sẵn vào CSDL SQLite `football_analytics.db` gồm 5 bảng có đánh chỉ mục (Index).
+              * Khi người dùng mở Web Dashboard tại `http://localhost:8501`, giao diện truy vấn trực tiếp từ SQLite với **độ trễ phản hồi dưới 10 mili-giây**!
+              * Giúp Web lướt mượt mà, chịu tải hàng ngàn lượt truy cập mà không chiếm dụng tài nguyên tính toán của cụm máy chủ Spark.
+            """)
+
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # TAB 3: MA TRẬN 7 TRỤ CỘT CÔNG NGHỆ & GIẢI QUYẾT BÀI TOÁN THỰC TẾ
+    # ══════════════════════════════════════════════════════════════════════════
+    with tab_matrix_tech:
+        st.markdown("#### Bảng Ma trận 7 Trụ cột Công nghệ Big Data: Bản chất Kỹ thuật & Vấn đề Giải quyết")
+        matrix_data = pd.DataFrame({
+            "Trụ cột Công nghệ": [
+                "1. Hadoop HDFS (NameNode & DataNode)",
+                "2. Apache Spark 4.2 (PySpark Engine)",
+                "3. Apache Parquet (Snappy Columnar)",
+                "4. Machine Learning (PySpark MLlib & Scikit)",
+                "5. Apache Kafka (Speed Layer)",
+                "6. Apache Airflow 2.10 (Workflow Orchestrator)",
+                "7. SQLite Data Mart (Serving Layer)"
+            ],
+            "Bản chất Kỹ thuật (Hiểu gì về nó?)": [
+                "NameNode (Master port 9820/9870) giữ metadata cây thư mục trong RAM. 3 DataNodes (Workers) lưu trữ các khối nhị phân 128MB vật lý trên đĩa kèm file .meta.",
+                "Động cơ tính toán phân tán In-Memory (Tungsten Engine), tối ưu kế hoạch thực thi bằng Catalyst Optimizer, song song hóa trên 16 cores CPU.",
+                "Định dạng lưu trữ hướng cột (Columnar format) kết hợp thuật toán nén Snappy; chỉ nạp các cột cần tính toán, bỏ qua các cột dư thừa.",
+                "K-Means gom cụm không giám sát (k=3); Random Forest Regressor với hàm biến đổi log1p(y) chống hiện tượng lệch phải nặng nề.",
+                "Message Broker phân tán dạng Publish/Subscribe thời gian thực, độ trễ mili-giây, chịu tải hàng ngàn thông điệp/giây.",
+                "Hệ thống điều phối lập lịch tự động dưới dạng Đồ thị có hướng không chu trình (DAG), quản lý trạng thái và phụ thuộc giữa các task.",
+                "CSDL Serving phục vụ dữ liệu đã tính toán sẵn (Pre-computed) có đánh chỉ mục (Index) tối ưu cho việc đọc nhanh."
+            ],
+            "Áp dụng cụ thể vào Đề tài": [
+                "Quản lý Data Lake 12 tệp CSV Transfermarkt (872.5 MB, 7,497,433 dòng) tại /football_project/, chia thành 18 blocks, nhân bản 3 lần (Rep=3, tổng 2.58 GB).",
+                "16 Cores CPU chạy song song làm sạch 50k hồ sơ cầu thủ (02_data_cleaning.py) và thực thi 4 truy vấn Spark SQL đa chiều (03_spark_analysis.py).",
+                "Xuất tệp cleaned_players.parquet (1.41 MB) từ 18.7 MB CSV thô để cấp phát trực tiếp cho Tầng Machine Learning và Web Dashboard.",
+                "Phân khúc 3 đẳng cấp cầu thủ (Silhouette 0.6429); Dự đoán định giá chuyển nhượng đạt R²=84.68% & Bộ công cụ săn ngọc quý (Scouting Engine).",
+                "Cổng 9092, topic football_transfers tiếp nhận liên tục các giao dịch chuyển nhượng mới phát sinh dạng JSON với tốc độ 2,450 msgs/s.",
+                "DAG transfermarkt_pipeline gồm 7 task tuần tự chạy qua 5 container Docker Compose, tự động hoàn thành trong 2 phút 10 giây (100% SUCCESS).",
+                "football_analytics.db lưu 5 bảng quan hệ phân tích, phục vụ người dùng tương tác tức thì trên giao diện Web Dashboard."
+            ],
+            "Vấn đề Giải quyết trong Bài toán Thực tế": [
+                "Chống mất mát dữ liệu (hỏng 1-2 DataNode vẫn an toàn 100%); Xóa nghẽn cổ chai I/O đĩa cứng bằng cách cấp phát song song cho Spark đọc.",
+                "Nhanh gấp 16.0 lần Pandas (0.78s vs 12.45s trên 200k dòng); Không bị tràn RAM (Out-Of-Memory) khi quét bảng lớn 3.2 triệu dòng.",
+                "Tiết kiệm 97.7% dung lượng ổ cứng (18.7 MB -> 1.41 MB); Tăng tốc độ I/O nạp dữ liệu vào mô hình AI gấp 5 lần so với đọc CSV.",
+                "Xóa bỏ định giá cầu thủ bằng cảm tính chủ quan; Tự động tìm kiếm các cầu thủ tài năng bị định giá thấp (Undervalued) giúp CLB tiết kiệm tiền.",
+                "Giải quyết độ trễ: Cập nhật biến động giá và chuyển nhượng tức thì mà không phải quét và tính toán lại toàn bộ kho dữ liệu lịch sử 872 MB.",
+                "Xóa bỏ thao tác thủ công của con người (dễ quên, sai thứ tự); Tự động kiểm tra điều kiện, ghi log chi tiết và tự phục hồi khi có lỗi.",
+                "Web Dashboard phản hồi dưới 10ms, lướt web mượt mà không bị đơ giật, và không chiếm dụng tài nguyên tính toán của cụm máy chủ Spark."
+            ]
+        })
+        st.dataframe(matrix_data, use_container_width=True, hide_index=True)
 
 
 # ═════════════════════════════════════════════════════════════════════════════
